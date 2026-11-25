@@ -90,7 +90,7 @@
       e.preventDefault(); S.state.name = String(new FormData(e.target).get('name') || '').trim().slice(0, 60); commit();
     } },
       h('label', { class: 'field' }, h('span', {}, 'What should we call you? (optional)'), h('input', { type: 'text', name: 'name', value: S.state.name || '', maxlength: '60', autocomplete: 'given-name' }),
-        h('small', {}, 'Used only to greet you. Stays in this browser and is never sent to the AI.')),
+        h('small', {}, 'Used only to greet you. Stays in this browser.')),
       h('button', { class: 'btn ghost', type: 'submit' }, 'Save name'));
   }
 

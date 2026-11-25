@@ -480,7 +480,7 @@
           field('Note (optional)', 'note', { multiline: true, rows: 2 }), h('button', { class: 'btn', type: 'submit' }, 'Add syllabus'))),
       S.syl.paste(c, m));
   }
-  function findMaterialsBtn(c, m) {
+  function findMaterialsBtn(c, m) { return null; /* AI-off copy: needs the AI service */
     const working = busy.has(m.id);
     return h('div', { class: 'find-row' },
       h('button', { class: 'btn ghost', type: 'button', disabled: working, onclick: async () => {

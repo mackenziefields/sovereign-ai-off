@@ -131,7 +131,7 @@
     out.push(p.submit);
     if (!(a.points > 0) && !a.work) out.push(h('div', { class: 'wb-manual' }, h('label', { class: 'checkline' },
       h('span', { class: 'check' }, h('input', { type: 'checkbox', checked: a.done, onchange: (e) => { a.done = e.target.checked; commit(); toast(a.done ? 'Marked completed.' : 'Marked not completed.'); } }), h('span', { class: 'box', 'aria-hidden': 'true' })),
-      h('span', {}, 'Mark this assignment completed')), h('button', { class: 'linkbtn', type: 'button', onclick: () => { ui.edit = a.id; S.render(false); } }, 'Add points to turn on AI feedback')));
+      h('span', {}, 'Mark this assignment completed')), h('button', { class: 'linkbtn', type: 'button', onclick: () => { ui.edit = a.id; S.render(false); } }, 'Add points')));
     if (a.work && a.work.final) out.push(S.portfolioToggle(a));
     return out;
   }
