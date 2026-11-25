@@ -1,0 +1,209 @@
+/* sovereign. — Module Studio (build 18). Shared components first, then one block per course design.
+   Themes change composition, type and surface; the components, controls and behaviour are the same in all four. */
+
+.studio { --st-ink: var(--ink); --st-accent: var(--accent); --st-line: var(--ink); --st-bg: var(--card); --st-learn: var(--ink); --st-apply: var(--cobalt); --st-demonstrate: var(--accent); }
+
+/* ----- module opening ----- */
+.studio-open { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1.25rem 0 1.5rem; border-bottom: 2px solid var(--st-line); }
+.chap { display: flex; align-items: baseline; gap: .6rem; color: var(--st-accent); font-family: var(--serif); }
+.chap-no { font-size: 3.4rem; line-height: .9; letter-spacing: -.03em; }
+.chap-of { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; font-family: var(--font); font-weight: 700; color: var(--muted); }
+.studio-title { margin-bottom: .5rem; }
+.so-brief .msec { border-top: 0; margin-top: .75rem; padding-top: 0; }
+.so-brief .msec .sec-head h3 { color: var(--muted); }
+.so-brief .msec > .pre { font-size: 1.1rem; max-width: 42rem; }
+.so-meta { margin-top: 1rem; display: grid; gap: .75rem; max-width: 42rem; }
+.so-settings summary { cursor: pointer; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--muted); min-height: 44px; display: flex; align-items: center; }
+.so-settings .tools { display: flex; gap: 1rem; flex-wrap: wrap; padding: .25rem 0 .5rem; }
+@media (min-width: 880px) {
+  .studio-open { grid-template-columns: 9.5rem minmax(0, 1fr); column-gap: 2rem; }
+  .chap { flex-direction: column; gap: .25rem; }
+  .chap-no { font-size: 5.5rem; }
+}
+
+/* ----- stage rail ----- */
+.rail-stages { margin-top: 1.25rem; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.rail-stages ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); }
+.rs { display: flex; gap: .6rem; align-items: flex-start; padding: .8rem .75rem; min-height: 44px; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; }
+.rs:hover { color: var(--ink); background: var(--accent-soft); }
+.rs:focus-visible { outline: 3px solid var(--cobalt); outline-offset: -3px; }
+.rs[aria-current="page"] { color: var(--ink); border-bottom-color: var(--st-c, var(--ink)); background: var(--card); }
+.rs-learn { --st-c: var(--st-learn); } .rs-apply { --st-c: var(--st-apply); } .rs-demonstrate { --st-c: var(--st-demonstrate); } .rs-wrap { --st-c: var(--muted); }
+.rs-mark { width: .8rem; height: .8rem; flex: none; margin-top: .3rem; border: 2px solid var(--st-c); }
+.rs-learn .rs-mark { border-radius: 50%; }
+.rs-demonstrate .rs-mark { border: 0; background: var(--st-c); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.rs-wrap .rs-mark { border-radius: 0; transform: rotate(45deg); width: .65rem; height: .65rem; margin-top: .4rem; }
+.rs.is-full .rs-mark { background: var(--st-c); }
+.rs.is-full.rs-demonstrate .rs-mark { background: var(--st-c); }
+.rs-text { display: grid; gap: .1rem; min-width: 0; }
+.rs-name { font-weight: 700; font-size: .95rem; color: var(--ink); }
+.rs-room { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.rs-count { font-size: .78rem; font-variant-numeric: tabular-nums; }
+@media (min-width: 720px) { .rail-stages { position: sticky; top: 0; } .rail-stages ol { grid-template-columns: repeat(4, 1fr); } .rs { padding: 1rem .9rem; } }
+
+/* ----- next up ----- */
+.nextup { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: .85rem 1rem; margin: 1rem 0 0; background: var(--ink); color: var(--card); }
+.nextup .nu-k { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; opacity: .8; width: 100%; }
+.nextup .nu-t { flex: 1 1 14rem; min-width: 0; overflow-wrap: anywhere; }
+.nextup .nu-t b { font-weight: 700; }
+.nextup .btn { background: var(--card); color: var(--ink); border-color: var(--card); }
+.nextup .btn.ghost { background: transparent; color: var(--card); border-color: color-mix(in srgb, var(--card) 55%, transparent); }
+.nextup .btn:focus-visible { outline: 3px solid var(--card); outline-offset: 3px; }
+.nextup.is-clear { background: var(--accent-soft); color: var(--ink); }
+.nextup.is-clear .btn { background: var(--ink); color: var(--card); border-color: var(--ink); }
+
+/* ----- a room ----- */
+.stage-panel { margin-top: 1.5rem; }
+.room-head { display: grid; gap: 1rem; padding-bottom: 1rem; }
+.room-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 5vw, 2.4rem); letter-spacing: -.02em; line-height: 1.05; margin: .25rem 0; }
+.room-blurb { color: var(--muted); max-width: 36rem; margin: 0; }
+.room-prog { display: grid; gap: .35rem; max-width: 22rem; }
+.room-sec { margin-top: 2rem; }
+.room-sec:first-of-type { margin-top: 1rem; }
+.stage-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+.stage-foot a:not(.btn) { min-height: 44px; display: inline-flex; align-items: center; }
+@media (min-width: 880px) { .room-head { grid-template-columns: minmax(0, 1fr) 20rem; align-items: end; } }
+
+.status { display: inline-block; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; padding: .2rem .5rem; border: 1px solid currentColor; }
+.status-todo { color: var(--muted); } .status-submitted { color: var(--cobalt); } .status-feedback { color: var(--accent); background: var(--accent-soft); } .status-done { color: #2b5a34; }
+.fact { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fact.late { color: var(--danger); font-weight: 700; }
+
+/* ----- Learn: resource cards ----- */
+.rcards { list-style: none; margin: 1rem 0; padding: 0; display: grid; gap: .9rem; grid-template-columns: 1fr; }
+.rcard { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); background: var(--card); border: 1px solid var(--rule); }
+.rcard.is-done { background: transparent; }
+.rcard.is-done .rc-title a, .rcard.is-done .rc-title { color: var(--muted); }
+.rc-plate { display: flex; flex-direction: column; justify-content: space-between; padding: .75rem; background: var(--st-learn); color: var(--card); min-height: 6rem; }
+.rc-no { font-family: var(--serif); font-size: 1.9rem; line-height: 1; }
+.rc-kind { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+.rc-body { padding: .8rem 1rem; display: grid; gap: .3rem; min-width: 0; align-content: start; }
+.rc-title { font-family: var(--serif); font-size: 1.15rem; line-height: 1.25; overflow-wrap: anywhere; }
+.rc-title a { color: var(--ink); text-underline-offset: .2em; }
+.rc-by { font-size: .8rem; color: var(--muted); } .rc-by:empty { display: none; }
+.rc-note { margin: 0; font-size: .92rem; color: var(--ink); max-width: 38rem; }
+.rc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; margin-top: .4rem; padding-top: .5rem; border-top: 1px solid var(--rule); }
+.rc-state { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.rc-foot .item-actions { margin-left: auto; }
+@media (min-width: 1100px) { .rcards { grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr)); } }
+@media (max-width: 420px) { .rcard { grid-template-columns: 1fr; } .rc-plate { flex-direction: row; align-items: baseline; min-height: 0; } }
+
+.selfcheck { list-style: none; margin: .5rem 0 0; padding: 0; counter-reset: q; display: grid; gap: .5rem; max-width: 42rem; }
+.selfcheck li { counter-increment: q; padding: .6rem .75rem; background: var(--card); border-left: 3px solid var(--st-learn); }
+.selfcheck .checkline { align-items: flex-start; }
+.selfcheck li::before { content: none; }
+
+/* ----- Apply: case files ----- */
+.cases { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 1rem; }
+.case { display: grid; grid-template-columns: 1fr; background: var(--card); border: 1px solid var(--rule); border-left: 6px solid var(--st-apply); }
+.case-no { display: flex; align-items: baseline; gap: .6rem; padding: .6rem 1rem 0; color: var(--st-apply); }
+.case-no span { font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; }
+.case-no b { font-family: var(--serif); font-weight: 400; font-size: 1.6rem; line-height: 1; }
+.case-body { padding: .3rem 1rem 1rem; display: grid; gap: .5rem; min-width: 0; }
+.case-top, .pj-top { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .9rem; }
+.case-title, .pj-title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 1.45rem; line-height: 1.15; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.case-title a, .pj-title a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.case-lead { margin: 0; max-width: 40rem; font-size: 1rem; line-height: 1.55; }
+.case-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: .4rem; padding-top: .7rem; border-top: 1px solid var(--rule); }
+.case-foot .item-actions { margin-left: auto; }
+.case.is-done { opacity: .9; }
+
+/* ----- Demonstrate: portfolio projects ----- */
+.projects { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 1.25rem; }
+.project { padding: 1.1rem 1.25rem 1rem; background: var(--card); border: 2px solid var(--st-demonstrate); display: grid; gap: .6rem; position: relative; }
+.project::before { content: ""; position: absolute; top: -2px; right: 1rem; width: 2.5rem; height: .6rem; background: var(--st-demonstrate); }
+.pj-title { font-size: clamp(1.5rem, 4.5vw, 2.1rem); }
+.pj-lead { margin: 0; max-width: 42rem; line-height: 1.55; }
+.pj-spec { display: grid; gap: 0; margin: .4rem 0 0; border-top: 1px solid var(--ink); }
+.pj-spec > div { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 1rem; padding: .6rem 0; border-bottom: 1px solid var(--rule); }
+.pj-spec dt { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--st-demonstrate); padding-top: .15rem; }
+.pj-spec dd { margin: 0; overflow-wrap: anywhere; }
+.skills { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.skills li { font-size: .8rem; padding: .15rem .55rem; border: 1px solid var(--ink); }
+@media (max-width: 520px) { .pj-spec > div { grid-template-columns: 1fr; gap: .15rem; } }
+
+/* ----- Wrap-up ----- */
+.recap { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: 0; max-width: 36rem; }
+.recap li { display: grid; grid-template-columns: 9rem 1fr auto; gap: .75rem; align-items: center; padding: .65rem 0; border-bottom: 1px solid var(--rule); }
+.recap a { min-height: 44px; display: inline-flex; align-items: center; }
+.studio .complete-row { margin: 2rem 0 1rem; }
+@media (max-width: 520px) { .recap li { grid-template-columns: 1fr auto; } .recap li .kmark { grid-column: 1 / -1; } }
+
+@media (prefers-reduced-motion: no-preference) { .rs, .rcard, .case, .project { transition: background-color .15s, border-color .15s; } }
+
+/* ===== design 1 · The Modernist: hard rules, giant numeral, flat blocks ===== */
+.studio[data-theme="modernist"] .studio-open { border-top: 12px solid var(--ink); border-bottom: 2px solid var(--ink); position: relative; }
+.studio[data-theme="modernist"] .studio-open::before { content: ""; position: absolute; top: -12px; right: 2rem; width: 3.5rem; height: 4rem; background: var(--accent); }
+.studio[data-theme="modernist"] .chap-no { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 800; letter-spacing: -.06em; color: var(--ink); }
+.studio[data-theme="modernist"] .studio-title { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 800; letter-spacing: -.045em; line-height: .95; text-wrap: balance; }
+.studio[data-theme="modernist"] .room-title { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 800; letter-spacing: -.04em; }
+.studio[data-theme="modernist"] .rs[aria-current="page"] { background: var(--ink); color: var(--card); border-bottom-color: var(--ink); }
+.studio[data-theme="modernist"] .rs[aria-current="page"] .rs-name, .studio[data-theme="modernist"] .rs[aria-current="page"] .rs-count { color: var(--card); }
+.studio[data-theme="modernist"] .rs[aria-current="page"] .rs-mark { border-color: var(--card); }
+.studio[data-theme="modernist"] .rs[aria-current="page"].rs-demonstrate .rs-mark { background: var(--card); }
+.studio[data-theme="modernist"] .rcard, .studio[data-theme="modernist"] .case { border-width: 2px; border-color: var(--ink); }
+.studio[data-theme="modernist"] .case { border-left-width: 12px; border-left-color: var(--st-apply); }
+.studio[data-theme="modernist"] .case-title, .studio[data-theme="modernist"] .pj-title, .studio[data-theme="modernist"] .rc-title { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 700; letter-spacing: -.02em; }
+
+/* ===== design 2 · The Editorial: serif italic, chapter opener, hairline frames ===== */
+.studio[data-theme="editorial"] .studio-open { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); position: relative; padding-top: 1.75rem; }
+.studio[data-theme="editorial"] .studio-open::before { content: ""; position: absolute; inset: 4px 0 auto 0; height: 1px; background: var(--ink); opacity: .4; }
+.studio[data-theme="editorial"] .chap { flex-direction: column; gap: 0; }
+.studio[data-theme="editorial"] .chap-no { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -.02em; }
+.studio[data-theme="editorial"] .chap-no::before { content: "No. "; font-size: 1.1rem; letter-spacing: .04em; }
+.studio[data-theme="editorial"] .studio-title, .studio[data-theme="editorial"] .room-title { font-family: "Playfair Display", Georgia, serif; font-weight: 400; color: var(--accent); }
+.studio[data-theme="editorial"] .so-brief .msec > .pre { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-size: 1.3rem; line-height: 1.45; color: var(--ink); }
+.studio[data-theme="editorial"] .so-brief .msec > .pre::first-letter { font-size: 3.1em; float: left; line-height: .85; padding: .08em .1em 0 0; font-style: normal; color: var(--accent); }
+.studio[data-theme="editorial"] .rail-stages { border-bottom: 1px solid var(--ink); }
+.studio[data-theme="editorial"] .rs-name { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-weight: 400; font-size: 1.1rem; }
+.studio[data-theme="editorial"] .rs[aria-current="page"] { border-bottom-width: 1px; box-shadow: inset 0 -3px 0 var(--st-c); }
+.studio[data-theme="editorial"] .rcard, .studio[data-theme="editorial"] .case { outline: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); outline-offset: -6px; }
+.studio[data-theme="editorial"] .rc-plate { background: var(--accent); }
+.studio[data-theme="editorial"] .rc-plate .rc-no { font-style: italic; }
+.studio[data-theme="editorial"] .case-title, .studio[data-theme="editorial"] .pj-title, .studio[data-theme="editorial"] .rc-title { font-family: "Playfair Display", Georgia, serif; }
+.studio[data-theme="editorial"] .project { border-width: 1px; outline: 1px solid var(--st-demonstrate); outline-offset: -7px; }
+
+/* ===== design 3 · The Intellectual: cobalt circle, tall serif, open margins ===== */
+.studio[data-theme="intellectual"] .studio-open { border-top: 8px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.studio[data-theme="intellectual"] .chap { position: relative; }
+.studio[data-theme="intellectual"] .chap-no { font-family: "Instrument Serif", Georgia, serif; color: var(--card); background: var(--cobalt); border-radius: 50%; width: 5.2rem; height: 5.2rem; display: grid; place-items: center; font-size: 2.6rem; letter-spacing: -.02em; line-height: 1; padding-top: .1em; }
+.studio[data-theme="intellectual"] .chap-of { color: var(--cobalt); }
+.studio[data-theme="intellectual"] .studio-title, .studio[data-theme="intellectual"] .room-title { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.03em; line-height: .98; }
+.studio[data-theme="intellectual"] .studio-title { font-size: clamp(2.4rem, 8vw, 4.4rem); }
+.studio[data-theme="intellectual"] .so-brief .msec > .pre { font-family: "Instrument Serif", Georgia, serif; font-size: 1.55rem; line-height: 1.25; letter-spacing: -.005em; }
+.studio[data-theme="intellectual"] .rs-name { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 1.25rem; }
+.studio[data-theme="intellectual"] .rs[aria-current="page"] { border-bottom-color: var(--cobalt); border-bottom-width: 4px; }
+.studio[data-theme="intellectual"] .rc-plate { background: var(--cobalt); }
+.studio[data-theme="intellectual"] .rcard, .studio[data-theme="intellectual"] .case { border-radius: 0 1.5rem 0 0; }
+.studio[data-theme="intellectual"] .case-title, .studio[data-theme="intellectual"] .pj-title, .studio[data-theme="intellectual"] .rc-title { font-family: "Instrument Serif", Georgia, serif; font-size: 1.6rem; letter-spacing: -.01em; }
+.studio[data-theme="intellectual"] .project::before { width: 2.2rem; height: 2.2rem; border-radius: 50%; top: -1.1rem; background: var(--cobalt); }
+
+/* ===== design 4 · The Institution: oxblood plate, capitals, ruled double frame ===== */
+.studio[data-theme="institution"] .studio-open { background: #073e35; color: #f5f6f7; padding: 1.5rem 1.25rem; border: 0; outline: 1px solid #9fb6cb; outline-offset: -8px; }
+.studio[data-theme="institution"] .studio-open .eyebrow, .studio[data-theme="institution"] .studio-open .muted, .studio[data-theme="institution"] .studio-open .chap-of, .studio[data-theme="institution"] .so-brief .msec .sec-head h3 { color: #c3d0dc; }
+.studio[data-theme="institution"] .studio-open a, .studio[data-theme="institution"] .studio-open .linkbtn, .studio[data-theme="institution"] .so-settings summary { color: #f5f6f7; }
+.studio[data-theme="institution"] .studio-open .linkbtn.danger { color: #ffb8b8; }
+.studio[data-theme="institution"] .studio-open .badge { color: #f5f6f7; border-color: #c3d0dc; background: transparent; }
+.studio[data-theme="institution"] .chap-no { font-family: "Cinzel", Georgia, serif; font-weight: 500; color: #f5f6f7; font-size: 3rem; }
+.studio[data-theme="institution"] .studio-title { font-family: "Cinzel", Georgia, serif; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; line-height: 1.15; font-size: clamp(1.6rem, 5vw, 2.6rem); color: #f5f6f7; }
+.studio[data-theme="institution"] .so-brief .msec > .pre { font-family: "Cormorant Garamond", Garamond, Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.4rem; line-height: 1.35; color: #f5f6f7; }
+.studio[data-theme="institution"] .so-brief ul.plain { color: #f5f6f7; }
+.studio[data-theme="institution"] .studio-open .progress { background: rgba(245, 246, 247, .25); }
+.studio[data-theme="institution"] .studio-open .progress > span { background: #f5f6f7; }
+.studio[data-theme="institution"] .studio-open :focus-visible { outline-color: #f5f6f7; }
+.studio[data-theme="institution"] .room-title { font-family: "Cinzel", Georgia, serif; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(1.3rem, 4vw, 1.8rem); color: #073e35; }
+.studio[data-theme="institution"] .rs-name { font-family: "Cinzel", Georgia, serif; font-weight: 600; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; }
+.studio[data-theme="institution"] .rs-room { font-family: "Cormorant Garamond", Garamond, Georgia, serif; font-style: italic; text-transform: none; letter-spacing: 0; font-size: .95rem; }
+.studio[data-theme="institution"] .rs[aria-current="page"] { background: #073e35; border-bottom-color: #9fb6cb; }
+.studio[data-theme="institution"] .rs[aria-current="page"] .rs-name, .studio[data-theme="institution"] .rs[aria-current="page"] .rs-count, .studio[data-theme="institution"] .rs[aria-current="page"] .rs-room { color: #f5f6f7; }
+.studio[data-theme="institution"] .rs[aria-current="page"] .rs-mark { border-color: #f5f6f7; }
+.studio[data-theme="institution"] .rs[aria-current="page"].rs-demonstrate .rs-mark { background: #f5f6f7; }
+.studio[data-theme="institution"] .rcard, .studio[data-theme="institution"] .case, .studio[data-theme="institution"] .project { border: 1px solid #073e35; outline: 1px solid #9fb6cb; outline-offset: -5px; }
+.studio[data-theme="institution"] .rc-plate { background: #073e35; }
+.studio[data-theme="institution"] .rc-no, .studio[data-theme="institution"] .case-no b { font-family: "Cinzel", Georgia, serif; }
+.studio[data-theme="institution"] .case { border-left-width: 1px; }
+.studio[data-theme="institution"] .case-title, .studio[data-theme="institution"] .pj-title, .studio[data-theme="institution"] .rc-title { font-family: "Cormorant Garamond", Garamond, Georgia, serif; font-weight: 500; font-size: 1.5rem; }
+.studio[data-theme="institution"] .project::before { content: none; }
+.studio[data-theme="institution"] .nextup { background: #073e35; color: #f5f6f7; }
+
+@media (max-width: 640px) { .studio .chap-no { font-size: 2.6rem; } .studio[data-theme="intellectual"] .chap-no { width: 4.2rem; height: 4.2rem; font-size: 2.1rem; } }

@@ -1,0 +1,73 @@
+/* sovereign. — navigation refinement (build 18, Phase 1C). Quiet, precise, content first.
+   Small line icons, muted inactive text, a soft filled active row, generous row height, and controls that appear when they are relevant. */
+
+:root { --nav-muted: #47526a; --nav-fill: rgba(16, 27, 50, .06); }
+
+/* ----- icons ----- */
+.ico { display: inline-flex; flex: none; width: 16px; height: 16px; }
+.ico svg { display: block; }
+
+/* ----- global sidebar ----- */
+.sidebar { --nav-accent: var(--accent); padding-top: 1.75rem; }
+.sidebar nav { margin-top: 1.75rem; }
+.sidebar nav a { gap: .7rem; min-height: 44px; margin: 1px -.75rem; padding: 0 .75rem; border-left: 0; border-radius: 3px; font-size: .78rem; font-weight: 600; letter-spacing: .12em; color: var(--nav-muted); background: transparent; }
+.sidebar nav a .ico { color: var(--nav-muted); }
+.sidebar nav a:hover { background: var(--nav-fill); color: var(--ink); }
+.sidebar nav a:hover .ico { color: var(--ink); }
+.sidebar nav a[aria-current="page"] { background: var(--nav-fill); color: var(--ink); font-weight: 700; }
+.sidebar nav a[aria-current="page"] .ico { color: var(--nav-accent); }
+.sidebar nav a:focus-visible { outline: 2px solid var(--cobalt); outline-offset: -2px; }
+.side-courses { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
+.side-k { margin: 0 0 .35rem; font-size: .62rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--nav-muted); }
+.side-courses a { min-height: 40px; font-size: .72rem; }
+.cname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* a small mark per design: square, ring, circle, diamond */
+.cdot { width: 10px; height: 10px; flex: none; background: var(--t-accent, var(--accent)); }
+.cdot[data-theme="editorial"] { background: transparent; border: 2px solid var(--t-accent); border-radius: 50%; }
+.cdot[data-theme="intellectual"] { border-radius: 50%; }
+.cdot[data-theme="institution"] { transform: rotate(45deg) scale(.85); }
+.sidebar[data-theme="modernist"] { --nav-accent: #2643d8; }
+.sidebar[data-theme="editorial"] { --nav-accent: #2643d8; }
+.sidebar[data-theme="intellectual"] { --nav-accent: #2643d8; }
+.sidebar[data-theme="institution"] { --nav-accent: #073e35; }
+.side-courses a[aria-current="page"] { box-shadow: inset 3px 0 0 var(--nav-accent); }
+.side-note { margin-top: auto; padding-top: 1.5rem; }
+
+/* ----- course menu ----- */
+.course-menu a { gap: .6rem; font-size: .72rem; letter-spacing: .12em; color: var(--nav-muted); }
+.course-menu a .ico { color: var(--nav-muted); }
+.course-menu a:hover { color: var(--ink); background: var(--nav-fill); }
+.course-menu a[aria-current="page"] { color: var(--ink); font-weight: 700; }
+.course-menu a[aria-current="page"] .ico { color: var(--nav-accent, var(--accent)); }
+.course-menu a:focus-visible { outline: 2px solid var(--cobalt); outline-offset: -2px; }
+.course[data-theme="intellectual"] .course-menu { --nav-accent: #2643d8; }
+.course[data-theme="institution"] .course-menu { --nav-accent: #073e35; }
+@media (max-width: 879px) { .course-menu a { padding: 0 .8rem; } .course-menu a .ico { display: none; } }
+@media (min-width: 880px) {
+  .course-menu a { min-height: 46px; padding: 0 .75rem; margin: 0 -1px 0 0; border-radius: 3px 0 0 3px; }
+  .course-menu a:hover { background: var(--nav-fill); color: var(--ink); }
+  .course-menu a[aria-current="page"] { background: var(--nav-fill); color: var(--ink); border-right-color: var(--nav-accent, var(--accent)); }
+}
+
+/* ----- contextual controls: edit, move and remove appear on hover or focus; always visible on touch ----- */
+@media (hover: hover) {
+  .rcard .item-actions, .case .item-actions, .project .item-actions { opacity: 0; transition: opacity .12s; }
+  .rcard:hover .item-actions, .case:hover .item-actions, .project:hover .item-actions,
+  .rcard:focus-within .item-actions, .case:focus-within .item-actions, .project:focus-within .item-actions { opacity: 1; }
+}
+
+/* ----- current place: the topbar on phones says where you are ----- */
+.topbar .wordmark { font-size: 1.35rem; }
+
+/* ----- tablet range ----- */
+@media (min-width: 720px) and (max-width: 999px) {
+  .wb-seg ul { grid-template-columns: repeat(7, 1fr); }
+  .wb-seg li:nth-child(n+5) { border-top: 0; }
+  .wb-seg li:not(:first-child) { border-left: 1px solid var(--ink); }
+  .wb-seg li:nth-child(5) { border-left: 2px solid var(--ink); }
+}
+
+/* ----- My Work cards: let the title column shrink so the status badge never pushes past a phone screen ----- */
+.work-card > summary { grid-template-columns: 5rem minmax(0, 1fr) auto; }
+.wc-title { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 420px) { .work-card > summary { grid-template-columns: minmax(0, 1fr) auto; } .work-card > summary .code { grid-column: 1 / -1; } }

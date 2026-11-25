@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="connect-src 'self' blob: data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3eee2">
+  <meta name="description" content="Sovereign (AI-off copy): a self-directed learning workspace with every AI feature switched off. Made for a class project.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Sovereign Copy">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>sovereign. (AI-off copy) — Learn. Apply. Demonstrate.</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/courses.css">
+  <link rel="stylesheet" href="css/ai.css">
+  <link rel="stylesheet" href="css/design.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/studio.css">
+  <link rel="stylesheet" href="css/workbench.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/academic.css">
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/review.css">
+  <link rel="stylesheet" href="css/exhibits.css">
+  <link rel="stylesheet" href="css/nav-overlay.css">
+  <link rel="stylesheet" href="css/ai-off.css">
+</head>
+<body>
+  <div class="aioff-bar" role="note"><b>AI-off copy</b> of Sovereign, made for a class project. Every AI feature is switched off; this app contacts no AI service.</div>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="wordmark" href="#/" aria-label="sovereign. dashboard">sovereign<span>.</span></a>
+      <button id="menu-btn" class="menu-btn" type="button" aria-expanded="false" aria-controls="sidebar">Menu</button>
+    </header>
+
+    <button id="nav-edge" class="nav-edge" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation menu" title="Open navigation"></button>
+    <aside id="sidebar" class="sidebar" aria-label="Primary">
+      <a class="wordmark" href="#/" aria-label="sovereign. dashboard">sovereign<span>.</span></a>
+      <p class="tagline">Learn. Apply. Demonstrate.</p>
+      <nav>
+        <ul>
+          <li><a data-route="dash" data-icon="dash" href="#/">Dashboard</a></li>
+          <li><a data-route="work" data-icon="work" href="#/work">My Work</a></li>
+          <li><a data-route="data" data-icon="data" href="#/data">Data &amp; Backup</a></li>
+        </ul>
+      </nav>
+      <nav class="side-courses" aria-label="Your courses" hidden>
+        <p class="side-k">Courses</p>
+        <ul id="side-courses"></ul>
+      </nav>
+      <button id="nav-pin" class="nav-pin" type="button" aria-pressed="false">Pin menu open</button>
+      <p class="side-note">Saved in this browser only. It does not sync across devices.</p>
+    </aside>
+    <div id="scrim" class="scrim" hidden></div>
+
+    <main id="main" tabindex="-1">
+      <div id="app" class="content">
+        <p>Loading Sovereign…</p>
+        <p>If this message stays on screen, the app’s <b>css</b>, <b>js</b>, or <b>icons</b> folders did not load. Make sure those folders were uploaded next to index.html, then refresh.</p>
+        <noscript><p>Sovereign needs JavaScript enabled. It runs entirely in your browser; nothing is sent anywhere.</p></noscript>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/exhibits.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/exhibits-view.js"></script>
+  <script src="js/files.js"></script>
+  <script src="js/dataset-import.js"></script>
+  <script src="js/mydata.js"></script>
+  <script src="js/capstone-ui.js"></script>
+<script src="js/publish-model.js"></script>
+<script src="js/publish.js"></script>
+<script src="js/publish-attach.js"></script>
+<script src="js/publish-docs.js"></script>
+  <script src="js/ai-client.js"></script>
+  <script src="js/views-ai.js"></script>
+  <script src="js/views-work.js"></script>
+  <script src="js/review-studio.js"></script>
+  <script src="js/views-course.js"></script>
+  <script src="js/studio.js"></script>
+  <script src="js/syllabus.js"></script>
+  <script src="js/workbench.js"></script>
+  <script src="js/academic.js"></script>
+  <script src="js/views-dash.js"></script>
+  <script src="js/ai-off.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

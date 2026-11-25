@@ -1,0 +1,56 @@
+/* sovereign. — G1: overlay navigation (build 27).
+   Desktop default: the global sidebar is out of the page flow. A slim edge handle opens it; it floats over the content, so the
+   page never resizes or reflows. "Pin" returns the persistent sidebar (the earlier layout). Phones and touch tablets keep the
+   Menu button. Everything is scoped to .shell so the course menu inside the page is untouched. */
+
+.nav-edge, .nav-pin { display: none; }
+
+@media (min-width: 1024px) {
+  /* ----- unpinned (default): sidebar leaves the layout ----- */
+  .shell:not([data-pinned]) { display: block; }
+  .shell:not([data-pinned]) .sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0; height: auto; width: min(17rem, 84vw);
+    transform: translateX(-102%); visibility: hidden; box-shadow: none;
+    transition: transform .18s ease, box-shadow .18s ease, visibility 0s .18s;
+  }
+  .shell:not([data-pinned]) .sidebar.open {
+    transform: none; visibility: visible; box-shadow: 0 0 0 1px rgba(16, 27, 50, .25), 14px 0 38px rgba(16, 27, 50, .38);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .shell:not([data-pinned]) .nav-edge {
+    display: block; position: fixed; z-index: 38; top: 0; bottom: 0; left: 0; width: 18px; padding: 0; border: 0; background: transparent; cursor: pointer;
+  }
+  /* the visible cue: a thin bar with a short grip, brighter on hover or focus */
+  .nav-edge::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 3px; background: var(--navy, #101b32); opacity: .22; transition: opacity .15s ease, width .15s ease; }
+  .nav-edge::after { content: ""; position: absolute; top: 50%; left: 5px; width: 4px; height: 3rem; margin-top: -1.5rem; border-radius: 2px; background: var(--navy, #101b32); opacity: .35; transition: opacity .15s ease; }
+  .nav-edge:hover::before, .nav-edge:focus-visible::before { opacity: .7; width: 5px; }
+  .nav-edge:hover::after, .nav-edge:focus-visible::after { opacity: .85; }
+  .nav-edge:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+  .shell:has(.sidebar.open) .nav-edge { visibility: hidden; }
+
+  /* ----- pin control (desktop only) ----- */
+  .nav-pin {
+    order: -1; align-self: flex-start; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin: 1rem 0 0; padding: 0 .75rem;
+    background: transparent; color: var(--nav-muted, #b4bfd3); border: 1px solid rgba(245, 246, 247, .3); border-radius: 3px;
+    font: 600 .72rem var(--font); letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+  }
+  .nav-pin:hover { background: var(--nav-fill, rgba(245, 246, 247, .09)); color: #fff; }
+  .nav-pin[aria-pressed="true"] { color: #fff; border-color: #8fa8ff; background: var(--nav-fill, rgba(245, 246, 247, .09)); }
+  .nav-pin:focus-visible { outline: 2px solid #8fa8ff; outline-offset: 2px; }
+  .sidebar > .wordmark { order: -3; }
+  .sidebar > .tagline { order: -2; }
+}
+
+/* touch-first large screens (tablets, hybrids): no hover, so keep the Menu button instead of the edge handle */
+@media (min-width: 1024px) and (hover: none) {
+  .shell:not([data-pinned]) .nav-edge { display: none; }
+  body:not(.firstrun) .shell:not([data-pinned]) .topbar { display: flex; }
+  .shell:not([data-pinned]) .scrim:not([hidden]) { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell .sidebar, .nav-edge::before, .nav-edge::after { transition: none !important; }
+}
+
+.firstrun .nav-edge { display: none !important; }
+@media print { .nav-edge, .nav-pin { display: none !important; } }

@@ -1,0 +1,304 @@
+/* sovereign. — the publication layout (Phase 4). Loaded ONLY inside the export frame, never into the app.
+   One layout for every exported document (Syllabus, Portfolio, Feedback Report). The course theme drives covers, headings, rules, tables,
+   callouts and the running footer, so a document looks like one publication from first page to last.
+   Page size and the running footer text are added per document by js/publish.js (--pw, --ph, @page size). Fonts are the self-hosted ones. */
+
+@font-face { font-family: "Inter Tight"; font-weight: 700; src: url("../fonts/inter-tight-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-weight: 800; src: url("../fonts/inter-tight-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: normal; src: url("../fonts/playfair-display-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; src: url("../fonts/playfair-display-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: normal; src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: italic; src: url("../fonts/instrument-serif-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 500; src: url("../fonts/cinzel-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 600; src: url("../fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-style: italic; src: url("../fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; src: url("../fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+
+/* ---------- design tokens: one set per course design ---------- */
+[data-theme="modernist"] { --hf: "Inter Tight", "Helvetica Neue", Arial, sans-serif; --hw: 800; --hc: none; --ht: -.035em; --hs: normal; --deck: "Inter Tight", Arial, sans-serif; --decks: normal;
+  --bg: #eceff4; --fg: #101b32; --ink: #101b32; --ac: #2643d8; --soft: #e6eaf2; --body: "Segoe UI", "Helvetica Neue", Arial, sans-serif; --bs: 10pt; --rule: 2pt; --cover-size: 64pt; }
+[data-theme="editorial"] { --hf: "Playfair Display", Georgia, serif; --hw: 400; --hc: none; --ht: -.015em; --hs: normal; --deck: "Playfair Display", Georgia, serif; --decks: italic;
+  --bg: #f7f3f5; --fg: #681632; --ink: #681632; --ac: #681632; --soft: #f3ebee; --body: Georgia, "Times New Roman", serif; --bs: 10.5pt; --rule: .75pt; --cover-size: 58pt; }
+[data-theme="intellectual"] { --hf: "Instrument Serif", Georgia, serif; --hw: 400; --hc: none; --ht: -.02em; --hs: normal; --deck: "Instrument Serif", Georgia, serif; --decks: italic;
+  --bg: #e9edfa; --fg: #101b32; --ink: #101b32; --ac: #2643d8; --soft: #e8ecf8; --body: Georgia, "Times New Roman", serif; --bs: 10.5pt; --rule: 1pt; --cover-size: 78pt; }
+[data-theme="institution"] { --hf: "Cinzel", "Palatino Linotype", Georgia, serif; --hw: 600; --hc: uppercase; --ht: .06em; --hs: normal; --deck: "Cormorant Garamond", Georgia, serif; --decks: italic;
+  --bg: #073e35; --fg: #f5f6f7; --ink: #073e35; --ac: #4c6b82; --soft: #e9efec; --body: Georgia, "Times New Roman", serif; --bs: 10.5pt; --rule: .75pt; --cover-size: 40pt; }
+
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html { background: #fff; }
+body { margin: 0; font-family: var(--body); font-size: var(--bs); line-height: 1.55; color: #1b1f27; -webkit-font-smoothing: antialiased; orphans: 3; widows: 3; }
+a { color: var(--ac); text-decoration: none; border-bottom: .5pt solid currentColor; }
+.pub-ink { color: var(--ink); }
+
+/* ---------- cover ---------- */
+.pub-cover { page: cover; width: var(--pw); height: var(--ph); position: relative; overflow: hidden; background: var(--bg); color: var(--fg); break-after: page; display: flex; flex-direction: column; justify-content: space-between; padding: .95in .95in .8in; }
+.pub-cover .kicker { font: 700 8.5pt/1 "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 1em; }
+.pub-cover h1 { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); font-size: var(--cover-size); line-height: .98; margin: 0; color: var(--fg); overflow-wrap: anywhere; }
+.pub-cover .deck { font-family: var(--deck); font-style: var(--decks); font-size: 19pt; line-height: 1.25; margin-top: .3in; max-width: 5.4in; }
+.pub-cover .doc { font-family: var(--hf); font-weight: var(--hw); text-transform: uppercase; letter-spacing: .24em; font-size: 10pt; margin-bottom: .22in; display: block; color: var(--ac); }
+.pub-cover .foot { border-top: var(--rule) solid var(--fg); padding-top: .16in; display: flex; justify-content: space-between; gap: 1em; font: 500 9pt/1.4 "Segoe UI", Arial, sans-serif; }
+.pub-cover .foot b { display: block; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; opacity: .85; font-weight: 700; margin-bottom: .03in; }
+[data-theme="institution"] .pub-cover .doc { color: #b9cad6; }
+[data-theme="modernist"] .pub-cover::before { content: ""; position: absolute; right: .95in; top: 0; width: 1.7in; height: .6in; background: var(--ac); }
+[data-theme="modernist"] .pub-cover .doc { color: var(--ac); }
+[data-theme="modernist"] .pub-cover h1 { font-size: 84pt; line-height: .9; margin-top: 1.4in; }
+[data-theme="editorial"] .pub-cover h1 { font-size: 62pt; margin-top: 1.5in; }
+[data-theme="editorial"] .pub-cover .rule-top, [data-theme="intellectual"] .pub-cover .rule-top { border-top: var(--rule) solid var(--fg); }
+[data-theme="intellectual"] .pub-cover h1 { font-size: 92pt; line-height: .9; margin-top: 1.3in; }
+[data-theme="intellectual"] .pub-cover::after { content: ""; position: absolute; left: .95in; right: .95in; top: 2.6in; height: 0; border-top: 3pt solid var(--ac); }
+[data-theme="institution"] .pub-cover { padding: 1.05in 1.05in .9in; text-align: center; }
+[data-theme="institution"] .pub-cover::before { content: ""; position: absolute; inset: .42in; border: .75pt solid #6e8f86; pointer-events: none; }
+[data-theme="institution"] .pub-cover::after { content: ""; position: absolute; inset: .5in; border: .4pt solid #6e8f86; pointer-events: none; }
+[data-theme="institution"] .pub-cover .kicker { justify-content: center; }
+[data-theme="institution"] .pub-cover h1 { font-size: 40pt; line-height: 1.12; margin-top: 1.3in; }
+[data-theme="institution"] .pub-cover .deck { margin-left: auto; margin-right: auto; font-size: 20pt; }
+[data-theme="institution"] .pub-cover .foot { text-align: center; justify-content: center; gap: 2em; border-top: .75pt solid #6e8f86; }
+
+/* ---------- running content ---------- */
+.pub-body { padding: 0; }
+.pub-sec { margin: 0 0 .28in; }
+.pub-sec + .pub-sec { margin-top: .32in; }
+.pub-sec-head { break-after: avoid; display: flex; align-items: baseline; gap: .14in; border-bottom: var(--rule) solid var(--ink); padding-bottom: .07in; margin-bottom: .16in; }
+.pub-sec-head .no { font-family: var(--hf); font-weight: var(--hw); color: var(--ac); font-size: 11pt; letter-spacing: .04em; min-width: .34in; }
+.pub-sec-head h2 { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); font-size: 21pt; line-height: 1.05; margin: 0; color: var(--ink); }
+[data-theme="institution"] .pub-sec-head h2 { font-size: 15pt; }
+[data-theme="modernist"] .pub-sec-head h2 { font-size: 24pt; }
+[data-theme="intellectual"] .pub-sec-head h2 { font-size: 28pt; }
+h3, .h3 { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); color: var(--ink); font-size: 12.5pt; line-height: 1.2; margin: .2in 0 .06in; break-after: avoid; }
+[data-theme="institution"] h3 { font-size: 10.5pt; }
+[data-theme="intellectual"] h3 { font-size: 16pt; }
+.k { font: 700 7.5pt/1.2 "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ac); margin: .16in 0 .04in; break-after: avoid; display: block; }
+[data-theme="institution"] .k { color: #3f6a5f; }
+p { margin: 0 0 .09in; }
+.lede { font-family: var(--deck); font-style: var(--decks); font-size: 14pt; line-height: 1.4; color: var(--ink); margin: 0 0 .14in; }
+[data-theme="modernist"] .lede { font-style: normal; font-size: 12.5pt; font-weight: 600; font-family: var(--body); }
+.muted { color: #5b6270; font-size: 9pt; }
+.pre { white-space: pre-line; }
+ul, ol { margin: 0 0 .1in; padding-left: .22in; } li { margin: 0 0 .03in; }
+ul.plain { list-style: none; padding: 0; } ul.plain li { padding-left: .15in; position: relative; } ul.plain li::before { content: ""; position: absolute; left: 0; top: .62em; width: 4pt; height: 4pt; background: var(--ac); }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: var(--rule) solid var(--ink); border-bottom: .5pt solid var(--ink); margin: .1in 0 .2in; break-inside: avoid; }
+.facts div { padding: .09in .1in .09in 0; } .facts dt { font: 700 7.5pt/1.2 "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ac); } .facts dd { margin: .02in 0 0; font-family: var(--hf); font-weight: var(--hw); font-size: 15pt; color: var(--ink); letter-spacing: var(--ht); text-transform: none; }
+.callout { border-left: 3pt solid var(--ac); background: var(--soft); padding: .1in .16in; margin: .12in 0; break-inside: avoid; font-size: 9.5pt; }
+.callout b:first-child { font-family: var(--hf); font-weight: var(--hw); color: var(--ink); }
+.tag { display: inline-block; font: 700 7.5pt/1.5 "Segoe UI", Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; border: .6pt solid var(--ink); color: var(--ink); padding: 0 .06in; margin-right: .05in; white-space: nowrap; }
+.tag.solid { background: var(--ink); color: var(--bg); } [data-theme="institution"] .tag.solid { color: #fff; }
+
+/* tables: header repeats, rows never split */
+table { width: 100%; border-collapse: collapse; font-size: 9.2pt; margin: .06in 0 .16in; }
+thead { display: table-header-group; } tr { break-inside: avoid; }
+th { text-align: left; font: 700 7.5pt/1.2 "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); border-bottom: var(--rule) solid var(--ink); padding: .05in .07in; }
+td { padding: .06in .07in; border-bottom: .4pt solid #cfd3da; vertical-align: top; }
+.nw { white-space: nowrap; }
+.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr.total td { border-top: 1.2pt solid var(--ink); border-bottom: 0; font-weight: 700; }
+
+/* module blocks and cards */
+.mod { margin: 0 0 .22in; break-inside: auto; }
+.mod-head { display: flex; align-items: baseline; gap: .14in; break-after: avoid; background: var(--soft); border-left: 4pt solid var(--ac); padding: .08in .14in; }
+.mod-head .no { font-family: var(--hf); font-weight: var(--hw); font-size: 15pt; color: var(--ac); letter-spacing: var(--ht); }
+.mod-head .t { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); font-size: 12.5pt; color: var(--ink); line-height: 1.2; flex: 1; }
+[data-theme="institution"] .mod-head .t { font-size: 10.5pt; } [data-theme="intellectual"] .mod-head .t { font-size: 17pt; }
+.mod-head .m { font-size: 8.5pt; color: #4a5260; white-space: nowrap; }
+.mod-body { padding: .08in .02in 0 .14in; }
+.card { border: .6pt solid #b9bfc9; border-top: 3pt solid var(--ac); padding: .14in .18in; margin: .12in 0; break-inside: avoid; }
+.cap-card { border-top-width: 5pt; background: var(--soft); }
+.big { font-family: var(--hf); font-weight: var(--hw); font-size: 30pt; line-height: 1; color: var(--ink); letter-spacing: var(--ht); text-transform: none; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: .3in; } .two > div { min-width: 0; }
+.q { border-left: 2.5pt solid var(--ac); padding: .03in .12in; margin: .06in 0 .1in; background: #f5f6f8; font-style: italic; font-size: 9.4pt; break-inside: avoid; }
+.disclaimer { border-top: .5pt solid #aab0ba; margin-top: .2in; padding-top: .08in; font-size: 8.5pt; color: #4a5260; break-inside: avoid; }
+.colophon { margin-top: .4in; break-inside: avoid; text-align: left; border-top: var(--rule) solid var(--ink); padding-top: .12in; font-size: 8.5pt; color: #4a5260; }
+.colophon .mark { font-family: var(--hf); font-weight: var(--hw); color: var(--ink); font-size: 13pt; letter-spacing: var(--ht); text-transform: none; }
+.keep { break-inside: avoid; }
+.pagebreak { break-before: page; }
+
+
+
+/* =====================================================================
+   Phase 4 design iteration: reusable components + a distinct interior per theme.
+   Markup is shared; each theme re-composes it (openers, section heads, margins, quotes, findings).
+   ===================================================================== */
+.sans { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+.opener { break-before: page; break-after: avoid; margin-bottom: .3in; }
+.opener .o-no { display: block; font-family: var(--hf); font-weight: var(--hw); color: var(--ac); line-height: 1; }
+.opener h2 { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); color: var(--ink); margin: 0; line-height: 1.02; overflow-wrap: anywhere; }
+.opener .o-deck { font-family: var(--deck); font-style: var(--decks); color: var(--ink); margin: .14in 0 0; }
+.opener .o-meta { font: 600 8pt/1.4 "Segoe UI", Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #4a5260; margin-top: .14in; display: flex; flex-wrap: wrap; gap: .06in .22in; }
+.opener .o-meta b { color: var(--ink); }
+
+/* generic content blocks */
+.toc { list-style: none; padding: 0; margin: .1in 0 .2in; }
+.toc li { display: flex; align-items: baseline; gap: .1in; padding: .075in 0; border-bottom: .4pt solid #cfd3da; break-inside: avoid; }
+.toc .t { flex: 1; font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); color: var(--ink); font-size: 12pt; }
+.toc .s { font-size: 8.5pt; color: #5b6270; } .toc .p { font: 700 9pt "Segoe UI", Arial, sans-serif; color: var(--ink); min-width: .3in; text-align: right; }
+.toc .n { color: var(--ac); font-family: var(--hf); font-weight: var(--hw); min-width: .5in; }
+.status { display: inline-block; font: 700 7.5pt/1.5 "Segoe UI", Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; padding: 0 .07in; border: .7pt solid; white-space: nowrap; }
+.status.full { color: #1d6b3a; border-color: #1d6b3a; } .status.part { color: #8a5a00; border-color: #8a5a00; } .status.ref { color: #5b6270; border-color: #5b6270; }
+.incl { border: .6pt solid #b9bfc9; margin: .14in 0; padding: .1in .16in; break-inside: avoid; background: #fff; }
+.incl .row { display: flex; gap: .12in; align-items: baseline; padding: .045in 0; border-bottom: .3pt solid #e1e4ea; font-size: 9pt; } .incl .row:last-child { border-bottom: 0; }
+.incl .row .status { min-width: 1.05in; text-align: center; }
+.work { margin: .1in 0; } .work > p, .work .para { margin: 0 0 .1in; }
+.work-text { font-family: Georgia, "Times New Roman", serif; font-size: 10.4pt; line-height: 1.62; hyphens: auto; }
+.work-text p { margin: 0 0 .11in; }
+.work-text h4 { font: 700 8pt "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ac); margin: .2in 0 .06in; break-after: avoid; }
+.work-label { font: 700 7.5pt "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ac); display: block; margin: .18in 0 .05in; break-after: avoid; }
+figure.fig { margin: .14in 0; break-inside: avoid; }
+figure.fig .frame { border: .6pt solid #b9bfc9; background: #fff; padding: .08in; }
+figure.fig svg, figure.fig img { width: 100%; height: auto; display: block; }
+figure.fig figcaption { font-size: 8.5pt; color: #4a5260; margin-top: .06in; } figure.fig figcaption b { color: var(--ink); }
+.ref-card { border: 1pt dashed #8a93a3; background: #f7f8fa; padding: .14in .18in; margin: .14in 0; break-inside: avoid; display: grid; grid-template-columns: .9in 1fr; gap: .16in; }
+.ref-card .thumb { height: 1.1in; border: .6pt solid #aab0ba; background: #fff; display: flex; align-items: center; justify-content: center; font: 700 10pt "Segoe UI", Arial, sans-serif; color: #5b6270; letter-spacing: .1em; }
+.ref-card .meta { font-size: 8.5pt; color: #4a5260; } .ref-card b.t { display: block; font-size: 10pt; color: var(--ink); margin-bottom: .03in; }
+.ref-card .warn { color: #8a5a00; font-weight: 700; }
+.pull { font-family: var(--deck); font-style: var(--decks); color: var(--ink); break-inside: avoid; }
+.sbar { height: 5pt; background: #dde1e8; position: relative; min-width: 1in; } .sbar i { position: absolute; inset: 0 auto 0 0; background: var(--ac); }
+.grade { font-family: var(--hf); font-weight: var(--hw); color: var(--ink); letter-spacing: var(--ht); text-transform: none; line-height: 1; }
+.cols2 { column-count: 2; column-gap: .3in; column-fill: balance; } .cols2 > * { break-inside: avoid; }
+.hist.one { grid-template-columns: 1fr; }
+.hist { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: .12in 0 .2in; break-inside: avoid; border: .7pt solid var(--ink); }
+.hist > div { padding: .12in .16in; } .hist > div + div { border-left: .7pt solid var(--ink); background: var(--soft); }
+.hist .st { font: 700 7.5pt "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ac); }
+.hist .v { font-family: var(--hf); font-weight: var(--hw); font-size: 26pt; line-height: 1.05; color: var(--ink); letter-spacing: var(--ht); text-transform: none; margin: .03in 0; }
+.hist .d { font-size: 8.5pt; color: #4a5260; }
+.finding { break-inside: avoid; margin: 0 0 .15in; display: grid; grid-template-columns: 1.25in 1fr; gap: .18in; }
+.finding .ty { font: 700 7.5pt/1.35 "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.finding .ty i { display: block; font-style: normal; font-weight: 600; letter-spacing: .04em; text-transform: none; color: #5b6270; margin-top: .03in; font-size: 8.5pt; }
+.finding .bd h4, .finding .bd .ft { font-family: var(--hf); font-weight: var(--hw); text-transform: var(--hc); letter-spacing: var(--ht); font-size: 11pt; margin: 0 0 .03in; color: var(--ink); line-height: 1.25; display: block; }
+.finding .bd p { margin: 0 0 .06in; font-size: 9.6pt; }
+.finding .loc { font: 600 8.5pt "Segoe UI", Arial, sans-serif; color: #5b6270; letter-spacing: .04em; }
+.dot { display: inline-block; width: 7pt; height: 7pt; margin-right: .06in; vertical-align: baseline; background: var(--ink); }
+.dot.err { background: #b3261e; } .dot.miss { background: #c76a00; } .dot.part { background: #b89400; } .dot.clar { background: var(--ac); } .dot.opt { background: #6b7a8c; } .dot.una { background: #fff; border: 1pt solid #6b7a8c; }
+.steps { counter-reset: st; list-style: none; padding: 0; margin: .1in 0; }
+.steps li { counter-increment: st; display: grid; grid-template-columns: .5in 1fr; gap: .1in; padding: .09in 0; border-bottom: .4pt solid #cfd3da; break-inside: avoid; }
+.steps li::before { content: counter(st); font-family: var(--hf); font-weight: var(--hw); font-size: 22pt; line-height: 1; color: var(--ac); text-transform: none; }
+.verdict { break-inside: avoid; margin: .1in 0 .2in; }
+.verdict .lede { margin-bottom: .1in; }
+.strength { break-inside: avoid; margin: 0 0 .1in; padding-left: .18in; position: relative; } .strength::before { content: ""; position: absolute; left: 0; top: .55em; width: 7pt; height: 2pt; background: var(--ac); }
+.strength b { color: var(--ink); }
+.aside-n { font-size: 8.5pt; line-height: 1.4; color: #4a5260; }
+.notice { border: .7pt solid #8a93a3; padding: .09in .14in; font-size: 8.5pt; background: #f7f8fa; margin: .12in 0; break-inside: avoid; }
+.notice b { color: var(--ink); }
+.rub td .sbar { width: 1.2in; }
+
+/* ===================== MODERNIST: Swiss grid, big numerals, colour blocks, flush left ===================== */
+[data-theme="modernist"] body { font-size: 9.8pt; }
+[data-theme="modernist"] .pub-sec-head { display: block; border: 0; border-top: 5pt solid var(--ink); padding-top: .1in; margin-bottom: .2in; }
+[data-theme="modernist"] .pub-sec-head .no { display: block; font-size: 11pt; margin-bottom: .04in; }
+[data-theme="modernist"] .opener { border-top: 14pt solid var(--ac); padding-top: .22in; position: relative; min-height: 2.9in; }
+[data-theme="modernist"] .opener .o-no { font-size: 120pt; letter-spacing: -.06em; color: var(--ink); position: absolute; right: 0; top: -.1in; opacity: .12; }
+[data-theme="modernist"] .opener h2 { font-size: 40pt; max-width: 5.2in; }
+[data-theme="modernist"] .opener .o-deck { font-family: var(--body); font-style: normal; font-weight: 600; font-size: 13pt; max-width: 4.8in; line-height: 1.35; }
+[data-theme="modernist"] .opener.project { min-height: 0; }
+[data-theme="modernist"] .pull { font-family: var(--hf); font-weight: 800; letter-spacing: -.03em; font-size: 19pt; line-height: 1.12; border-left: 8pt solid var(--ac); padding-left: .18in; margin: .2in 0; font-style: normal; }
+[data-theme="modernist"] .work-text { font-family: var(--body); font-size: 9.9pt; line-height: 1.58; hyphens: manual; }
+[data-theme="modernist"] .card, [data-theme="modernist"] .incl, [data-theme="modernist"] .ref-card { border-radius: 0; }
+[data-theme="modernist"] .grade { font-size: 52pt; } [data-theme="modernist"] .hist { border-width: 2pt; } [data-theme="modernist"] .hist > div + div { border-left-width: 2pt; background: var(--ac); } [data-theme="modernist"] .hist > div + div .st, [data-theme="modernist"] .hist > div + div .v, [data-theme="modernist"] .hist > div + div .d { color: #fff; }
+[data-theme="modernist"] .finding { grid-template-columns: 1.25in 1fr; border-top: 1.5pt solid var(--ink); padding-top: .09in; }
+[data-theme="modernist"] .steps li::before { font-size: 30pt; }
+[data-theme="modernist"] .toc .t { font-size: 13pt; } [data-theme="modernist"] .toc li { border-bottom: 1.5pt solid var(--ink); }
+[data-theme="modernist"] .q { border-left-width: 6pt; background: var(--soft); }
+
+/* ===================== EDITORIAL: magazine, centred heads, drop caps, pull quotes, two-column ===================== */
+[data-theme="editorial"] .pub-sec-head { display: block; text-align: center; border: 0; border-top: .75pt solid var(--ink); border-bottom: .75pt solid var(--ink); padding: .1in 0 .12in; margin-bottom: .22in; }
+[data-theme="editorial"] .pub-sec-head .no { display: block; font-style: italic; font-size: 10pt; margin-bottom: .03in; }
+[data-theme="editorial"] .pub-sec-head h2 { font-size: 27pt; }
+[data-theme="editorial"] .opener { text-align: center; padding: .1in 0 .25in; border-bottom: .75pt solid var(--ink); }
+[data-theme="editorial"] .opener::before { content: ""; display: block; border-top: 3pt double var(--ink); margin-bottom: .22in; }
+[data-theme="editorial"] .opener .o-no { font-size: 12pt; font-style: italic; margin-bottom: .1in; letter-spacing: .08em; }
+[data-theme="editorial"] .opener h2 { font-size: 40pt; line-height: 1.05; }
+[data-theme="editorial"] .opener .o-deck { font-size: 15pt; max-width: 5in; margin-left: auto; margin-right: auto; }
+[data-theme="editorial"] .opener .o-meta { justify-content: center; }
+[data-theme="editorial"] .dropcap > p:first-of-type::first-letter, [data-theme="editorial"] .work-text.dropcap > p:first-of-type::first-letter { font-family: var(--hf); float: left; font-size: 54pt; line-height: .82; padding: .04in .07in 0 0; color: var(--ac); }
+[data-theme="editorial"] .pull { text-align: center; font-size: 19pt; line-height: 1.28; border-top: .75pt solid var(--ink); border-bottom: .75pt solid var(--ink); padding: .16in .3in; margin: .22in .3in; position: relative; }
+[data-theme="editorial"] .pull::before { content: "“"; display: block; font-size: 38pt; line-height: .5; color: var(--ac); }
+[data-theme="editorial"] .work-text { font-size: 10.6pt; text-align: justify; }
+[data-theme="editorial"] .grade { font-style: italic; font-size: 44pt; }
+[data-theme="editorial"] .finding { grid-template-columns: 1fr; gap: .02in; border-bottom: .4pt solid #cfd3da; padding-bottom: .1in; }
+[data-theme="editorial"] .finding .ty { font-family: var(--hf); font-style: italic; font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 9.5pt; color: var(--ac); } [data-theme="editorial"] .finding .ty i { display: inline; margin-left: .08in; }
+[data-theme="editorial"] .hist { border-left: 0; border-right: 0; border-width: .75pt; } [data-theme="editorial"] .hist > div + div { background: transparent; }
+[data-theme="editorial"] .toc .t { font-size: 13pt; }
+[data-theme="editorial"] .steps li::before { font-style: italic; }
+[data-theme="editorial"] .mod-head, [data-theme="editorial"] .card { border-radius: 0; }
+
+/* ===================== INTELLECTUAL: scholarly, short accent rule, marginal notes, justified text ===================== */
+[data-theme="intellectual"] .pub-sec-head { display: block; border: 0; margin-bottom: .22in; padding: 0; }
+[data-theme="intellectual"] .pub-sec-head::before { content: ""; display: block; width: 1in; border-top: 3pt solid var(--ac); margin-bottom: .1in; }
+[data-theme="intellectual"] .pub-sec-head .no { display: inline-block; vertical-align: super; font-size: 10pt; margin-right: .06in; min-width: 0; }
+[data-theme="intellectual"] .pub-sec-head h2 { display: inline; font-size: 34pt; }
+[data-theme="intellectual"] .opener { display: grid; grid-template-columns: 1fr 1.7in; column-gap: .3in; }
+[data-theme="intellectual"] .opener::before { content: ""; grid-column: 1 / -1; width: 1.4in; border-top: 4pt solid var(--ac); margin-bottom: .16in; }
+[data-theme="intellectual"] .opener .o-no { grid-column: 2; grid-row: 2 / span 3; font-size: 64pt; font-style: italic; align-self: start; text-align: right; opacity: .9; }
+[data-theme="intellectual"] .opener h2 { grid-column: 1; grid-row: 2; font-size: 56pt; line-height: .95; }
+[data-theme="intellectual"] .opener .o-deck { grid-column: 1; font-size: 18pt; }
+[data-theme="intellectual"] .opener .o-meta { grid-column: 1; }
+[data-theme="intellectual"] .mg { display: grid; grid-template-columns: 1fr 1.7in; column-gap: .3in; align-items: start; }
+[data-theme="intellectual"] .mg > aside, [data-theme="intellectual"] .mg > .aside-n { grid-column: 2; font-size: 8.5pt; line-height: 1.4; color: #4a5260; border-top: .75pt solid var(--ac); padding-top: .05in; font-family: var(--deck); font-style: italic; font-size: 10pt; }
+[data-theme="intellectual"] .mg > :not(aside):not(.aside-n) { grid-column: 1; }
+[data-theme="intellectual"] .work-text { text-align: justify; font-size: 10.6pt; }
+[data-theme="intellectual"] .pull { font-size: 22pt; line-height: 1.2; border-left: 0; margin: .2in 0 .2in 0; padding-left: 0; max-width: 4.4in; color: var(--ac); }
+[data-theme="intellectual"] .grade { font-style: italic; font-size: 46pt; }
+[data-theme="intellectual"] .finding { grid-template-columns: 1fr 1.7in; gap: .3in; }
+[data-theme="intellectual"] .finding .ty { grid-column: 2; grid-row: 1; border-top: .75pt solid var(--ac); padding-top: .05in; font-family: var(--deck); font-style: italic; font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 10pt; color: var(--ink); }
+[data-theme="intellectual"] .finding .bd { grid-column: 1; grid-row: 1; }
+[data-theme="intellectual"] .hist { border-width: 0; border-top: 1pt solid var(--ink); border-bottom: 1pt solid var(--ink); } [data-theme="intellectual"] .hist > div + div { border-left: 0; background: transparent; }
+[data-theme="intellectual"] .toc .t { font-size: 18pt; letter-spacing: -.01em; }
+[data-theme="intellectual"] .steps li::before { font-style: italic; font-size: 26pt; }
+[data-theme="intellectual"] .card, [data-theme="intellectual"] .incl { border-width: 0 0 0 3pt; border-left-style: solid; border-color: var(--ac); background: var(--soft); }
+
+/* ===================== INSTITUTION: formal, centred, framed openers, roman numerals, ornament, seal ===================== */
+[data-theme="institution"] .pub-sec-head { display: block; text-align: center; border: 0; margin-bottom: .14in; }
+[data-theme="institution"] .pub-sec-head .no { display: block; font-size: 9pt; letter-spacing: .2em; margin-bottom: .05in; color: #3f6a5f; }
+[data-theme="institution"] .pub-sec-head h2 { font-size: 15pt; letter-spacing: .12em; }
+[data-theme="institution"] .pub-sec-head::after { content: "◆"; display: block; color: var(--ac); font-size: 7pt; margin-top: .08in; background: linear-gradient(var(--ac), var(--ac)) center / 100% .5pt no-repeat; letter-spacing: 0; line-height: 1; }
+[data-theme="institution"] .opener { text-align: center; border: .75pt solid var(--ink); outline: .4pt solid var(--ink); outline-offset: 3pt; padding: .3in .35in; margin: .06in; }
+[data-theme="institution"] .opener .o-no { font-size: 13pt; letter-spacing: .3em; color: #3f6a5f; margin-bottom: .08in; }
+[data-theme="institution"] .opener h2 { font-size: 22pt; letter-spacing: .1em; line-height: 1.25; }
+[data-theme="institution"] .opener h2::after { content: ""; display: block; width: 1.4in; margin: .12in auto 0; border-top: .75pt solid var(--ac); }
+[data-theme="institution"] .opener .o-deck { font-size: 14pt; max-width: 4.6in; margin-left: auto; margin-right: auto; }
+[data-theme="institution"] .opener .o-meta { justify-content: center; }
+[data-theme="institution"] .work-text { text-align: justify; }
+[data-theme="institution"] .pull { text-align: center; font-size: 16pt; line-height: 1.3; margin: .14in .4in; color: var(--ink); }
+[data-theme="institution"] .pull::before, [data-theme="institution"] .pull::after { content: "◆"; display: block; font-size: 6pt; color: var(--ac); font-style: normal; margin: .06in 0; }
+[data-theme="institution"] .grade { font-size: 38pt; }
+[data-theme="institution"] .seal { break-inside: avoid; break-after: avoid; margin-bottom: .1in; width: 1.05in; height: 1.05in; border-radius: 50%; border: 1.2pt solid var(--ink); outline: .5pt solid var(--ink); outline-offset: 2.5pt; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin: 0 auto; }
+[data-theme="institution"] .seal .grade { font-size: 25pt; } [data-theme="institution"] .seal small { font: 700 7.5pt "Segoe UI", Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #3f6a5f; }
+[data-theme="institution"] .finding { grid-template-columns: 1fr; text-align: left; gap: .02in; border: .5pt solid #b9bfc9; border-left: 3pt solid var(--ink); padding: .09in .16in; }
+[data-theme="institution"] .finding .ty { letter-spacing: .12em; color: #3f6a5f; }
+[data-theme="institution"] .hist { border-width: .75pt; } [data-theme="institution"] .hist > div { text-align: center; } [data-theme="institution"] .hist > div + div { background: var(--soft); }
+[data-theme="institution"] .toc li { justify-content: center; border: 0; flex-direction: column; align-items: center; text-align: center; gap: .02in; } [data-theme="institution"] .toc .t { flex: none; font-size: 11pt; letter-spacing: .1em; } [data-theme="institution"] .toc .p { text-align: center; }
+[data-theme="institution"] .steps li { grid-template-columns: .6in 1fr; } [data-theme="institution"] .steps li::before { content: counter(st, upper-roman); font-size: 16pt; letter-spacing: .1em; }
+[data-theme="institution"] .strength::before { content: "◆"; width: auto; height: auto; background: none; font-size: 6pt; top: .3em; color: var(--ac); }
+.seal { display: none; } [data-theme="institution"] .seal { display: flex; }
+
+
+table.rub { break-inside: avoid; }
+[data-theme="intellectual"] .finding .bd h4 { letter-spacing: 0; font-size: 14pt; }
+/* ---------- screen preview (inside the export dialog) ---------- */
+@media screen {
+  html { background: #7a8090; }
+  body { padding: 28px 0 48px; }
+  .pub-doc { width: var(--pw); margin: 0 auto 28px; background: #fff; box-shadow: 0 6px 28px rgba(0,0,0,.35); }
+  .pub-cover { margin: 0 auto; }
+  .pub-body { padding: .8in .85in .9in; }
+}
+@media print {
+  .pub-doc { width: auto; margin: 0; }
+  .no-print { display: none !important; }
+}
+
+.pub-sec.keep { break-inside: avoid; }
+
+/* ===== Phase 4C: files the learner chose to include ===== */
+.att-status { font-size: 9pt; color: #4a5260; margin: .02in 0 .08in; }
+.att-fig { break-inside: avoid; margin: .12in 0; }
+.att-fig img { display: block; max-width: 100%; height: auto; margin: 0 auto; border: .4pt solid #c5cad3; }
+.att-page { break-before: auto; }
+.att-page figcaption { margin: 0 0 .05in; }
+figure.att-fig img { width: auto; max-width: 100%; height: auto; max-height: calc(var(--ph, 11in) - 2.9in); }
+.att-page img { margin: 0 auto; }
+.att-chart svg { width: 100%; height: auto; display: block; }
+.att-tbl { margin: .1in 0; }
+.att-tbl table { table-layout: fixed; width: 100%; font-size: 9pt; word-break: break-word; }
+.att-tbl caption { caption-side: top; text-align: left; font: 700 8.5pt "Segoe UI", Arial, sans-serif; color: var(--ink); padding-bottom: .04in; }
+.att-h { font-weight: 700; color: var(--ink); margin: .14in 0 .04in; break-after: avoid; }
+.att-h1 { font-size: 12pt; } .att-h2 { font-size: 11pt; } .att-h3 { font-size: 10pt; }
+.att-p { margin: 0 0 .07in; white-space: pre-wrap; } .att-li { margin: 0 0 .03in .18in; }

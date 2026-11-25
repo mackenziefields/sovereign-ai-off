@@ -1,0 +1,188 @@
+/* sovereign. — four course designs, issued by one university press. Loaded after design.css.
+   A course carries data-theme="modernist | editorial | intellectual | institution" (saved as designTheme).
+   Themes touch covers, course headers, major headings, and the Portfolio cover only. Body text, navigation, forms, tables,
+   assignment instructions and feedback keep the shared, readable system type in every design.
+   Fonts are self-hosted from /fonts (all SIL Open Font License 1.1; see fonts/LICENSES.md), so they work offline. */
+
+@font-face { font-family: "Inter Tight"; font-weight: 700; font-style: normal; font-display: swap; src: url("../fonts/inter-tight-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter Tight"; font-weight: 800; font-style: normal; font-display: swap; src: url("../fonts/inter-tight-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/playfair-display-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; font-display: swap; src: url("../fonts/playfair-display-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: normal; font-display: swap; src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-weight: 400; font-style: italic; font-display: swap; src: url("../fonts/instrument-serif-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 500; font-style: normal; font-display: swap; src: url("../fonts/cinzel-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-style: italic; font-display: swap; src: url("../fonts/cormorant-garamond-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; font-display: swap; src: url("../fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+
+/* ---------- design tokens ---------- */
+[data-theme="modernist"] {
+  --t-font: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif; --t-w: 800; --t-style: normal; --t-case: none; --t-track: -.045em; --t-lh: .92;
+  --t-bg: #eceff4; --t-fg: #101b32; --t-accent: #2643d8; --t-hscale: .95;
+  --t-tile-bg: #101b32; --t-tile-fg: #f5f6f7;
+  --t-sf-font: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif; --t-sf-w: 700; --t-sf-style: normal; --t-sf-size: 1.4rem; --t-sf-track: -.025em; --t-sf-lh: 1.2;
+  --cap-cover: 27; --cap-head: 15;
+}
+[data-theme="editorial"] {
+  --t-font: "Playfair Display", Georgia, "Times New Roman", serif; --t-w: 400; --t-style: normal; --t-case: none; --t-track: -.02em; --t-lh: 1.02;
+  --t-bg: #f7f3f5; --t-fg: #681632; --t-accent: #681632; --t-hscale: .9;
+  --t-tile-bg: #681632; --t-tile-fg: #f7f3f5;
+  --t-sf-font: "Playfair Display", Georgia, serif; --t-sf-w: 400; --t-sf-style: italic; --t-sf-size: 1.5rem; --t-sf-track: 0; --t-sf-lh: 1.35;
+  --cap-cover: 22; --cap-head: 12;
+}
+[data-theme="intellectual"] {
+  --t-font: "Instrument Serif", Georgia, "Times New Roman", serif; --t-w: 400; --t-style: normal; --t-case: none; --t-track: -.025em; --t-lh: .94;
+  --t-bg: #e9edfa; --t-fg: #101b32; --t-accent: #2643d8; --t-hscale: 1.2;
+  --t-tile-bg: #101b32; --t-tile-fg: #f5f6f7;
+  --t-sf-font: "Instrument Serif", Georgia, serif; --t-sf-w: 400; --t-sf-style: normal; --t-sf-size: 1.9rem; --t-sf-track: -.01em; --t-sf-lh: 1.1;
+  --cap-cover: 34; --cap-head: 20;
+}
+[data-theme="institution"] {
+  --t-font: "Cinzel", "Trajan Pro", "Palatino Linotype", Georgia, serif; --t-w: 600; --t-style: normal; --t-case: uppercase; --t-track: .08em; --t-lh: 1.18;
+  --t-bg: #073e35; --t-fg: #f5f6f7; --t-accent: #6687a1; --t-hscale: .6;
+  --t-tile-bg: #073e35; --t-tile-fg: #f5f6f7;
+  --t-sf-font: "Cormorant Garamond", Garamond, Georgia, serif; --t-sf-w: 500; --t-sf-style: italic; --t-sf-size: 1.6rem; --t-sf-track: 0; --t-sf-lh: 1.3;
+  --cap-cover: 13; --cap-head: 7.5;
+}
+.cover[data-theme="modernist"] .tail, .course-head[data-theme="modernist"] .tail { color: var(--t-accent); }
+.cover[data-theme="editorial"] .tail, .course-head[data-theme="editorial"] .tail, .cover[data-theme="intellectual"] .tail, .course-head[data-theme="intellectual"] .tail { font-style: italic; }
+/* the cover and header italics for The Institution use Cormorant for the secondary line */
+[data-theme="institution"] { --t-meta-font: "Cormorant Garamond", Garamond, Georgia, serif; }
+
+/* ---------- covers and course headers: shared structure ---------- */
+.cover[data-theme], .course-head[data-theme], .pf-head[data-theme] { background: var(--t-bg); color: var(--t-fg); }
+.cover[data-theme], .course-head[data-theme] { container-type: inline-size; }
+.cover[data-theme]:hover { color: var(--t-fg); }
+.cover[data-theme]::before, .course-head[data-theme]::before { content: none; width: auto; height: auto; }
+.cover[data-theme]::after, .course-head[data-theme]::after { content: none; position: absolute; z-index: -1; pointer-events: none; }
+.cover-title, .course-head[data-theme] h1 {
+  font-family: var(--t-font); font-weight: var(--t-w); font-style: var(--t-style); text-transform: var(--t-case); letter-spacing: var(--t-track); line-height: var(--t-lh);
+  max-width: none; overflow-wrap: anywhere; hyphens: manual; color: inherit;
+}
+.cover-title { font-size: 2rem; font-size: min(calc(var(--k, 1) * var(--cap-cover) * 1cqw), calc(var(--wfit, 100) * 1cqw)); margin: 1.5rem 0; }
+.course-head[data-theme] h1 { font-size: 2.4rem; font-size: min(calc(var(--k, 1) * var(--cap-head) * 1cqw), calc(var(--wfit, 100) * 1cqw), 7rem); }
+.cover-top, .ch-code, .ch-meta { color: inherit; }
+.cover[data-theme] .cover-foot, .course-head[data-theme] .ch-meta { border-top-color: var(--t-fg); }
+.cover[data-theme] .progress { background: var(--rule); background: color-mix(in srgb, var(--t-fg) 22%, transparent); }
+.cover[data-theme] .progress > span { background: var(--t-fg); }
+.course-head[data-theme] .linkbtn { color: inherit; font-size: .66rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 0; min-height: 0; text-underline-offset: .25em; }
+.course-head[data-theme] .linkbtn:hover { color: inherit; opacity: .75; }
+.course-head[data-theme] .linkbtn:focus-visible { outline-color: currentColor; }
+.course-head[data-theme] { min-height: 15rem; }
+.cover[data-theme]:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+
+/* ---------- 1. The Modernist ---------- */
+.cover[data-theme="modernist"] { border: 2px solid var(--t-fg); }
+.cover[data-theme="modernist"]::before { content: ""; position: absolute; z-index: -1; right: 1.25rem; top: 0; width: 22%; height: 3.4rem; background: var(--t-accent); }
+.cover[data-theme="modernist"] .cover-top span:last-child { display: none; }
+.cover[data-theme="modernist"] .cover-title { margin-top: 4.5rem; }
+.cover[data-theme="modernist"] .stack .w { display: block; }
+.cover[data-theme="modernist"] .cover-foot { border-top-width: 2px; }
+.cover[data-theme="modernist"] .cover-pct strong { font-family: var(--t-font); font-weight: 700; letter-spacing: -.05em; }
+.course-head[data-theme="modernist"] { border-top: 12px solid var(--t-fg); border-bottom: 2px solid var(--t-fg); }
+.course-head[data-theme="modernist"]::before { content: ""; position: absolute; z-index: -1; right: 2rem; top: 0; width: 8%; min-width: 3rem; height: 4.5rem; background: var(--t-accent); }
+.course-head[data-theme="modernist"] .stack .w { display: block; }
+.course-head[data-theme="modernist"] .ch-meta { border-top-width: 2px; }
+
+/* ---------- 2. The Editorial ---------- */
+.cover[data-theme="editorial"] { border: 1px solid var(--t-fg); }
+.cover[data-theme="editorial"]::after, .course-head[data-theme="editorial"]::after { content: ""; inset: .55rem; border: 1px solid var(--t-fg); opacity: .4; }
+.cover[data-theme="editorial"] { padding: 1.75rem; }
+.cover[data-theme="editorial"] .cover-title { margin: 2rem 0; }
+.cover[data-theme="editorial"] .cover-top { font-weight: 600; }
+.cover[data-theme="editorial"] .cover-pct strong { font-family: var(--t-font); font-weight: 400; font-style: italic; letter-spacing: -.02em; }
+.course-head[data-theme="editorial"] { border: 1px solid var(--t-fg); }
+.course-head[data-theme="editorial"] .ch-code { letter-spacing: .3em; }
+@media (min-width: 760px) { .course-head[data-theme="editorial"] { padding-top: 3rem; padding-bottom: 2.25rem; } }
+
+/* ---------- 3. The Intellectual ---------- */
+.cover[data-theme="intellectual"] { border: 2px solid var(--t-fg); border-top: 8px solid var(--t-fg); }
+.cover[data-theme="intellectual"]::before { content: ""; position: absolute; z-index: -1; right: 1.25rem; top: 1.1rem; width: 3.6rem; height: 3.6rem; border-radius: 50%; background: var(--t-accent); }
+.cover[data-theme="intellectual"] .cover-top span:last-child { display: none; }
+.cover[data-theme="intellectual"] .cover-title { margin: 3.5rem 0 1.5rem; }
+.cover[data-theme="intellectual"] .cover-pct strong { font-family: var(--t-font); font-weight: 400; letter-spacing: -.03em; }
+.course-head[data-theme="intellectual"] { border-top: 10px solid var(--t-fg); border-bottom: 1px solid var(--t-fg); }
+.course-head[data-theme="intellectual"]::before { content: ""; position: absolute; z-index: -1; right: -3.5rem; top: -5rem; width: 11rem; height: 11rem; border-radius: 50%; background: var(--t-accent); }
+.course-head[data-theme="intellectual"] { min-height: 18rem; }
+.course-head[data-theme="intellectual"] .ch-code { display: inline-block; background: var(--t-fg); color: var(--t-bg); padding: .3rem .6rem; align-self: flex-start; }
+
+/* ---------- 4. The Institution ---------- */
+.cover[data-theme="institution"] { text-align: center; padding: 2rem 1.75rem 1.75rem; justify-content: center; gap: .5rem; }
+.cover[data-theme="institution"]::before { content: ""; position: absolute; z-index: -1; inset: .6rem; border: 1px solid var(--t-fg); opacity: .75; }
+.cover[data-theme="institution"]::after { content: ""; inset: .95rem; border: 1px solid var(--t-fg); opacity: .35; }
+.cover[data-theme="institution"] .cover-top { justify-content: center; }
+.cover[data-theme="institution"] .cover-top span:last-child { display: none; }
+.cover[data-theme="institution"] .cover-title { margin: 1.25rem 0; }
+.cover[data-theme="institution"] .cover-foot { border-top: 1px solid var(--t-fg); }
+.cover[data-theme="institution"] .cover-pct { flex-direction: column; align-items: center; gap: .15rem; text-transform: none; letter-spacing: 0; }
+.cover[data-theme="institution"] .cover-pct strong { font-family: var(--t-font); font-weight: 500; font-size: 1.6rem; letter-spacing: .06em; }
+.cover[data-theme="institution"] .cover-pct span { font-family: var(--t-meta-font); font-style: italic; font-size: 1.05rem; font-weight: 500; }
+.course-head[data-theme="institution"] { text-align: center; align-items: center; justify-content: center; padding-top: 2.75rem; padding-bottom: 2rem; }
+.course-head[data-theme="institution"]::before { content: ""; position: absolute; z-index: -1; inset: .7rem; border: 1px solid var(--t-fg); opacity: .75; }
+.course-head[data-theme="institution"]::after { content: ""; inset: 1.1rem; border: 1px solid var(--t-fg); opacity: .35; }
+.course-head[data-theme="institution"] .ch-code { letter-spacing: .32em; }
+.course-head[data-theme="institution"] .ch-meta { justify-content: center; font-family: var(--t-meta-font); font-style: italic; font-weight: 500; font-size: 1.1rem; letter-spacing: 0; text-transform: none; border-top-color: var(--t-fg); width: 100%; }
+.course-head[data-theme="institution"] .linkbtn { font-family: var(--t-meta-font); font-style: italic; font-weight: 500; font-size: 1.1rem; letter-spacing: 0; text-transform: none; }
+
+/* ---------- module tiles follow the course's design ---------- */
+.tile[data-theme] .tile-art { background-color: var(--t-tile-bg); color: var(--t-tile-fg); }
+.tile[data-theme] .tile-label { color: var(--t-tile-fg); }
+.tile[data-theme] .tile-num { font-family: var(--t-font); font-weight: var(--t-w); font-style: var(--t-style); letter-spacing: var(--t-track); color: var(--t-tile-fg); text-transform: none; }
+.tile[data-theme="modernist"] .tile-art { border-bottom: 6px solid var(--t-accent); }
+.tile[data-theme="institution"] .tile-num { font-size: 2.2rem; letter-spacing: .04em; }
+.tile[data-theme="institution"] .tile-art { box-shadow: inset 0 0 0 .4rem var(--t-tile-bg), inset 0 0 0 calc(.4rem + 1px) rgba(245, 246, 247, .5); }
+.tile[data-theme="intellectual"] .tile-art { border-bottom: 6px solid var(--t-accent); }
+
+/* ---------- major headings inside a course (headings only; body text stays in the system faces) ---------- */
+.course[data-theme] .page-head h2, .course[data-theme] .mod-h, .course[data-theme] .portfolio .display {
+  font-family: var(--t-font); font-weight: var(--t-w); font-style: var(--t-style); text-transform: var(--t-case); letter-spacing: var(--t-track); line-height: var(--t-lh);
+}
+.course[data-theme] .mod-h { font-size: calc(var(--t-hscale) * clamp(2rem, 7vw, 3.4rem)); }
+.course[data-theme] .page-head h2 { font-size: calc(var(--t-hscale) * clamp(1.6rem, 5vw, 2.4rem)); }
+.course[data-theme] .portfolio .display { font-size: calc(var(--t-hscale) * clamp(2.75rem, 11vw, 6.25rem)); }
+.course[data-theme] .eyebrow { color: var(--t-accent); }
+.course[data-theme] .section-head, .course[data-theme] .msec { border-top-color: var(--t-fg); }
+.course[data-theme="institution"] .section-head, .course[data-theme="institution"] .msec { border-top-color: var(--ink); }
+.course[data-theme] .standfirst { font-family: var(--t-sf-font); font-weight: var(--t-sf-w); font-style: var(--t-sf-style); font-size: var(--t-sf-size); letter-spacing: var(--t-sf-track); line-height: var(--t-sf-lh); max-width: 36rem; margin: 0 0 1.5rem; color: var(--ink); }
+.course[data-theme="modernist"] .standfirst { font-size: clamp(1.2rem, 4vw, 1.6rem); }
+
+/* ---------- Portfolio cover ---------- */
+.pf-head[data-theme] { padding: 2rem 1.5rem 1.5rem; outline: 1px solid var(--t-fg); outline-offset: -.6rem; border-bottom: 0; margin-bottom: 1rem; }
+.pf-head[data-theme] .eyebrow, .pf-head[data-theme] .lede, .pf-head[data-theme] .small, .pf-head[data-theme] .display, .pf-head[data-theme] .stats dt, .pf-head[data-theme] .stats dd, .pf-head[data-theme] .stats dd small { color: inherit; }
+.pf-head[data-theme] .stats, .pf-head[data-theme] .stats > div + div { border-color: var(--t-fg); }
+.pf-head[data-theme] .lede { font-family: var(--t-sf-font); font-style: var(--t-sf-style); font-weight: var(--t-sf-w); letter-spacing: var(--t-sf-track); }
+.pf-head[data-theme="modernist"] { border-top: 12px solid var(--t-fg); outline-offset: -.6rem; outline-color: transparent; }
+.pf-head[data-theme="modernist"] .display { color: var(--t-fg); }
+.pf-head[data-theme="intellectual"] { border-top: 10px solid var(--t-fg); outline-color: transparent; }
+.pf-head[data-theme="institution"] { text-align: center; padding-top: 2.5rem; }
+.pf-head[data-theme="institution"] .eyebrow { justify-content: center; }
+.pf-head[data-theme="institution"] .eyebrow::before { content: none; }
+.pf-head[data-theme="institution"] .lede, .pf-head[data-theme="institution"] .small { margin-left: auto; margin-right: auto; }
+.pf-head[data-theme="institution"] .stats dd { font-family: var(--t-font); font-weight: 500; }
+.course[data-theme] .plate { border-top-color: var(--t-accent); }
+.course[data-theme] .plate-title { font-family: var(--t-font); font-weight: var(--t-w); font-style: var(--t-style); letter-spacing: var(--t-track); text-transform: none; line-height: 1.05; font-size: 1.55rem; }
+.course[data-theme="institution"] .plate-title { font-size: 1.15rem; text-transform: uppercase; letter-spacing: .06em; line-height: 1.25; }
+.course[data-theme="modernist"] .plate-title { font-size: 1.7rem; }
+
+/* ---------- the design picker ---------- */
+.designer { margin: 0 0 2.5rem; padding: 1.25rem; background: var(--card); border: 1px solid var(--ink); border-top: 4px solid var(--ink); }
+.designer .section-head { margin-top: 0; border-top: 0; padding-top: 0; }
+.theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 1.25rem; margin-top: 1rem; }
+.theme-opt { display: flex; flex-direction: column; gap: .35rem; cursor: pointer; position: relative; min-width: 0; }
+.theme-opt input { position: absolute; opacity: 0; inset: 0 0 auto 0; height: 14rem; margin: 0; cursor: pointer; }
+.theme-prev { display: block; pointer-events: none; padding: 3px; }
+.theme-prev .cover { min-height: 14rem; height: 14rem; pointer-events: none; padding: 1rem; }
+.theme-prev .cover-top span:last-child, .theme-prev .cover-pct span { display: none; }
+.theme-prev .cover[data-theme="institution"] .cover-pct strong { font-size: 1.3rem; }
+.theme-prev .cover[data-theme="editorial"] { padding: 1.25rem; }
+.theme-prev .cover[data-theme="institution"] { padding: 1.4rem 1.1rem; }
+.theme-opt input:focus-visible + .theme-prev { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+.theme-opt input:checked + .theme-prev { outline: 3px solid var(--ink); outline-offset: 2px; }
+.theme-name { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-top: .4rem; }
+.theme-opt.on .theme-name::after { content: " · Selected"; color: var(--accent); }
+.theme-opt small { color: var(--muted); font-size: .8rem; line-height: 1.35; }
+
+@media (max-width: 559px) {
+  .course-head[data-theme] { min-height: 13rem; }
+  .cover[data-theme="institution"] { padding: 1.75rem 1.5rem; }
+}

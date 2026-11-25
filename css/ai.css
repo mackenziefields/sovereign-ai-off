@@ -1,0 +1,48 @@
+/* sovereign. — AI course building: wizard, resource labels, usage. Loaded after courses.css. */
+.badge.soft { color: var(--muted); border-color: var(--rule); }
+.badge.ok { color: #073e35; border-color: #073e35; }
+.badge.warn { color: var(--danger); border-color: var(--danger); }
+.ai-meta { display: flex; flex-wrap: wrap; gap: .3rem .4rem; margin-top: .35rem; align-items: center; }
+.ai-meta .ai-line { flex-basis: 100%; margin: 0; }
+.ai-usage { margin: 1.5rem 0; }
+.ai-usage > summary { cursor: pointer; color: var(--accent); font-weight: 500; min-height: 44px; display: flex; align-items: center; }
+.ai-form .field.big input { font-size: 1.2rem; padding: .9rem .8rem; }
+.ai-form input[type="url"], .ai-form input[type="password"], .ai-settings input[type="url"], .ai-settings input[type="password"] { width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-bottom: 1.5px solid var(--ink); border-radius: 2px; padding: .7rem .8rem; min-height: 44px; }
+.ai-form input[type="url"]:focus-visible, .ai-form input[type="password"]:focus-visible, .ai-settings input:focus-visible { outline: 3px solid var(--accent-soft); border-color: var(--accent); }
+.radios { border: 0; padding: 0; margin: 0 0 1rem; }
+.radios legend { font-size: .8rem; font-weight: 600; letter-spacing: .04em; padding: 0; margin-bottom: .4rem; }
+.radios label { display: flex; align-items: center; gap: .6rem; min-height: 44px; cursor: pointer; }
+.radios input[type="radio"] { width: 1.15rem; height: 1.15rem; accent-color: var(--accent); }
+.steps { list-style: none; margin: 1rem 0; padding: 0; }
+.steps li { display: flex; gap: .75rem; align-items: baseline; padding: .45rem 0; border-bottom: 1px solid var(--rule); color: var(--muted); }
+.steps li.active { color: var(--ink); font-weight: 600; }
+.steps li.done { color: var(--ink); }
+.steps li.warn, .steps li.fail { color: var(--danger); }
+.steps .mark { width: 1.2rem; text-align: center; flex: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.choices.two-up { margin: 1rem 0; }
+@media (min-width: 640px) { .choices.two-up { grid-template-columns: 1fr 1fr; } }
+.plain { margin: .25rem 0 0; padding-left: 1.2rem; }
+.plain li { margin: .25rem 0; }
+.callout { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: .75rem 1rem; font-size: .92rem; }
+.find-row { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-top: .75rem; }
+.ai-settings .panel { margin-top: .25rem; }
+
+/* ---- submissions and feedback ---- */
+.work-panel { margin-top: .75rem; border: 1px solid var(--rule); border-radius: 3px; }
+.work-panel > summary { cursor: pointer; padding: .55rem .8rem; font-size: .85rem; font-weight: 600; }
+.work-panel .wp-body { padding: .25rem .9rem .9rem; display: grid; gap: .75rem; }
+.submit-box { display: grid; gap: .75rem; }
+.submit-box textarea { width: 100%; }
+.consent { display: flex; gap: .6rem; align-items: flex-start; font-size: .88rem; }
+.consent input { margin-top: .2rem; flex: none; }
+.feedback h4.minor { margin: .6rem 0 .2rem; }
+.grade-line { font-size: 1.05rem; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+
+/* ---- assignment page ---- */
+.ameta { display: grid; gap: .35rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: .75rem 0; margin: 1rem 0 1.5rem; font-size: .92rem; }
+.ameta-i { display: flex; gap: .75rem; }
+.ameta-k { flex: 0 0 8.5rem; font-weight: 600; }
+.steps-list { padding-left: 1.3rem; display: grid; gap: .4rem; }
+.apage .work-panel > summary { font-size: .95rem; }
+@media (max-width: 480px) { .ameta-i { flex-direction: column; gap: 0; } .ameta-k { flex: none; } }

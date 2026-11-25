@@ -1,0 +1,154 @@
+/* sovereign. — Assignment Workbench (build 18). Shared layout first, then one block per course design. */
+
+.wb { --wb-ink: var(--ink); --wb-line: var(--ink); --wb-accent: var(--accent); }
+.wb-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem 2rem; padding: 1.1rem 0 .25rem; border-top: 2px solid var(--wb-line); }
+.wb-head-main { min-width: 0; flex: 1 1 24rem; }
+.wb-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.9rem, 6vw, 3.2rem); line-height: 1.04; letter-spacing: -.02em; margin: .3rem 0 0; max-width: 20em; overflow-wrap: anywhere; text-wrap: balance; }
+.wb-where { font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.wb-tools { padding-bottom: .4rem; }
+.wb-meta { margin-top: 1rem; }
+
+/* notice for short, older, or hand-made assignments */
+.wb-notice { margin: 1.25rem 0 0; padding: 1rem 1.15rem; background: var(--accent-soft); border-left: 6px solid var(--wb-accent); max-width: 52rem; display: grid; gap: .5rem; }
+.wb-notice p { margin: 0; }
+.wb-notice-k { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: var(--wb-accent); }
+.wb-notice .callout { margin-top: .5rem; background: var(--card); }
+
+/* phone switcher: all six views in one control */
+.wb-seg { margin-top: 1.25rem; }
+.wb-seg ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border: 2px solid var(--ink); }
+.wb-seg li:nth-child(n+5) { border-top: 1px solid var(--ink); }
+.wb-seg li:not(:nth-child(4n+1)) { border-left: 1px solid var(--ink); }
+.wb-seg a { position: relative; display: flex; align-items: center; justify-content: center; text-align: center; min-height: 48px; padding: .4rem .35rem; font-size: .8rem; font-weight: 700; letter-spacing: .04em; color: var(--ink); text-decoration: none; background: var(--paper); }
+.wb-seg a[aria-current="page"] { background: var(--ink); color: var(--card); }
+.wb-seg a:hover:not([aria-current]) { background: var(--accent-soft); }
+.wb-seg a:focus-visible { outline: 3px solid var(--cobalt); outline-offset: -4px; }
+.wb-dot { display: inline-block; width: .55rem; height: .55rem; margin-left: .35rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--paper); }
+.wb-seg a[aria-current="page"] .wb-dot { background: var(--card); box-shadow: none; }
+
+/* panes */
+.wb-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1rem; }
+.wb-pane { min-width: 0; }
+.wb-pane-k { display: none; margin: 0 0 .5rem; font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.wb-ptabs { display: none; }
+.wb-ptabs ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; border-bottom: 1px solid var(--rule); }
+.wb-ptabs a { display: inline-flex; align-items: center; min-height: 44px; padding: .5rem 1rem; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.wb-ptabs a:hover { color: var(--ink); background: var(--accent-soft); }
+.wb-ptabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--wb-accent); }
+.wb-ptabs a:focus-visible { outline: 3px solid var(--cobalt); outline-offset: -3px; }
+.wb-body { padding-top: 1rem; display: grid; gap: 1.25rem; align-content: start; }
+.wb-body > * { min-width: 0; }
+
+@media (max-width: 999px) { .wb-pane:not(.is-focus) { display: none; } .wb-grid { margin-top: 0; } .wb-body { padding-top: .75rem; } .wb-status { justify-content: flex-start; } }
+@media (min-width: 1000px) {
+  .wb-seg { display: none; }
+  .wb-ptabs { display: block; }
+  .wb-pane-k { display: block; }
+  .wb-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 2.5rem; align-items: start; }
+  .wb-ref { padding-right: 2.5rem; border-right: 1px solid var(--rule); }
+  .wb-ref .wb-ptabs { position: sticky; top: 0; z-index: 3; background: var(--paper); }
+}
+/* G1: with the global menu pinned the page is 15.5rem narrower, so two panes need a wider window before they fit comfortably.
+   Below that, a pinned menu uses the one-pane switcher (same as phones). With the menu hidden, the page keeps the full width. */
+@media (min-width: 1000px) and (max-width: 1379px) {
+  .shell[data-pinned] .wb-pane:not(.is-focus) { display: none; }
+  .shell[data-pinned] .wb-seg { display: block; }
+  .shell[data-pinned] .wb-ptabs, .shell[data-pinned] .wb-pane-k { display: none; }
+  .shell[data-pinned] .wb-grid { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 0; }
+  .shell[data-pinned] .wb-ref { padding-right: 0; border-right: 0; }
+  .shell[data-pinned] .wb-work.is-sticky { position: static; }
+}
+/* The page itself scrolls. A short work area (the submission form) rides alongside a long brief so both stay in view. */
+@media (min-width: 1000px) and (min-height: 760px) { .wb-work.is-sticky { position: sticky; top: 1rem; } }
+
+/* reference content */
+.wb-sec h3 { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin: 0 0 .5rem; padding-top: .75rem; border-top: 1px solid var(--ink); }
+.wb-sec .pre { max-width: var(--measure); font-size: 1.02rem; line-height: 1.62; margin: 0 0 .6rem; }
+.wb-lead { font-size: 1.15rem !important; }
+.wb-sec .plain li { max-width: var(--measure); }
+.wb-steps { list-style: none; margin: .25rem 0 0; padding: 0; display: grid; gap: 1rem; counter-reset: none; }
+.wb-steps > li { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: .5rem; }
+.wb-stepno { font-family: var(--serif); font-size: 1.5rem; line-height: 1; color: var(--wb-accent); }
+.wb-steps h4 { margin: 0 0 .3rem; font-size: 1rem; }
+.wb-doc { background: var(--card); border: 1px solid var(--ink); padding: 1.1rem 1.25rem 1.25rem; position: relative; }
+.wb-doc::before { content: ""; position: absolute; top: -1px; left: -1px; width: 3rem; height: .5rem; background: var(--wb-accent); }
+.wb-doc-k { margin: 0 0 .6rem; font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--wb-accent); }
+.wb-doc-body p { font-family: var(--serif); font-size: 1.08rem; line-height: 1.65; margin: 0 0 .8rem; max-width: 40rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+.wb-total { margin: .6rem 0 0; font-size: .85rem; color: var(--muted); }
+.wb-total b { font-family: var(--serif); font-size: 1.4rem; color: var(--ink); font-weight: 400; }
+
+/* work content */
+.wb-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .9rem; padding: .7rem .9rem; background: var(--card); border-left: 4px solid var(--wb-accent); }
+.wb-status-k { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.wb-manual { display: grid; gap: .4rem; padding: .8rem .9rem; border: 1px dashed var(--ink); }
+.wb-work .submit-box textarea { min-height: 16rem; font-size: 1.02rem; line-height: 1.55; }
+.wb-work .work-panel { margin: 0; }
+.wb-work .feedback h4.minor { margin-top: .9rem; }
+.wb-body .grade-line { font-size: 1.05rem; }
+.wb-body .callout { margin: 0; }
+.wb-body .empty { margin: 0; }
+
+.wb .pager { margin-top: 3rem; }
+
+/* ===== design 1 · The Modernist ===== */
+.wb[data-theme="modernist"] .wb-head { border-top: 12px solid var(--ink); position: relative; }
+.wb[data-theme="modernist"] .wb-head::before { content: ""; position: absolute; top: -12px; right: 1.5rem; width: 3rem; height: 3.4rem; background: var(--accent); }
+.wb[data-theme="modernist"] .wb-title { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 800; letter-spacing: -.045em; line-height: .96; }
+.wb[data-theme="modernist"] .wb-ptabs ul { border-bottom: 2px solid var(--ink); }
+.wb[data-theme="modernist"] .wb-ptabs a[aria-current="page"] { background: var(--ink); color: var(--card); }
+.wb[data-theme="modernist"] .wb-doc, .wb[data-theme="modernist"] .wb-status { border-width: 2px; }
+.wb[data-theme="modernist"] .wb-doc-body p { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-size: 1rem; }
+.wb[data-theme="modernist"] .wb-stepno { font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif; font-weight: 800; letter-spacing: -.04em; font-size: 1.7rem; color: var(--ink); }
+.wb[data-theme="modernist"] .wb-ref { border-right: 2px solid var(--ink); }
+
+/* ===== design 2 · The Editorial ===== */
+.wb[data-theme="editorial"] .wb-head { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 1rem; position: relative; padding-top: 1.5rem; }
+.wb[data-theme="editorial"] .wb-head::before { content: ""; position: absolute; inset: 4px 0 auto 0; height: 1px; background: var(--ink); opacity: .4; }
+.wb[data-theme="editorial"] .wb-title { font-family: "Playfair Display", Georgia, serif; font-weight: 400; color: var(--accent); }
+.wb[data-theme="editorial"] .wb-lead::first-letter { font-size: 3em; float: left; line-height: .85; padding: .08em .1em 0 0; color: var(--accent); }
+.wb[data-theme="editorial"] .wb-ptabs a { font-family: "Playfair Display", Georgia, serif; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 1.05rem; font-weight: 400; }
+.wb[data-theme="editorial"] .wb-doc { outline: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); outline-offset: -6px; padding: 1.4rem 1.6rem; }
+.wb[data-theme="editorial"] .wb-doc-body p { font-family: "Playfair Display", Georgia, serif; font-size: 1.02rem; }
+.wb[data-theme="editorial"] .wb-stepno { font-family: "Playfair Display", Georgia, serif; font-style: italic; }
+
+/* ===== design 3 · The Intellectual ===== */
+.wb[data-theme="intellectual"] .wb-head { border-top: 8px solid var(--ink); position: relative; padding-top: 1.5rem; }
+.wb[data-theme="intellectual"] .wb-head::before { content: ""; position: absolute; top: .9rem; right: 0; width: 3rem; height: 3rem; border-radius: 50%; background: var(--cobalt); }
+.wb[data-theme="intellectual"] .wb-title { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; letter-spacing: -.03em; line-height: .98; font-size: clamp(2.2rem, 7vw, 4rem); }
+.wb[data-theme="intellectual"] { --wb-accent: var(--cobalt); }
+.wb[data-theme="intellectual"] .wb-ptabs a { font-family: "Instrument Serif", Georgia, serif; text-transform: none; letter-spacing: 0; font-size: 1.2rem; font-weight: 400; }
+.wb[data-theme="intellectual"] .wb-ptabs a[aria-current="page"] { border-bottom-width: 4px; }
+.wb[data-theme="intellectual"] .wb-doc { border-radius: 0 1.5rem 0 0; }
+.wb[data-theme="intellectual"] .wb-doc-body p { font-family: "Instrument Serif", Georgia, serif; font-size: 1.3rem; line-height: 1.45; }
+.wb[data-theme="intellectual"] .wb-stepno { font-family: "Instrument Serif", Georgia, serif; font-size: 1.9rem; }
+.wb[data-theme="intellectual"] .wb-sec .pre.wb-lead { font-family: "Instrument Serif", Georgia, serif; font-size: 1.5rem !important; line-height: 1.3; }
+
+/* ===== design 4 · The Institution ===== */
+.wb[data-theme="institution"] .wb-head { background: #073e35; color: #f5f6f7; padding: 1.4rem 1.25rem 1rem; border: 0; outline: 1px solid #9fb6cb; outline-offset: -8px; }
+.wb[data-theme="institution"] .wb-head .eyebrow, .wb[data-theme="institution"] .wb-head .wb-where { color: #c3d0dc; }
+.wb[data-theme="institution"] .wb-head .kmark { color: #f5f6f7; }
+.wb[data-theme="institution"] .wb-head .linkbtn { color: #f5f6f7; }
+.wb[data-theme="institution"] .wb-head :focus-visible { outline-color: #f5f6f7; }
+.wb[data-theme="institution"] .wb-title { font-family: "Cinzel", Georgia, serif; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; line-height: 1.15; font-size: clamp(1.5rem, 4.6vw, 2.5rem); color: #f5f6f7; }
+.wb[data-theme="institution"] .wb-ptabs a { font-family: "Cinzel", Georgia, serif; font-weight: 600; font-size: .74rem; letter-spacing: .1em; }
+.wb[data-theme="institution"] .wb-ptabs a[aria-current="page"] { border-bottom-color: #073e35; color: #073e35; }
+.wb[data-theme="institution"] .wb-doc, .wb[data-theme="institution"] .wb-status { border: 1px solid #073e35; outline: 1px solid #9fb6cb; outline-offset: -5px; }
+.wb[data-theme="institution"] .wb-doc::before { background: #073e35; }
+.wb[data-theme="institution"] .wb-doc-body p { font-family: "Cormorant Garamond", Garamond, Georgia, serif; font-weight: 500; font-size: 1.3rem; line-height: 1.5; }
+.wb[data-theme="institution"] .wb-stepno { font-family: "Cinzel", Georgia, serif; color: #073e35; font-size: 1.25rem; }
+.wb[data-theme="institution"] { --wb-accent: #073e35; }
+.wb[data-theme="institution"] .wb-seg a[aria-current="page"] { background: #073e35; }
+
+@media (max-width: 640px) { .wb-ptabs a { padding: .5rem .7rem; } .wb[data-theme="intellectual"] .wb-head::before { width: 2.2rem; height: 2.2rem; } }
+.wb-doc-note { margin: -.2rem 0 .8rem; font-size: .82rem; font-style: italic; color: var(--muted); }
+
+/* ---- G1 follow-up: the workbench uses the room the hidden menu frees ---- */
+@media (min-width: 1024px) {
+  .content:has(> .wb) { max-width: 120rem; padding-inline: 2rem; }
+}
+@media (min-width: 1700px) { .content:has(> .wb) { padding-inline: 3rem; } }
+@media (min-width: 1000px) {
+  /* 55% reference / 45% your work, with only a modest gutter; text inside keeps its own readable measure */
+  .wb-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 1.5rem; }
+  .wb-ref { padding-right: 1.5rem; }
+}

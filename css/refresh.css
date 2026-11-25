@@ -1,0 +1,189 @@
+/* sovereign. — visual refresh (build 21). Loaded last.
+   1. Institutional palette as tokens (navy, pine, indigo, cool ivory, steel, oxblood).
+   2. A more application-like shell: navy sidebar, wider workspace, surfaces instead of rules, readable type.
+   3. Course Home as a landing page: Up Next panel and a side column.
+   Presentation only. No data, Worker or behaviour changes. */
+
+:root {
+  --navy: #101b32;
+  --navy-2: #1a2a4a;
+  --pine: #073e35;
+  --indigo: #2643d8;
+  --indigo-ink: #1c34b0;       /* indigo text/link on ivory: 7.7:1 */
+  --ivory: #f5f6f7;
+  --steel: #6687a1;
+  --oxblood: #681632;
+  --surface: #ffffff;
+  --line: #d4d9e2;
+  --line-soft: #e4e8ef;
+  --paper: var(--ivory);
+  --card: var(--surface);
+  --ink: var(--navy);
+  --muted: #47526a;
+  --rule: var(--line);
+  --accent: var(--indigo-ink);
+  --accent-soft: #e8ecf8;
+  --cobalt: var(--indigo);
+  --danger: #9b1c31;
+  --radius: 6px;
+  --shadow: 0 1px 0 rgba(16, 27, 50, .04);
+}
+
+/* ---------- type: comfortable everyday text ---------- */
+body { font-size: 1.0625rem; line-height: 1.62; }
+.small { font-size: .9375rem; }
+.muted, .item-note, .field > small { color: var(--muted); }
+.count, .tagline, .side-k, .eyebrow { font-size: .75rem; }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.15rem; }
+a { color: var(--indigo-ink); }
+a:hover { color: var(--navy); }
+
+/* ---------- shell: navy sidebar, wider workspace ---------- */
+.sidebar { background: var(--navy); color: var(--ivory); border-right: 0; --nav-muted: #b4bfd3; --nav-fill: rgba(245, 246, 247, .09); --nav-accent: #8fa8ff; }
+.sidebar .wordmark { color: var(--ivory); }
+.sidebar .wordmark span { color: #8fa8ff; }
+.sidebar .tagline, .sidebar .side-note, .sidebar .side-k { color: #b4bfd3; }
+.sidebar nav a:hover, .sidebar nav a[aria-current="page"] { color: #fff; }
+.sidebar nav a:hover .ico, .sidebar nav a[aria-current="page"] .ico { color: #fff; }
+.sidebar nav a[aria-current="page"] { background: var(--nav-fill); box-shadow: inset 3px 0 0 var(--indigo); }
+.sidebar nav a:focus-visible { outline-color: #8fa8ff; }
+.side-courses { border-top-color: rgba(245, 246, 247, .16); }
+.side-courses a[aria-current="page"] { box-shadow: inset 3px 0 0 var(--indigo); }
+.sidebar .cdot { background: #8fa8ff; }
+.sidebar .cdot[data-theme="editorial"] { background: transparent; border-color: #e2a0b8; }
+.sidebar .cdot[data-theme="institution"] { background: #6fcfb7; }
+.topbar { background: var(--navy); color: var(--ivory); border-bottom: 0; }
+.topbar .wordmark { color: var(--ivory); }
+.topbar .wordmark span { color: #8fa8ff; }
+.menu-btn { color: var(--ivory); border-color: rgba(245, 246, 247, .5); }
+.menu-btn:hover { background: var(--ivory); color: var(--navy); }
+.scrim { background: rgba(16, 27, 50, .55); }
+
+.content { max-width: 90rem; }
+@media (min-width: 1024px) { .content { padding: 2.5rem 3rem 5rem; } }
+@media (min-width: 1500px) { .content { padding-left: 4rem; padding-right: 4rem; } }
+
+/* ---------- buttons and controls ---------- */
+.btn { background: var(--indigo); border-color: var(--indigo); color: #fff; border-radius: var(--radius); font-size: .95rem; font-weight: 600; letter-spacing: 0; }
+.btn:hover { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn.ghost { background: transparent; color: var(--navy); border-color: var(--navy); }
+.btn.ghost:hover { background: var(--navy); color: #fff; }
+.btn.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn.danger:hover { background: var(--danger); color: #fff; }
+.chip { border-radius: 999px; }
+.chip[aria-pressed="true"] { background: var(--navy); }
+input[type="text"], textarea, select { background: var(--surface); border: 1px solid var(--line); border-bottom-width: 1px; border-radius: var(--radius); }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid rgba(38, 67, 216, .25); border-color: var(--indigo); }
+button:focus-visible, .btn:focus-visible, a:focus-visible { outline-color: var(--indigo); }
+.linkbtn { color: var(--muted); font-size: .9rem; }
+.linkbtn:hover:not(:disabled) { color: var(--indigo-ink); }
+::selection { background: var(--indigo); color: #fff; }
+.progress { background: var(--line-soft); border-radius: 999px; height: 8px; }
+.progress > span { background: var(--indigo); border-radius: 999px; }
+
+/* ---------- surfaces instead of rules ---------- */
+.section-head { border-top: 0; padding-top: 0; margin-bottom: 1rem; }
+.section-head h2 { font-size: 1.3rem; }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
+.banner { background: var(--accent-soft); border-left-color: var(--indigo); border-radius: 0 var(--radius) var(--radius) 0; }
+.badge { border-radius: 999px; padding: .2rem .65rem; }
+.course-card, .final-card, .choice, .designer, .mod-sec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.course-card { border-top: 4px solid var(--indigo); }
+.mod-sec.learn { border-top: 3px solid var(--navy); }
+.mod-sec.apply { border-top: 3px solid var(--indigo); }
+.rcard, .case, .project { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.rcard:hover, .case:hover, .project:hover { border-color: var(--steel); }
+.status { border-radius: 999px; padding: .2rem .65rem; font-size: .72rem; }
+.status-feedback { background: var(--accent-soft); color: var(--indigo-ink); }
+.status-submitted { color: var(--indigo-ink); }
+
+/* ---------- course shell: a sticky course menu beside the page on wide screens ---------- */
+@media (min-width: 880px) {
+  .course-layout { grid-template-columns: 13.5rem minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+  .course-menu { position: sticky; top: 1.25rem; }
+  .course-menu ul { flex-direction: column; overflow: visible; border-bottom: 0; gap: 2px; }
+  .course-menu a { border-radius: var(--radius); margin: 0; border-right: 0; min-height: 44px; }
+  .course-menu a[aria-current="page"] { background: var(--navy); color: #fff; font-weight: 600; box-shadow: none; }
+  .course-menu a[aria-current="page"] .ico { color: #fff; }
+}
+.course-menu ul { border-bottom-color: var(--line); }
+
+/* ---------- course Home: landing page ---------- */
+.home { display: grid; gap: 2rem; }
+@media (min-width: 1100px) { .home { grid-template-columns: minmax(0, 1fr) 19rem; gap: 2.5rem; align-items: start; } .home-side { position: sticky; top: 1.25rem; } }
+.home-main > :first-child { margin-top: 0; }
+.home-main .standfirst { max-width: 44rem; }
+.home-sec { margin-top: 2.25rem; }
+.up-next { margin-top: 0; }
+.next-grid { display: grid; gap: 1rem; }
+@media (min-width: 720px) { .next-grid { grid-template-columns: 1.25fr 1fr; } }
+.next-card { display: flex; flex-direction: column; gap: .55rem; align-items: flex-start; padding: 1.25rem 1.35rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; color: var(--ink); min-width: 0; transition: border-color .12s, transform .12s; }
+.next-card:hover { border-color: var(--indigo); color: var(--ink); }
+.next-card:focus-visible { outline: 3px solid var(--indigo); outline-offset: 2px; }
+.next-card.now { background: var(--navy); border-color: var(--navy); color: var(--ivory); }
+.next-card.now:hover { border-color: #8fa8ff; color: var(--ivory); }
+.next-role { font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--indigo-ink); }
+.next-card.now .next-role { color: #9fb4ff; }
+.next-title { font-size: 1.4rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; overflow-wrap: anywhere; }
+.next-meta { display: flex; flex-direction: column; gap: .15rem; font-size: .95rem; color: var(--muted); }
+.next-card.now .next-meta { color: #c9d2e3; }
+.next-meta .late { color: var(--danger); font-weight: 600; }
+.next-card.now .next-meta .late { color: #ffb4bf; }
+.next-card.now .status { color: #fff; background: transparent; }
+.side-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.side-card .section-head h2 { font-size: 1.05rem; }
+.side-card .progress-row strong { font-size: 2.2rem; font-weight: 600; color: var(--navy); }
+.side-card .ann h3 { font-size: 1rem; }
+.side-card p:last-child { margin-bottom: 0; }
+.side-card .ann .pre, .side-card > div > p:not(.muted) { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------- Reading Room: resources beside a sticky study column ---------- */
+.room-cols { display: grid; gap: 1.5rem; }
+@media (min-width: 1100px) { .room-cols { grid-template-columns: minmax(0, 1fr) 26rem; gap: 2.5rem; align-items: start; } .room-aside { min-width: 0; } }
+.room-aside > section { margin-top: 0; margin-bottom: 1rem; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.room-aside .sec-head h3 { font-size: 1rem; }
+.room-main > section:first-child { margin-top: 1.5rem; }
+@media (min-width: 760px) { .room-main .rcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)); gap: 1rem; align-items: stretch; } }
+
+/* ---------- Grades and Syllabus: panels and surfaces ---------- */
+.gr-hero, .ac-map, .ac-facts, .callout { border-radius: var(--radius); }
+.gr-hero { background: var(--surface); border: 1px solid var(--line); padding: 1.25rem 1.4rem; }
+.ac-table { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ex { background: var(--surface); border-radius: var(--radius); }
+.callout { background: var(--accent-soft); border-left: 3px solid var(--indigo); }
+
+/* ---------- Assignment Workbench: each pane is a surface; the work pane stands out ---------- */
+.wb-pane { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem 1.5rem; min-width: 0; }
+.wb-work { border-top: 3px solid var(--indigo); }
+.wb-meta { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.wb-pane-k { color: var(--indigo-ink); }
+
+/* ---------- Syllabus review and assignment revisions ---------- */
+.syl-review, .syl-rev { margin-top: .9rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.syl-rev { background: var(--accent-soft); border-color: transparent; }
+.syl-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin-bottom: .6rem; }
+.syl-items { list-style: none; margin: .5rem 0; padding: 0; display: grid; gap: .75rem; }
+.syl-item { padding: .75rem .9rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.syl-item p { margin: .35rem 0 0; }
+.syl-meta { display: flex; flex-wrap: wrap; gap: .4rem .7rem; align-items: center; margin-top: .4rem; }
+.rev-card { margin: .75rem 0; padding: .85rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.rev-cols { display: grid; gap: 1rem; margin-top: .6rem; }
+@media (min-width: 640px) { .rev-cols { grid-template-columns: 1fr 1fr; } }
+.rev-cols > div { min-width: 0; padding: .7rem .8rem; background: var(--paper); border-radius: var(--radius); }
+.syl-paste .consent { display: flex; gap: .6rem; align-items: flex-start; margin: .75rem 0; }
+
+/* Evidence-based feedback (build 24) */
+.findings { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .6rem; }
+.finding { background: var(--surface, #fff); border: 1px solid var(--line, #d9dde3); border-left: 4px solid var(--line, #d9dde3); border-radius: 4px; padding: .6rem .8rem; }
+.finding.f-strength { border-left-color: var(--indigo, #2643d8); }
+.finding.f-error, .finding.f-missing { border-left-color: var(--oxblood, #681632); }
+.finding.f-partial { border-left-color: #b58900; }
+.f-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.f-claim { margin: .35rem 0; }
+.f-quote { margin: .35rem 0; padding: .3rem .6rem; border-left: 3px solid var(--line, #d9dde3); font-style: italic; }
+.f-quote .small { font-style: normal; }
+.inspect { margin: .4rem 0 .8rem; }
+.inspect > summary { cursor: pointer; font-weight: 600; }
+.mode-pick { border: 1px solid var(--line, #d9dde3); border-radius: 4px; padding: .6rem .8rem; margin: 0 0 .8rem; display: grid; gap: .5rem; }
+.mode-pick legend { padding: 0 .3rem; font-weight: 600; }

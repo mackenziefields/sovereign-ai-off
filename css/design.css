@@ -1,0 +1,257 @@
+/* sovereign. — visual identity. Swiss modernist grid and type, luxury-editorial restraint. Loaded last, so it refines the other sheets.
+   System fonts only (works offline). Rule of type: the sans declares, the serif names.
+   Palette: paper, oxblood, near-black, and one cobalt accent used sparingly (Apply, links in focus). */
+
+:root {
+  --paper: #f5f6f7;
+  --card: #fcfcfd;
+  --ink: #101b32;
+  --muted: #47526a;
+  --rule: #d4d9e2;
+  --accent: #2643d8;          /* oxblood */
+  --accent-soft: #e8ecf8;
+  --accent-ink: #fcfcfd;
+  --cobalt: #2643d8;
+  --danger: #9b1c31;
+  --font: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --measure: 40rem;
+}
+
+body { background: var(--paper); }
+::selection { background: var(--ink); color: var(--paper); }
+
+/* ---------- type ---------- */
+h1, h2 { font-weight: 600; letter-spacing: -.035em; }
+h1 { line-height: 1; }
+h3 { font-weight: 600; }
+.display { font-size: clamp(2.75rem, 11vw, 6.25rem); font-weight: 700; letter-spacing: -.055em; line-height: .94; margin: 0 0 1.25rem; overflow-wrap: anywhere; }
+.lede { font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 1.3rem; line-height: 1.45; letter-spacing: 0; }
+.eyebrow { display: flex; align-items: center; gap: .6rem; font-size: .68rem; letter-spacing: .18em; font-weight: 700; }
+.eyebrow::before { content: ""; width: .55rem; height: .55rem; background: currentColor; flex: none; }
+.code { letter-spacing: .14em; }
+a { text-decoration-thickness: 1px; }
+
+/* ---------- shell ---------- */
+.wordmark { font-weight: 700; font-size: 1.75rem; letter-spacing: -.06em; }
+.tagline { letter-spacing: .2em; font-size: .62rem; font-weight: 600; }
+.topbar { border-bottom: 2px solid var(--ink); }
+.sidebar { border-right: 2px solid var(--ink); }
+.sidebar nav a { font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; border-left-width: 4px; }
+.sidebar nav a[aria-current="page"] { background: transparent; color: var(--accent); }
+.sidebar nav a:hover { background: transparent; color: var(--accent); }
+.content { max-width: 74rem; }
+@media (min-width: 1024px) { .content { padding: 3.5rem 3.5rem 6rem; } }
+
+section { margin-top: 3.5rem; }
+.section-head { border-top: 2px solid var(--ink); padding-top: .8rem; margin-bottom: 1.5rem; align-items: center; }
+.section-head h2, .page-head h2 { font-size: .74rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.page-head h2 { font-size: clamp(1.6rem, 5vw, 2.4rem); text-transform: none; letter-spacing: -.035em; }
+.count { letter-spacing: .1em; text-transform: uppercase; font-size: .68rem; font-weight: 600; }
+
+/* ---------- buttons, forms ---------- */
+.btn, .menu-btn { font-weight: 700; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; border-width: 2px; }
+.btn.ghost { background: transparent; }
+.field > span { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+.panel, .inline-edit { border-top: 2px solid var(--ink); }
+.callout, .banner, .brief-card { border-left-width: 4px; }
+.badge { letter-spacing: .14em; font-weight: 700; border-radius: 0; }
+
+/* ---------- Learn / Apply / Demonstrate: a shape, a word, a color. Never color alone. ---------- */
+.kmark { display: inline-flex; align-items: center; gap: .5rem; font-size: .68rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.kmark::before { content: ""; width: .72rem; height: .72rem; flex: none; border: 2px solid currentColor; }
+.kmark-learn::before { border-radius: 50%; }                                            /* circle: taking in */
+.kmark-apply { color: var(--cobalt); }                                                  /* square: exercising judgment */
+.kmark-demonstrate { color: var(--accent); }                                            /* triangle: producing the work */
+.kmark-demonstrate::before { border: 0; background: currentColor; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.eyebrow .kmark::before { margin: 0; }
+.eyebrow:has(.kmark)::before { display: none; }
+
+/* ---------- Dashboard ---------- */
+.masthead { padding-bottom: .5rem; }
+.masthead .lede { margin: 0; max-width: 32rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); margin: 2rem 0 0; border-top: 1px solid var(--rule); }
+.stats > div { padding: .9rem 1rem .2rem 0; display: flex; flex-direction: column; justify-content: space-between; gap: .35rem; }
+.stats > div + div { padding-left: 1rem; border-left: 1px solid var(--rule); }
+.stats dt { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.stats dd { margin: .2rem 0 0; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 300; letter-spacing: -.05em; line-height: 1; }
+.stats dd small { font-size: .9rem; letter-spacing: 0; color: var(--muted); font-weight: 400; }
+.dash { gap: 3rem; }
+@media (min-width: 1180px) { .dash { grid-template-columns: minmax(0, 1fr) 19.5rem; gap: 4rem; } }
+.dash > div > section:first-of-type { margin-top: 2.5rem; }
+.name-form { margin: 1.5rem 0 0; max-width: 28rem; }
+
+/* course covers: each course is a small publication */
+.covers { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
+.cover, .course-head { position: relative; isolation: isolate; overflow: hidden; background: var(--c); color: #fcfcfd; }
+.cover { display: flex; flex-direction: column; justify-content: space-between; min-height: 19rem; padding: 1.25rem; text-decoration: none; }
+.cover:hover { color: #fcfcfd; }
+.cover:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.cover-top { display: flex; justify-content: space-between; gap: 1rem; font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; }
+.cover-title { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 5vw, 2rem); line-height: 1.08; letter-spacing: -.01em; margin: 1.5rem 0 1.5rem; max-width: 12em; overflow-wrap: anywhere; }
+.cover:hover .cover-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.cover-foot { border-top: 1px solid rgba(245, 246, 247, .55); padding-top: .8rem; }
+.cover-pct { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+.cover-pct strong { font-size: 2.6rem; font-weight: 300; letter-spacing: -.05em; line-height: 1; text-transform: none; }
+.cover .progress { background: rgba(245, 246, 247, .3); height: 3px; border-radius: 0; margin-top: .6rem; }
+.cover .progress > span { background: #fcfcfd; }
+/* one restrained geometric mark per color; shared by covers and course headers */
+.cover::before, .course-head::before { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+.art-0::before { width: 14rem; height: 14rem; border-radius: 50%; right: -4.5rem; top: -4.5rem; border: 2.2rem solid rgba(245, 246, 247, .13); }
+.art-1::before { width: 13rem; height: 13rem; right: 0; bottom: 0; border-radius: 100% 0 0 0; background: rgba(245, 246, 247, .1); }
+.art-2::before { width: 7rem; height: 10rem; right: 1.25rem; top: 0; background: repeating-linear-gradient(90deg, rgba(245, 246, 247, .16) 0 .55rem, transparent .55rem 1.1rem); }
+.art-3::before { width: 8.5rem; height: 8.5rem; right: 1rem; top: 3rem; background-image: radial-gradient(circle, rgba(245, 246, 247, .24) 3px, transparent 3.5px); background-size: 1.2rem 1.2rem; }
+.art-4::before { width: 11rem; height: 11rem; right: 0; top: 0; border-radius: 0 0 0 100%; background: rgba(245, 246, 247, .11); }
+.art-5::before { width: 9rem; height: 100%; right: 0; top: 0; background: rgba(245, 246, 247, .1); clip-path: polygon(55% 0, 100% 0, 100% 100%, 0 100%); }
+.cover.art-0, .cover.art-1, .cover.art-2, .cover.art-3, .cover.art-4, .cover.art-5 { background-image: none; }
+
+/* module tiles: contents-page entries */
+.tiles { gap: 1.25rem; }
+.tile { background: var(--card); border: 1px solid var(--ink); border-top: 0; }
+.tile:hover, .tile:focus-visible { border-color: var(--ink); }
+.tile:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+.tile-art, .art-0.tile-art, .art-1.tile-art, .art-2.tile-art, .art-3.tile-art, .art-4.tile-art, .art-5.tile-art { height: 6rem; background-color: var(--c); background-image: none; display: flex; align-items: flex-end; justify-content: space-between; padding: .75rem 1rem; }
+.tile-art::before { content: none; }
+.tile-label { position: static; font-size: .64rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; align-self: flex-start; }
+.tile-num { font-family: var(--serif); font-size: 3rem; line-height: .85; color: #fcfcfd; letter-spacing: -.03em; }
+.tile-badge { top: .7rem; right: .75rem; border-radius: 0; }
+.tile-title { font-family: var(--serif); font-weight: 400; font-size: 1.3rem; line-height: 1.15; letter-spacing: -.005em; }
+.tile-meta { font-size: .74rem; letter-spacing: .04em; }
+.progress { border-radius: 0; height: 4px; }
+.tile .progress { height: 4px; }
+
+/* To Do + Calendar */
+.rail-box { border-top: 2px solid var(--ink); }
+.rail-h { font-size: .74rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.tab { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.cal { border-color: var(--ink); background: var(--ink); }
+.cal .today { background: var(--accent); color: var(--accent-ink); outline: 0; }
+.cal .today .dot { background: var(--accent-ink); }
+.cal-nav strong { font-family: var(--serif); font-weight: 400; font-size: 1.1rem; }
+
+/* module library: a table of contents */
+.lib { border-top: 2px solid var(--ink); }
+.lib a { grid-template-columns: 6rem 1fr auto; }
+.lib b { font-family: var(--serif); font-weight: 400; font-size: 1.12rem; }
+
+/* ---------- course pages: the opening spread ---------- */
+.course-head { display: flex; flex-direction: column; justify-content: flex-end; min-height: 13rem; margin: 0 -1.25rem 2rem; padding: 1.5rem 1.25rem 1.25rem; }
+@media (min-width: 760px) { .course-head { margin: 0 0 2.75rem; padding: 2.5rem 2.5rem 1.75rem; min-height: 17rem; } }
+.course-head::before { z-index: -1; }
+.ch-code { margin: 0 0 1.25rem; font-size: .68rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.course-head h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -.02em; line-height: 1.02; font-size: clamp(2.2rem, 8vw, 4.4rem); margin: 0; max-width: 16em; overflow-wrap: anywhere; }
+.ch-meta { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin: 1.5rem 0 0; padding-top: .8rem; border-top: 1px solid rgba(245, 246, 247, .55); font-size: .66rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.crumbs { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+.course-menu a { font-size: .68rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+.course-menu ul { border-bottom-width: 2px; }
+.course-menu a[aria-current="page"] { color: var(--accent); }
+@media (min-width: 760px) {
+  .course-layout { grid-template-columns: 11rem minmax(0, 1fr); gap: 3rem; }
+  .course-menu ul { border-right-width: 2px; }
+  .course-menu a[aria-current="page"] { border-right-color: var(--accent); }
+}
+.progress-row strong { font-weight: 300; font-size: 2.4rem; letter-spacing: -.05em; }
+.grade-big { font-weight: 300; letter-spacing: -.05em; }
+.grade-card { border-top-width: 2px; border-color: var(--ink); }
+.agroup .minor { margin-top: 1.5rem; }
+
+/* syllabus: a typeset document */
+.syllabus > section > p, .syllabus > p, .syllabus .brief dd, .syllabus .plain, .syllabus .pre { font-family: var(--serif); font-size: 1.1rem; line-height: 1.65; max-width: var(--measure); }
+.syllabus .minor { font-family: var(--font); border-top: 1px solid var(--ink); padding-top: .7rem; margin-top: 2.25rem; max-width: var(--measure); color: var(--accent); }
+.syllabus .brief { margin: 2.25rem 0; border-top: 2px solid var(--ink); padding-top: 1rem; max-width: 52rem; }
+.syllabus .brief dd { font-size: 1.15rem; }
+.syllabus > section:first-of-type > p:first-of-type::first-line { font-weight: 600; }
+
+/* ---------- modules and assignments ---------- */
+.mod-h { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 7vw, 3.4rem); line-height: 1.04; letter-spacing: -.02em; max-width: 18em; margin-bottom: .75rem; overflow-wrap: anywhere; }
+.msec { border-top: 2px solid var(--ink); padding-top: 1rem; margin-top: 3rem; }
+.msec h3, .mod-sec h3, .minor { font-size: .68rem; letter-spacing: .18em; font-weight: 700; }
+.msec .pre, .msec > p { max-width: var(--measure); }
+.msec > .pre { font-size: 1.05rem; line-height: 1.65; }
+.item-title { font-weight: 600; }
+.pager a { font-family: var(--serif); font-size: 1.05rem; }
+.complete-row { border-top-width: 2px; border-top-color: var(--ink); }
+
+.apage > .eyebrow { margin-top: .5rem; }
+.ameta { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0 1.25rem; padding: 0; margin: 1.75rem 0 0; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule); font-size: .95rem; }
+.ameta-i { flex-direction: column; gap: .15rem; padding: .85rem 0; }
+.ameta-k { flex: none; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+@media (min-width: 880px) {
+  .apage .msec { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); column-gap: 2rem; }
+  .apage .msec > .sec-head { grid-column: 1; grid-row: 1 / span 40; display: block; align-self: start; }
+  .apage .msec > :not(.sec-head) { grid-column: 2; }
+}
+/* supplied material reads as a document, apart from the instructions */
+.s-scenario-and-materials { background: #e8ecf8; padding: 1.1rem 1.25rem 1.4rem; border-bottom: 1px solid var(--rule); }
+.s-scenario-and-materials .pre { font-family: var(--serif); font-size: 1.08rem; line-height: 1.7; }
+.s-scenario-and-materials .sec-head h3::after { content: "Supplied material"; display: block; margin-top: .35rem; font-size: .6rem; letter-spacing: .14em; color: var(--cobalt); }
+.s-portfolio-piece { border-top-color: var(--accent); }
+.s-portfolio-piece .sec-head h3 { color: var(--accent); }
+.s-what-to-submit .pre { font-weight: 600; }
+.s-your-submission { border-top-width: 4px; }
+.steps-list { padding-left: 1.3rem; }
+.msec > .plain li { max-width: var(--measure); }
+
+.rubric { list-style: none; margin: 1rem 0 0; padding: 0; max-width: 40rem; border-top: 1px solid var(--rule); }
+.rubric li { display: grid; grid-template-columns: 1fr auto; gap: .35rem 1rem; align-items: baseline; padding: .75rem 0; border-bottom: 1px solid var(--rule); }
+.rb-name { font-weight: 600; }
+.rb-pts { font-size: .9rem; font-weight: 400; white-space: nowrap; }
+.rb-pts b { font-size: 1.35rem; font-weight: 300; letter-spacing: -.03em; }
+.rb-bar { grid-column: 1 / -1; height: 4px; background: var(--rule); }
+.rb-bar i { display: block; height: 100%; background: var(--accent); }
+
+.work-panel { border-color: var(--ink); border-radius: 0; background: var(--card); }
+.work-panel > summary { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; }
+.submit-box { gap: 1rem; }
+.grade-line { font-size: 1.15rem; }
+.feedback { border-left: 4px solid var(--accent); padding-left: 1rem; }
+.feedback h4.minor { color: var(--accent); }
+
+/* ---------- Portfolio: an exhibition catalogue ---------- */
+.portfolio .pf-head { border-bottom: 2px solid var(--ink); padding-bottom: 1.75rem; }
+.portfolio .pf-head .lede { margin: 0; max-width: 34rem; }
+.portfolio .pf-head .small { max-width: 38rem; margin: 1rem 0 0; }
+.plates { list-style: none; margin: 0; padding: 0; counter-reset: plate; display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+.plate { counter-increment: plate; display: flex; flex-direction: column; gap: .7rem; background: var(--card); border: 1px solid var(--ink); border-top: 4px solid var(--accent); padding: 1.25rem; min-width: 0; }
+.plate-top { display: flex; justify-content: space-between; gap: .75rem; align-items: center; }
+.plate-top::after { content: "No. " counter(plate, decimal-leading-zero); order: 2; font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.plate-title { font-family: var(--serif); font-weight: 400; font-size: 1.65rem; line-height: 1.08; letter-spacing: -.01em; margin: .5rem 0 0; overflow-wrap: anywhere; }
+.plate-title a { color: var(--ink); text-decoration: none; }
+.plate-title a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: .15em; }
+.plate-dek { font-family: var(--serif); font-style: italic; color: var(--muted); margin: 0; font-size: 1.02rem; }
+.plate-score { display: flex; align-items: baseline; gap: .75rem; border-top: 1px solid var(--rule); padding-top: .7rem; }
+.plate-score strong { font-size: 2.4rem; font-weight: 300; letter-spacing: -.05em; line-height: 1; }
+.plate-score span { font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.plate .item-meta { margin: 0; }
+.plate .work-panel { margin-top: auto; }
+.portfolio .items .item-title a { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; }
+.work-card { border-top: 4px solid var(--accent); }
+.work-card > summary .wc-title b { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; }
+
+/* ---------- first run and AI course creation ---------- */
+.trio > div { border-top-width: 2px; padding-top: .8rem; }
+.trio > div > b { display: flex; align-items: center; gap: .55rem; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; }
+.trio > div > b::before { content: ""; width: .72rem; height: .72rem; border: 2px solid currentColor; }
+.trio > div:nth-child(1) > b::before { border-radius: 50%; }
+.trio > div:nth-child(2) > b { color: var(--cobalt); }
+.trio > div:nth-child(3) > b { color: var(--accent); }
+.trio > div:nth-child(3) > b::before { border: 0; background: currentColor; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.trio > div:nth-child(2) { border-top-color: var(--cobalt); }
+.trio > div:nth-child(3) { border-top-color: var(--accent); }
+.narrow > h1 { font-size: clamp(2.4rem, 9vw, 4.5rem); font-weight: 700; letter-spacing: -.055em; line-height: .96; }
+.choice { border-top: 4px solid var(--accent); }
+.choice h2 { font-family: var(--serif); font-weight: 400; font-size: 1.5rem; }
+.steps li.active { font-weight: 700; }
+
+/* ---------- phones: re-composed, not shrunk ---------- */
+@media (max-width: 559px) {
+  .content { padding-top: 1.5rem; }
+  .covers { gap: 1rem; }
+  .cover { min-height: 15rem; }
+  .stats > div { padding-right: .5rem; }
+  .stats > div + div { padding-left: .75rem; }
+  .lib a { grid-template-columns: 4.5rem 1fr auto; }
+  .plates { grid-template-columns: 1fr; }
+  .ameta { grid-template-columns: 1fr 1fr; }
+  .section-head { flex-wrap: wrap; }
+}
