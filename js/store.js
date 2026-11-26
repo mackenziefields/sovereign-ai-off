@@ -492,10 +492,384 @@
   S.newModule = (title) => M(title);
   S.newCourse = (f) => C(f.code, f.title, S.state.courses.length % S.COLORS.length, f.description, [M('Foundations')], { objective: f.objective || '', deliverable: f.deliverable || '' });
 
+  // Starter course: Cultural Anthropology, built out as a visual anthropology sequence (seeing as social practice, then critical visual practice).
+  // Readings are cited, never copied; links are only to publisher, journal, DOI or author pages.
+  const rub = (...p) => p.map(([name, max]) => ({ name, max }));
+  const L = (title, purpose, steps, rubric, o) => A(title, '', { kind: 'learn', basis: 'readings', points: 10, purpose, steps, rubric, format: 'text', submit: 'Typed response in the submission box.', estimate: '2–3 hours', ...o });
+  const P = (title, purpose, materials, steps, rubric, o) => A(title, '', { kind: 'apply', points: 20, purpose, materials, steps, rubric, format: 'any', estimate: '4–6 hours', ...o });
+  const D = (title, purpose, steps, rubric, portfolioNote, o) => A(title, '', { kind: 'demonstrate', basis: 'portfolio', points: 30, purpose, steps, rubric, portfolioNote, format: 'any', estimate: '8–12 hours', ...o });
+
+  function anthropologyCourse() {
+    const m1 = M('Forms of Seeing: Staring and the Social Life of Looking', {
+      duration: '2 weeks',
+      overview: 'Looking feels natural, but how we look at one another is learned, regulated and unequal. This module introduces staring as a social relationship and visual culture as a field that studies seeing, not only images.',
+      keyIdeas: 'Staring is an exchange between a starer and a staree, not a one-way act. Looking is governed by social rules about who may look, at whom and for how long. Visual culture studies how seeing is shaped by history, power and technology ("showing seeing"). Ethnography has its own history of visual technologies that described and ranked human difference.',
+      objectives: ['Explain staring as a social relationship with its own rules and effects.', 'Describe what it means to treat seeing itself as a cultural practice.', 'Use close observation to record how looking is regulated in everyday life.'],
+      selfCheck: ['Can I explain why staring is a relationship and not just a glance?', 'Can I name one rule about looking that I follow without thinking?', 'Can I say what Mitchell means by showing seeing, in one sentence?'],
+      readings: [
+        R('Rosemarie Garland-Thomson, Staring: How We Look (Oxford, 2009), pp. 3–59', '', 'Book. Why we stare, staring as a physical response and a cultural history, staring as a social relationship and as knowledge gathering.'),
+        R('W. J. T. Mitchell, "Showing Seeing: A Critique of Visual Culture," in What Do Pictures Want? (2005), pp. 336–356', '', 'Book chapter. A short case for studying vision itself as a cultural construction.'),
+        R('Deborah Poole, "An Excess of Description: Ethnography, Race, and Visual Technologies," Annual Review of Anthropology 34 (2005): 159–179', '', 'Journal article. How anthropology used photography and other visual technologies to describe race.'),
+        R('Rosemarie Garland-Thomson, Staring and Its Implications in Society (video, 4 min.)', 'https://youtu.be/jALsDVW63wo', 'Watch first: the author introduces the book’s argument.'),
+        R('This American Life, Episode 118: What You Lookin’ At? (1998)', 'https://www.thisamericanlife.org/118/what-you-lookin-at', 'Optional listening.'),
+      ],
+      assignments: [
+        L('Staring as a social relationship', 'Show that you can explain Garland-Thomson’s account of staring in your own words and connect it to lived experience.', [
+          'Read Staring, pp. 3–59, and watch the author’s short video.',
+          'Choose two short passages (one or two sentences each) that carry the core of her argument.',
+          'For each passage, explain what it claims and why it matters (about 150 words each).',
+          'Describe one staring encounter you have witnessed or been part of, and analyse it with the concepts from both passages (about 200 words).',
+        ], rub(['Accurate account of staring as a social relationship', 4], ['Close explication of the two passages', 3], ['Analysis of a real encounter using the concepts', 3])),
+        P('Field notes: rules of looking in a public place', 'Practise ethnographic observation by recording how looking is managed in one ordinary public setting.', 'Observation protocol (supplied by this course).\n\nChoose a public place where strangers share space: a bus, a waiting room, a café, a gym, a queue. Spend 30–45 minutes there.\n\nRecord, without identifying anyone:\n1. The setting: layout, lighting, where people face, what there is to look at.\n2. Looking behaviour: who looks at whom, how long, what happens when eyes meet, what people do instead of looking (phones, windows, floor).\n3. Breaches: any moment a rule of looking seemed to be broken, and how others responded.\n4. Your own position: how your presence and your looking were received.\n\nEthics: do not photograph people, do not record names or identifying details, and stop if anyone is uncomfortable.', [
+          'Pick the place and time, and note why you chose it.',
+          'Observe for 30–45 minutes, taking dated notes under the four headings in the protocol.',
+          'Write up your notes into a clean field record (500–700 words).',
+          'Finish with a 200-word analysis naming two rules of looking you observed, using course concepts.',
+        ], rub(['Specific, descriptive field notes under all four headings', 8], ['Analysis names and supports two rules of looking', 8], ['Ethical, non-identifying record', 4])),
+        D('Visual essay: who gets looked at?', 'Make a short, public-facing visual essay about one situation where some people are stared at and others are not.', [
+          'Choose a situation (a body, a garment, an assistive device, a place, a practice) where looking is unevenly distributed.',
+          'Gather or make five images that help a reader see the pattern. Use your own photographs, public-domain images, or images you have permission to use; credit every image.',
+          'Write 600–800 words for a general reader, using Garland-Thomson and at least one other module reading.',
+          'Lay out the images and text together as a PDF or web page.',
+        ], rub(['Clear argument about how looking is distributed', 10], ['Images chosen and sequenced to support the argument', 8], ['Accurate use of course readings', 7], ['Writing and layout suitable for a general reader; images credited', 5]), 'A short visual essay showing you can explain how looking works socially, for a general audience.'),
+      ],
+    });
+
+    const m2 = M('Norms, Knowledge and the Politics of Looking', {
+      duration: '2 weeks',
+      overview: 'Who is allowed to look, and who must look away? This module examines looking prohibitions, the claim that identity can be read from appearance, and how visual norms are built into technologies like search engines.',
+      keyIdeas: 'Visual culture divides what can be seen from what cannot (the "division of the sensible"). Claims that a group can be identified on sight turn appearance into supposed evidence. Looking prohibitions are rules about where eyes may go, and they enforce social hierarchies. Algorithms can reproduce racist ways of seeing at scale.',
+      objectives: ['Define a looking prohibition and give an example from everyday life.', 'Explain why "telling by looking" is a social claim rather than a neutral observation.', 'Analyse how a technology can encode a way of seeing.'],
+      selfCheck: ['Can I explain the difference between a looking prohibition and simple politeness?', 'Can I describe one way a search engine or app shapes what I see?', 'Can I state what is at stake in the question "can you tell when you see one?"'],
+      readings: [
+        R('Nicholas Mirzoeff, An Introduction to Visual Culture (2009), pp. 1–20', '', 'Book. Global visual cultures and the division of the sensible.'),
+        R('Daniel A. Segal, "Can You Tell a Jew When You See One?" Judaism 48, no. 2 (1999): 234–241', '', 'Journal article. Appearance, race and the claim to identify people on sight.'),
+        R('Rosemarie Garland-Thomson, Staring (2009), pp. 63–94', '', 'Book. Regulating our looks; looking away and staring back.'),
+        R('Safiya Umoja Noble, Algorithms of Oppression (NYU Press, 2018)', '', 'Book. Optional in full; watch the short talk below.'),
+        R('Safiya Umoja Noble on Algorithms of Oppression (video, 3 min.)', 'https://youtu.be/6KLTpoTpkXo', ''),
+        R('Elizabeth Barret, dir., Stranger with a Camera (2000), 61 min.', '', 'Documentary. A filmmaker’s look at who has the right to film whom. Check your library or Kanopy.'),
+        R('Mimi Thi Nguyen, "The Hoodie as Sign, Screen, Expectation, and Force," Signs 40, no. 4 (2015): 791–816', '', 'Further reading.'),
+      ],
+      assignments: [
+        L('Telling by looking', 'Explain the logic of identifying people "on sight" and its consequences, using Segal and Mirzoeff.', [
+          'Read Segal and Mirzoeff, pp. 1–20.',
+          'In about 250 words, explain what Segal is arguing about the claim to recognise a group by appearance.',
+          'In about 250 words, connect that argument to Mirzoeff’s idea of the division of the sensible.',
+          'Close with one present-day example where "telling by looking" is used to make decisions about people.',
+        ], rub(['Accurate account of Segal’s argument', 4], ['Clear link to Mirzoeff', 3], ['Relevant present-day example', 3])),
+        P('Looking prohibition mini-project', 'Identify and observe how a looking prohibition is enacted in a public space, and analyse it with course concepts for a general audience.', 'Mini-project brief (supplied by this course).\n\nA looking prohibition is a rule, spoken or unspoken, about where people may not look or who may not be looked at: not staring at a person with a visible difference, averting eyes in a locker room, not looking into neighbours’ windows, not filming in certain places.\n\n1. Choose one looking prohibition you can observe in a public or semi-public space.\n2. Observe it in action at least twice, taking notes on how it is taught, kept and broken.\n3. Talk briefly with at least five people (informally, with their agreement) about how they learned the rule and what happens when it is broken. Do not record names.\n4. Write a 600–800-word analysis for a general reader, as a blog post or short article.', [
+          'Choose the prohibition and the place where you will observe it.',
+          'Carry out two observation sessions and the five short conversations.',
+          'Draft the 600–800-word write-up, using at least two module readings.',
+          'Revise for a general reader: a clear opening, concrete examples, and no jargon left unexplained.',
+        ], rub(['Clear identification of a looking prohibition and its setting', 4], ['Evidence from observation and five conversations', 6], ['Analysis using course concepts', 6], ['Writing for a popular audience (600–800 words)', 4])),
+        D('Annotated collection: looking norms in the news', 'Build an annotated collection showing how a looking norm or a way of "telling by looking" appears in current media.', [
+          'Collect six to eight recent news articles, posts or videos that show a looking norm at work (surveillance, profiling, viral staring, image recognition and so on).',
+          'For each item, write a 100–150-word annotation: what is being seen, by whom, and which course concept explains it.',
+          'Write a 300-word introduction stating the pattern across the collection.',
+          'Present the collection as a PDF or web page with full citations and links.',
+        ], rub(['Relevant, varied items with full citations', 8], ['Annotations apply course concepts accurately', 12], ['Introduction states a clear pattern', 6], ['Organised, readable presentation', 4]), 'An annotated media collection showing you can apply visual-culture concepts to current events.'),
+      ],
+    });
+
+    const m3 = M('Expert Visions and Learning to See', {
+      duration: '2 weeks',
+      overview: 'Professionals learn to see in particular ways: archaeologists, police, doctors, casting directors and machine-learning engineers. This module studies how expert vision is taught and how it becomes authoritative.',
+      keyIdeas: 'Professional vision is built through coding schemes, highlighting and graphic representation (Goodwin). Training datasets for computer vision carry hidden classifications and politics (Crawford and Paglen). Design choices encode values; design justice asks who benefits. Technologies such as colour film were calibrated to some bodies and not others.',
+      objectives: ['Explain Goodwin’s three practices of professional vision.', 'Analyse the classifications built into an image dataset or recognition system.', 'Describe the material and discursive sides of an expert way of seeing.'],
+      selfCheck: ['Can I name Goodwin’s three practices and give an example of each?', 'Can I explain why a training dataset is not neutral?', 'Can I describe one way a camera or app was designed around some bodies and not others?'],
+      readings: [
+        R('Charles Goodwin, "Professional Vision," American Anthropologist 96, no. 3 (1994): 606–633', '', 'Journal article. The core reading for this module.'),
+        R('Kate Crawford and Trevor Paglen, "Excavating AI: The Politics of Images in Machine Learning Training Sets" (2019)', 'https://www.excavating.ai', 'Online essay.'),
+        R('Sasha Costanza-Chock, "Design Values: Hard-Coding Liberation?" in Design Justice (2019)', 'https://design-justice.pubpub.org/pub/3h2zq86d', 'Open-access chapter.'),
+        R('Rosemarie Garland-Thomson, Staring (2009), pp. 95–196', '', 'Book. Faces, hands, breasts, bodies, and beholding.'),
+        R('Cristina Grasseni, "Ecologies of Belonging and the Mugshot Aesthetics," Anthrovision 5, no. 2 (2017)', 'https://doi.org/10.4000/anthrovision.2845', 'Further reading.'),
+        R('Vox, Color film was built for white people. Here’s what it did to dark skin. (2015, 5 min.)', 'https://youtu.be/d16LNHIEJzs', ''),
+        R('Trevor Paglen Shows Us How Computers See the World (HBO/Vice News, 2017, 5 min.)', 'https://youtu.be/HEI8cuGKiNk', ''),
+      ],
+      assignments: [
+        L('Professional vision in three moves', 'Show that you understand Goodwin’s framework well enough to use it on a new case.', [
+          'Read Goodwin, "Professional Vision."',
+          'Define coding schemes, highlighting and graphic representations in your own words (about 75 words each).',
+          'Choose one profession not discussed by Goodwin and show all three practices at work in it (about 300 words).',
+        ], rub(['Accurate definitions of the three practices', 4], ['Convincing application to a new profession', 4], ['Clear, concise writing', 2])),
+        P('Material and discursive practices of seeing', 'Identify an expert or vernacular way of seeing and analyse both its material tools and its talk.', 'Mini-project brief (supplied by this course).\n\nChoose an expert or everyday way of seeing you can observe: a real-estate photographer, a nail technician, a referee, a radiographer, a birdwatcher, a dating-app user scrolling profiles.\n\n1. Material dimension: the tools, screens, lighting, forms, charts or software that shape what is seen.\n2. Discursive dimension: the vocabulary, categories and judgements people use to describe what they see.\n3. Observe the practice at least once in person or in a recorded demonstration.\n4. Talk briefly with at least five people who use or are subject to this way of seeing (with their agreement, no names recorded).\n5. Write 600–800 words for a general reader.', [
+          'Choose the way of seeing and arrange your observation.',
+          'Record the material tools and the vocabulary you encounter.',
+          'Hold five short conversations.',
+          'Write the 600–800-word analysis using Goodwin and one other reading.',
+        ], rub(['Clear identification of the way of seeing', 4], ['Material dimension analysed with evidence', 5], ['Discursive dimension analysed with evidence', 5], ['Use of Goodwin and another reading', 3], ['Popular-audience writing', 3])),
+        D('Excavate a classification', 'Produce an illustrated explainer that excavates the categories inside one image-sorting system.', [
+          'Choose a system that sorts images or people visually: a photo app’s automatic albums, a stock-photo site’s tags, a dating-app filter, a content-moderation policy, a public image dataset.',
+          'Document its categories with screenshots or quotations (no private information about other people).',
+          'Analyse what the categories assume, who they misread, and whose vision they reflect, following Crawford and Paglen.',
+          'Present an explainer of 800–1,000 words with annotated images, as a PDF or web page.',
+        ], rub(['Careful documentation of the system’s categories', 8], ['Analysis of assumptions and exclusions', 12], ['Use of Crawford and Paglen and Costanza-Chock', 6], ['Clear, credited visual presentation', 4]), 'An illustrated explainer showing you can analyse the politics of a classification system.'),
+      ],
+    });
+
+    const m4 = M('Vernacular Visions and Family Photographs', {
+      duration: '2 weeks',
+      overview: 'Everyday photography (studio portraits, snapshots, family albums) is where many people learn to see themselves and their nation. This module reads ordinary images as cultural evidence.',
+      keyIdeas: 'Popular photography helped make national modernity visible (Strassler). Amateur photographers work within genres and conventions they rarely notice. Family photographs carry memory across generations and across displacement. Images can be "listened to" for what they register quietly, not only for what they show (Campt).',
+      objectives: ['Identify the conventions of a vernacular photographic genre.', 'Explain how family photographs work as memory and as evidence.', 'Practise close, slow reading of an ordinary image.'],
+      selfCheck: ['Can I name three conventions of a family snapshot?', 'Can I explain what Strassler means by refracted visions?', 'Can I describe what Campt means by listening to images?'],
+      readings: [
+        R('Karen Strassler, Refracted Visions: Popular Photography and National Modernity in Java (Duke, 2010), pp. 1–71 and 165–206', '', 'Book. Introduction, amateur visions, and family documentation.'),
+        R('Tina M. Campt, Listening to Images (Duke, 2017), pp. 1–46', '', 'Book.'),
+        R('Thy Phu, "Unhomed: Domestic Images and the Diasporic Art of Recollection," in Warring Visions: Photography and Vietnam (2022), pp. 147–186', '', 'Book chapter.'),
+        R('Marianne Hirsch, Family Frames: Photography, Narrative, and Postmemory (1997)', '', 'Further reading.'),
+        R('Shirin Malek, "Clickbait Orientalism and Vintage Iranian Snapshots," International Journal of Cultural Studies (2020)', 'https://doi.org/10.1177/1367877920957348', 'Further reading.'),
+      ],
+      assignments: [
+        L('Amateur visions', 'Explain how Strassler reads popular photography as a window onto national modernity.', [
+          'Read Strassler, pp. 1–71.',
+          'In about 250 words, explain what Strassler means by refracted visions.',
+          'In about 250 words, describe two conventions of amateur photography she identifies and what they reveal.',
+        ], rub(['Accurate account of the central argument', 4], ['Two conventions explained with examples', 4], ['Clear writing', 2])),
+        P('Read a family album', 'Analyse a set of vernacular photographs as cultural evidence, attending to genre and convention.', 'Image set (choose one source).\n\nOption A: five photographs from your own family or household, used with the permission of anyone shown.\nOption B: five photographs from a public archive of vernacular images (a library or museum collection of snapshots or studio portraits).\n\nFor each photograph record: occasion, setting, pose and gaze, who holds the camera, what is outside the frame, and how the image was kept (album, wall, phone, box).', [
+          'Choose your image set and confirm permission or the archive’s terms.',
+          'Complete the record for each of the five photographs.',
+          'Write 600–800 words identifying the genre conventions at work and what they say about family, nation or class.',
+          'Use Strassler and at least one other module reading.',
+        ], rub(['Careful record of all five photographs', 6], ['Analysis of genre and convention', 8], ['Use of course readings', 4], ['Permissions and sources noted', 2])),
+        D('Listening to an image', 'Write an image essay in the spirit of Campt, reading one vernacular photograph slowly and closely.', [
+          'Choose one ordinary photograph you are allowed to reproduce.',
+          'Spend time with it over several days and keep notes on what it registers quietly: posture, tension, sound, what is withheld.',
+          'Write a 900–1,200-word essay that moves between close description and the module’s ideas.',
+          'Present the image and essay together with a caption giving its source and date.',
+        ], rub(['Sustained close description', 10], ['Insightful use of Campt and one other reader', 10], ['Essay structure and voice', 6], ['Image presented with proper caption and permission', 4]), 'An image essay showing slow, theoretically informed reading of a vernacular photograph.'),
+      ],
+    });
+
+    const m5 = M('Identity, Documentation and Surveillance', {
+      duration: '2 weeks',
+      overview: 'Identity cards, biometric scans and face recognition turn bodies into records. This module examines how states and platforms document people visually, and how people respond.',
+      keyIdeas: 'Identity photographs make citizens legible to the state (Strassler). Biometric security grew out of a long history of identifying and sorting bodies (Maguire). Surveillance has a racial history (Browne). Generated faces and virtual fitting rooms show how imaging technologies imagine "normal" bodies (Hill and White; Pham).',
+      objectives: ['Explain how identity documents make people visible to institutions.', 'Trace one surveillance technology to an older practice of visual identification.', 'Explain a surveillance concept clearly to someone outside the course.'],
+      selfCheck: ['Can I explain what makes an ID photo different from a portrait?', 'Can I name one historical precursor of face recognition?', 'Can I explain "the surveillance of blackness" in plain language?'],
+      readings: [
+        R('Karen Strassler, Refracted Visions (2010), pp. 123–163', '', 'Book. Identifying citizens.'),
+        R('Mark Maguire, "The Birth of Biometric Security," Anthropology Today 25, no. 2 (2009): 9–14', '', 'Journal article.'),
+        R('Kashmir Hill and Jeremy White, "Designed to Deceive: Do These People Look Real to You?" New York Times, November 21, 2020', 'https://www.nytimes.com/interactive/2020/11/21/science/artificial-intelligence-fake-people-faces.html', 'Interactive article; may require a subscription.'),
+        R('Minh-Ha T. Pham, "Visualizing \'The Misfit\': Virtual Fitting Rooms and the Politics of Technology," American Quarterly 67, no. 1 (2015): 165–188', '', 'Journal article.'),
+        R('Simone Browne, Dark Matters: On the Surveillance of Blackness (Duke, 2015)', '', 'Further reading.'),
+        R('Hasan Elahi, FBI, here I am! (TED, 2011, 14 min.)', '', 'Talk. Search the title on the TED website.'),
+      ],
+      assignments: [
+        L('From mugshot to biometrics', 'Trace the connection between older and newer practices of visual identification.', [
+          'Read Maguire and Strassler, pp. 123–163.',
+          'In about 300 words, explain what Maguire means by the birth of biometric security.',
+          'In about 200 words, connect it to Strassler’s account of identity photographs.',
+        ], rub(['Accurate account of Maguire', 4], ['Meaningful connection to Strassler', 4], ['Clear writing', 2])),
+        P('Anatomy of an identity document', 'Analyse the visual conventions of an identity document and what they require of the person pictured.', 'Document set (supplied by this course).\n\nUse a published specimen, not a real person’s document: most governments and passport offices publish specimen images and photo rules for passports, ID cards and driving licences.\n\nCollect: (1) one specimen document, (2) the official photo requirements for it (pose, expression, background, head covering, glasses, lighting).\n\nDo not upload or share anyone’s real identity document.', [
+          'Find a published specimen and the official photo rules.',
+          'List every visual requirement and what it is meant to secure.',
+          'Write 600–800 words on what the document asks a body to be, and who these rules burden.',
+          'Use Strassler or Maguire and one other reading.',
+        ], rub(['Complete, sourced list of visual requirements', 6], ['Analysis of what the rules demand and whom they burden', 8], ['Use of course readings', 4], ['No real personal documents used', 2])),
+        D('Recorded explainer: how surveillance sees', 'Record a conversation in which you explain a surveillance concept to someone unfamiliar with the course.', [
+          'Choose one concept from the module (biometric security, the surveillance of blackness, generated faces, the "misfit").',
+          'Record a 6–10-minute conversation explaining it to a willing friend or family member, using one concrete example. Get their permission to record.',
+          'Write a 300-word reflection: what was hard to explain, what questions they asked, and what you would change.',
+          'Submit the recording (or a transcript) and the reflection.',
+        ], rub(['Accurate explanation of the concept', 12], ['Effective concrete example', 8], ['Thoughtful reflection on explaining', 6], ['Permission noted; clear recording or transcript', 4]), 'A recorded explainer showing you can teach a visual-culture concept clearly.'),
+      ],
+    });
+
+    const m6 = M('Bearing Witness and Visual Evidence', {
+      duration: '2 weeks',
+      overview: 'Photographs are used as proof in courts, newsrooms and movements. This module asks what makes an image count as evidence, and what it means to bear witness through images.',
+      keyIdeas: 'Images testify, but always within institutions that decide what counts (Strassler, "witnessing history" and "revelatory signs"). Photography creates a civil relation between photographer, photographed and viewer (Azoulay). Perpetrators can also stage images of violence (The Act of Killing). The same photograph can be evidence, propaganda and memorial.',
+      objectives: ['Explain what makes an image function as evidence in a given setting.', 'Describe Azoulay’s idea of a civil contract of photography.', 'Analyse how an image-event circulated and was used.'],
+      selfCheck: ['Can I name the institutions that decide whether an image is evidence?', 'Can I explain the civil contract in two sentences?', 'Can I describe how one image changed meaning as it circulated?'],
+      readings: [
+        R('Karen Strassler, Refracted Visions (2010), pp. 207–300', '', 'Book. Witnessing history, revelatory signs, beyond the paper trace.'),
+        R('Ariella Azoulay, The Civil Contract of Photography (Zone Books, 2008)', '', 'Book. Read the introduction.'),
+        R('Joshua Oppenheimer, dir., The Act of Killing (2013), director’s cut', '', 'Documentary. Long and disturbing; take breaks.'),
+        R('Shawn Michelle Smith, "Afterimages: Abu Ghraib," in At the Edge of Sight: Photography and the Unseen (Duke, 2013), pp. 195–213', '', 'Further reading.'),
+        R('Errol Morris, Believing Is Seeing: Observations on the Mysteries of Photography (2011)', '', 'Further reading.'),
+      ],
+      assignments: [
+        L('The civil contract of photography', 'Explain Azoulay’s argument and test it against a case.', [
+          'Read the introduction to Azoulay.',
+          'In about 300 words, explain the civil contract and who its parties are.',
+          'In about 200 words, apply it to one documentary or news photograph you know well.',
+        ], rub(['Accurate account of Azoulay', 4], ['Convincing application to a case', 4], ['Clear writing', 2])),
+        P('Image as evidence: tracing an image-event', 'Trace how one widely circulated image was used as evidence, and by whom.', 'Case brief (supplied by this course).\n\nChoose one image-event: a photograph or video that circulated widely and was used to prove or disprove something (in a trial, an inquiry, a news story or a campaign).\n\nGather: the image’s origin, its first publication, at least three later uses, and how each user framed what it proved. Use public sources only and cite each one.', [
+          'Choose the image-event and confirm its origin from reliable sources.',
+          'Build a timeline of at least four uses of the image.',
+          'Write 700–900 words on how the image’s evidentiary meaning changed across those uses.',
+          'Use Strassler and Azoulay.',
+        ], rub(['Well-sourced timeline of uses', 6], ['Analysis of shifting evidentiary claims', 8], ['Use of Strassler and Azoulay', 4], ['Accurate citations', 2])),
+        D('Public essay: what counts as visual evidence?', 'Write a public-facing essay arguing a position on images as evidence, drawing across the course so far.', [
+          'Choose a question: Should viral video be trusted? Who has the right to film? When does witnessing become spectacle?',
+          'Draft an essay of 1,000–1,200 words for a general reader, with a clear position.',
+          'Draw on at least three readings from different modules.',
+          'Revise for clarity and include properly credited images if you use any.',
+        ], rub(['Clear, arguable position', 8], ['Synthesis across at least three readings and modules', 10], ['Evidence and examples', 7], ['Writing for a general reader', 5]), 'A public essay showing you can synthesise the course into an argument about visual evidence.'),
+      ],
+    });
+
+    const m7 = M('Critical Visions: Art, Ethnography and Intervention', {
+      duration: '2 weeks',
+      overview: 'The second half of the course moves from analysing ways of seeing to intervening in them. This module introduces artist-ethnographers, public art as critique, and the "unsteady in-between" of art and anthropology.',
+      keyIdeas: 'Artists and anthropologists borrow each other’s methods, and the overlap is productive because it is unsteady. Public art can be a critical language, not decoration (Lacy). False documents and fabricated archives can reveal how documentation works (Chavoya). An implosion exercise unpacks one object into its many relations (Dumit).',
+      objectives: ['Describe how artistic and ethnographic methods can combine.', 'Use an implosion exercise to map the relations around one object.', 'Propose an intervention that makes a dominant way of seeing visible.'],
+      selfCheck: ['Can I name one artist who works ethnographically and what they do?', 'Can I explain the steps of an implosion exercise?', 'Can I state the dominant way of seeing my intervention will target?'],
+      readings: [
+        R('Stephanie Sadre-Orafai, Tate, Kang and McGrath, "Critical Visions and the Unsteady In-Between," American Anthropologist 120, no. 1 (2018): 153–162', '', 'Journal article. The course’s namesake.'),
+        R('Arnd Schneider and Christopher Wright, "The Challenge of Practice," in Contemporary Art and Anthropology (Berg, 2006), pp. 1–28', '', 'Book chapter.'),
+        R('Suzanne Lacy, "Debated Territory: Toward a Critical Language for Public Art," in Mapping the Terrain: New Genre Public Art (1994), pp. 171–185', '', 'Book chapter.'),
+        R('Rosalind Krauss, "Sculpture in the Expanded Field," October 8 (1979): 30–44', 'https://doi.org/10.2307/778224', 'Journal article.'),
+        R('Joseph Dumit, "Writing the Implosion: Teaching the World One Thing at a Time," Cultural Anthropology 29, no. 2 (2014): 344–362', '', 'Journal article. The method for this module’s Apply assignment.'),
+        R('C. Ondine Chavoya, "No-Movies: The Art of False Documents," in Only Skin Deep (2004), pp. 199–203', '', 'Book chapter.'),
+        R('Joan Kee, "Orders of Law in the One Year Performances of Tehching Hsieh," American Art 30, no. 1 (2016): 72–91', 'https://doi.org/10.1086/686549', 'Further reading.'),
+      ],
+      assignments: [
+        L('The unsteady in-between', 'Explain what art and anthropology gain from working together, and where they pull apart.', [
+          'Read Sadre-Orafai et al. and Schneider and Wright.',
+          'In about 250 words, explain what the "unsteady in-between" names.',
+          'In about 250 words, describe one artwork or project that works this way and what it does that a written ethnography could not.',
+        ], rub(['Accurate account of the argument', 4], ['Well-chosen example analysed', 4], ['Clear writing', 2])),
+        P('Implosion exercise', 'Unpack one everyday visual object into the relations that make it what it is.', 'Exercise brief (supplied by this course, after Dumit 2014).\n\nChoose one object involved in seeing: a selfie stick, a security mirror, a passport photo booth, a ring light, a one-way window.\n\nMap its dimensions: material (what it is made of, where), technical, economic, political, historical, bodily, symbolic and educational. For each, write two or three sentences and one source.', [
+          'Choose the object and write a 100-word description.',
+          'Work through each dimension with notes and sources.',
+          'Draw a map or diagram connecting the dimensions.',
+          'Write a 300-word reflection on which relation surprised you and why.',
+        ], rub(['Breadth across dimensions', 6], ['Sources for each dimension', 4], ['Map or diagram that shows connections', 5], ['Reflective insight', 5])),
+        D('Critical Visions project proposal', 'Propose a public intervention that draws attention to the social, historical or cultural construction of a dominant way of seeing.', [
+          'Name the dominant way of seeing you will target and why it matters.',
+          'Gather at least ten images that show it at work (credit each one).',
+          'Write a 350–500-word proposal: the way of seeing, your intervention, its site and audience, materials, and how you will document it.',
+          'Present the proposal and images as one PDF. This becomes the start of your course capstone.',
+        ], rub(['Clear identification of a dominant way of seeing', 8], ['Ten relevant, credited images', 6], ['Feasible, specific intervention plan', 10], ['Grounding in module readings', 6]), 'A project proposal showing you can design a critical visual intervention.'),
+      ],
+    });
+
+    const m8 = M('Land/Water as Method', {
+      duration: '2 weeks',
+      overview: 'Instead of treating land and water as backdrops, these readings think through them: their textures, flows and politics. The module ends in a hand-made zine.',
+      keyIdeas: 'Conceptual displacement: rethink a concept by moving it into another medium, such as seawater (Jue). Affordances: what an environment offers to a body (Gibson). Unruly forms like a pollution plume can be studied through their shape and movement, not only their meaning (Ballestero). Black and Indigenous studies meet at the shoal, a place that is neither land nor sea (King). States simplify landscapes to make them legible (Scott).',
+      objectives: ['Explain conceptual displacement and affordances.', 'Compare how two publications use form, structure and binding.', 'Make a zine that thinks through a land or water form.'],
+      selfCheck: ['Can I explain what Jue means by thinking through seawater?', 'Can I define an affordance with an everyday example?', 'Can I explain what "seeing like a state" means?'],
+      readings: [
+        R('Melody Jue, "Introduction: Thinking through Seawater," in Wild Blue Media (Duke, 2020), pp. 1–33', 'https://www.dukeupress.edu/Assets/PubMaterials/978-1-4780-0697-8_601.pdf', 'Publisher’s free introduction.'),
+        R('James J. Gibson, "The Theory of Affordances," in The Ecological Approach to Visual Perception (1979), pp. 127–137', '', 'Book chapter.'),
+        R('Andrea Ballestero, "The Plume: Movement and Mixture in Subterranean Water Worlds," Fieldsights, September 22, 2020', 'https://culanth.org/fieldsights/the-plume-movement-and-mixture-in-subterranean-water-worlds', 'Short essay.'),
+        R('Tiffany Lethabo King, "Introduction: The Black Shoals," in The Black Shoals (Duke, 2019), pp. 1–34', 'https://www.dukeupress.edu/Assets/PubMaterials/978-1-4780-0636-7_601.pdf', 'Publisher’s free introduction.'),
+        R('Justin Hosbey and J. T. Roane, "A Totally Different Form of Living," Southern Cultures 27, no. 1 (2021): 68–73', 'https://doi.org/10.1353/scu.2021.0009', ''),
+        R('James C. Scott, Seeing Like a State (Yale, 1998), Introduction, pp. 1–10', '', 'Book.'),
+        R('Lucy Walker, dir., Waste Land (2011), 99 min.', '', 'Documentary.'),
+        R('Anna Tsing et al., Feral Atlas: The More-Than-Human Anthropocene (Stanford, 2020)', 'https://doi.org/10.21627/2020fa', 'Case study: a digital publication.'),
+        R('The Center for Land Use Interpretation', 'https://clui.org/section/about-center', 'Case study: an organisation that interprets landscapes.'),
+      ],
+      assignments: [
+        L('Thinking through a medium', 'Explain the methods Jue, Gibson and Ballestero offer for unsettling taken-for-granted categories.', [
+          'Read Jue, Gibson and Ballestero.',
+          'In about 200 words, explain what Jue’s conceptual displacement involves and what it works against.',
+          'In about 150 words, define an affordance with an example of your own.',
+          'In about 150 words, explain how Ballestero’s plume connects to the other two.',
+        ], rub(['Accurate account of Jue', 4], ['Clear definition and example of affordance', 3], ['Connection to Ballestero', 3])),
+        P('Comparative forms', 'Compare how two publications use physical form to carry meaning.', 'Comparison brief (supplied by this course).\n\nChoose two printed or digital publications whose form you find interesting: an artist’s book, a zine, a field guide, an atlas, an exhibition catalogue, a digital publication like Feral Atlas.\n\nFor each record: format and size, binding or navigation, paper or screen, sequence, how images and text relate, and how a reader moves through it. Ignore the content as far as you can; focus on form.', [
+          'Choose two publications and photograph or screenshot their key formal features.',
+          'Complete the record for each.',
+          'Write 500–700 words comparing how each one’s form shapes the reader’s experience.',
+          'Finish with three formal ideas you could borrow for your own zine.',
+        ], rub(['Detailed formal record of both publications', 6], ['Comparative analysis of form and reading experience', 8], ['Three usable ideas for your zine', 4], ['Images of formal features', 2])),
+        D('Land/Water zine', 'Make a zine that thinks through one land or water form using the module’s methods.', [
+          'Choose a land or water form near you (a shoreline, a flood plain, a drainage ditch, a vacant lot, a river crossing).',
+          'Visit it and collect images, textures, notes and short texts.',
+          'Make a maquette (a quick paper model) first, then the finished zine of 8–16 pages.',
+          'Photograph or scan every page and add a 300-word statement on your method and readings.',
+        ], rub(['Thinking through form, not just about it', 10], ['Craft and use of the zine format', 8], ['Grounding in module readings', 6], ['Documentation and statement', 6]), 'A hand-made zine showing you can turn theory into visual, material form.'),
+      ],
+    });
+
+    const m9 = M('Form, Critique and Publication', {
+      duration: '2 weeks',
+      overview: 'Critical visual work improves through critique and comes together in publication. This module covers how books and zines are designed, how to give and receive critique, and how to keep a process book.',
+      keyIdeas: 'Every publication starts with an idea that its form must serve (Mevis). Design is a process of iteration that can be documented as a visual essay. Structured critique separates description, interpretation and judgement. A process book records decisions so they can be explained and defended.',
+      objectives: ['Explain how a publication’s structure serves its idea.', 'Give structured, constructive critique.', 'Document a creative process as a process book.'],
+      selfCheck: ['Can I name the parts of a structured critique?', 'Can I say what idea my own project’s form serves?', 'Can I show the key decisions in my process so far?'],
+      readings: [
+        R('Armand Mevis, "Every Book Starts with an Idea: Notes for Designers," in The Form of the Book Book (Occasional Papers), pp. 85–90', '', 'Book chapter.'),
+        R('Willem Henri Lucas, "Designing a Publication" and "The Design Process + Building a Visual Essay / Process Book," Open Book Experimental Book Workshop (2013)', '', 'Workshop handouts. Search the titles.'),
+        R('Willem Henri Lucas and Jon Sueda, "Binding," Open Book Experimental Book Workshop (2013)', '', 'Workshop handout.'),
+      ],
+      assignments: [
+        L('Form serves the idea', 'Explain how a publication’s form can carry its argument.', [
+          'Read Mevis and the Lucas handouts.',
+          'In about 250 words, explain Mevis’s claim that a book starts with an idea.',
+          'In about 250 words, analyse one publication you own: what is its idea, and how does its form serve it?',
+        ], rub(['Accurate account of Mevis', 4], ['Analysis of a real publication', 4], ['Clear writing', 2])),
+        P('Structured critique', 'Practise giving critique that is specific, generous and useful.', 'Critique protocol (supplied by this course).\n\nChoose one work to critique: a classmate’s or friend’s draft (with their agreement) or a published zine or artist’s book.\n\nWork in four stages:\n1. Describe: what is there, without judgement.\n2. Interpret: what the work seems to be about and how it does it.\n3. Ask: three open questions for the maker.\n4. Suggest: two concrete changes, each tied to something you described.', [
+          'Choose the work and note how you have permission or where it was published.',
+          'Write each of the four stages (600–800 words in all).',
+          'If the maker is available, share the critique and record their response in 100 words.',
+        ], rub(['Description free of judgement', 4], ['Interpretation grounded in description', 5], ['Open, useful questions', 5], ['Concrete, tied suggestions', 6])),
+        D('Process book', 'Assemble a process book documenting how your Critical Visions project developed.', [
+          'Gather notes, sketches, maquettes, drafts, photographs and critique responses from Modules 7–9.',
+          'Sequence them as a visual essay that shows key decisions and why you made them.',
+          'Add short captions and a 300-word opening statement.',
+          'Export as a PDF of 12–24 pages.',
+        ], rub(['Documents key decisions and reasons', 10], ['Sequenced as a readable visual essay', 8], ['Captions and statement', 6], ['Design and finish', 6]), 'A process book showing how you develop and document creative research.'),
+      ],
+    });
+
+    const modules = [m1, m2, m3, m4, m5, m6, m7, m8, m9];
+    const capstone = S.makeCapstone({
+      title: 'Capstone: Critical Visions Intervention and Publication', status: 'ready', weight: 20, createdAt: new Date().toISOString(),
+      overview: 'Design, carry out and publish a critical public intervention into a dominant way of seeing. This brings together the analysis of the first half of the course and the practice of the second.',
+      prepares: {
+        modules: [
+          { id: m1.id, why: 'Staring and the rules of looking give you a way of seeing to target.' },
+          { id: m3.id, why: 'Expert vision and classification show how ways of seeing are built.' },
+          { id: m7.id, why: 'Your project proposal is the starting point.' },
+          { id: m8.id, why: 'Zine-making gives you a publication form.' },
+          { id: m9.id, why: 'Critique and the process book carry you through iteration.' },
+        ],
+        objectives: ['Identify a dominant way of seeing and its social construction.', 'Design and carry out a public intervention.', 'Document and publish the work with a reflective narrative.'],
+        skills: ['Visual analysis', 'Ethnographic observation', 'Public art and intervention', 'Publication design', 'Critique'],
+      },
+      assignments: [A('Critical Visions intervention and publication', '', {
+        kind: 'demonstrate', basis: 'portfolio', points: 100, format: 'any', estimate: '4–6 weeks',
+        purpose: 'Create a public intervention that disrupts or draws attention to the social, historical or cultural construction of a dominant way of seeing, and publish it with documentation and a project narrative.',
+        steps: [
+          'Revise your Module 7 proposal using critique from Module 9.',
+          'Iteration 1: make a first creative version and a first written draft; get critique.',
+          'Iteration 2: revise both; test the intervention in its site if you can.',
+          'Iteration 3: an in-situ critique of the near-final work in its real setting.',
+          'Carry out the intervention and document it thoroughly (photographs, video, audience responses).',
+          'Write a 500–750-word project narrative: the way of seeing, your intervention, what happened, and what it showed.',
+          'Lay out documentation and narrative as a publication spread or zine, and present it (live or recorded, 5–8 minutes).',
+        ],
+        submit: 'A PDF of the publication spread or zine, including documentation and the project narrative, plus the presentation (file or link).',
+        rubric: rub(['Originality of the creative work', 30], ['Nuance of the critique of a way of seeing', 30], ['Rigour of the accompanying research', 25], ['Documentation, publication and presentation', 15]),
+        portfolioNote: 'The course’s culminating project: a documented, published critical visual intervention.',
+      })],
+    });
+
+    return C('ANTH 101', 'Cultural Anthropology', 5,
+      'An introduction to visual anthropology: how seeing is shaped by culture, power and history, and how artists and anthropologists intervene in dominant ways of seeing.',
+      modules, {
+        objective: 'Analyse seeing as a socially situated, culturally variable and historically specific practice, and make critical visual work that intervenes in it.',
+        deliverable: 'A documented, published Critical Visions intervention into a dominant way of seeing (the course capstone).',
+        duration: '18 weeks',
+        outcomes: [
+          'Explain how dominant ways of seeing rank social differences such as race, gender, sexuality and ability.',
+          'Read visual forms and practices critically, as culturally variable, historically specific and unequal in their effects.',
+          'Use ethnographic methods, including observation, interviews and visual and discursive analysis.',
+          'Write about visual culture for both academic and general readers.',
+          'Design, critique and publish creative work that intervenes in a way of seeing.',
+        ],
+        syllabus: 'Modules 1–6 study seeing as social practice: staring, looking norms, expert vision, vernacular photography, surveillance and visual evidence. Modules 7–9 turn to critical visual practice: art and ethnography, land and water as method, and publication. Each module has a Learn assignment (10 points), an Apply assignment (20 points) and a Demonstrate portfolio piece (30 points). The capstone counts for 20% of the course grade.\n\nReadings are cited, not reproduced. Find books and articles through a library; links are given where the publisher, journal or author makes the text available.\n\nFieldwork ethics: never photograph or record people without permission, never record names in field notes, and never share anyone’s real identity documents.',
+        capstone,
+      });
+  }
+
   S.starterCourses = () => [
-    C('ANTH 101', 'Cultural Anthropology', 5,
-      'An introduction to how culture shapes human life, and how anthropologists study and write about difference.',
-      [M('Critical Visions', { overview: 'Describe what this module covers and why it matters to your study of culture.' })]),
+    anthropologyCourse(),
     C('FIN 101', 'Financial Freedom', 3,
       'Build the knowledge and habits to create, protect, and grow your own financial independence.',
       [M('Asset Creation', { overview: 'How assets are created, and the first moves toward owning them.' }),
