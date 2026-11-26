@@ -30,7 +30,7 @@
         h('div', {}, h('b', {}, 'Design'), THEME_NAME[c.designTheme] || 'Sovereign'),
         h('div', {}, h('b', {}, 'Format'), sz.label)));
     const body = h('main', { class: 'pub-body' }, ...doc.nodes, h('div', { class: 'colophon' },
-      h('span', { class: 'mark' }, 'sovereign.'), h('p', {}, 'Learn. Apply. Demonstrate. This document was generated on your device from your own course record' + (doc.colophon ? '. ' + doc.colophon : '.') + ' It is not an official transcript or a credential from any institution.')));
+      h('span', { class: 'mark' }, 'sovereign.'), h('p', {}, 'Learn. Apply. Demonstrate. This document was generated on your device from your own course record' + (doc.colophon ? '. ' + doc.colophon + '.' : '.') + ' It is not an official transcript or a credential from any institution.')));
     const esc = (s) => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/[<>&]/g, (ch) => '\\' + ch.charCodeAt(0).toString(16) + ' ').replace(/[ \r\n]+/g, ' '); // a CSS string: a title can never close the <style> block
     const th = c.designTheme, sans = '"Segoe UI", Arial, sans-serif', serif = 'Georgia, "Times New Roman", serif';
     // Each design has its own running footer (all 8pt or larger, contrast above 4.5:1): where the title sits and how the page number looks.
@@ -206,8 +206,7 @@
     } else {
       g.push(h('p', {}, 'Your current grade is the points you have earned divided by the points possible across the assignments that have a score.'));
     }
-    g.push(h('div', { class: 'callout' }, h('b', {}, 'AI review and revision. '), 'If you send work for AI review, you get detailed feedback first with no grade. You then have ' + S.REVIEW_HOURS + ' hours to improve and resubmit for your final grade; if you do not, the first review becomes your grade.'));
-    g.push(h('p', {}, 'Reviews are produced by an AI and are automated assessments, not human grades. Letter equivalents, where shown, use a common scale and accompany the points; they never replace them.'));
+    g.push(h('p', {}, 'Letter equivalents, where shown, use a common scale and accompany the points; they never replace them.'));
     nodes.push(sec(n(), 'Grading policy', ...g));
 
     // Credentials

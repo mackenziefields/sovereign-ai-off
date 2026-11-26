@@ -1,5 +1,5 @@
-/* sovereign. — the course capstone on the Modules page (Phase 3-3): create with a preview, finish if incomplete, open, remove.
-   Data and AI calls live in store.js (course.capstone, S.courseGrade) and ai-client.js (ai.draftCapstone / adoptCapstone / finishCapstone / createCapstone). */
+/* sovereign. (AI-off copy) — the course capstone on the Modules page: open it, see what prepares you, remove it.
+   Data lives in store.js (course.capstone, S.courseGrade). In this copy you write a capstone yourself (no AI step): it counts 20% of the course grade once you assess it. */
 (function (S) {
   'use strict';
   const { h, badge, toast, commit } = S;
@@ -21,7 +21,7 @@
       h('p', { class: 'small muted' }, 'These are recommendations, not requirements. You can open and start the capstone at any time.'));
   };
 
-  const workText = (a) => { const w = a.work; return !w ? 'Not started' : w.phase === 'reviewed' ? 'Feedback ready: you can resubmit for your final grade' : w.final && w.final.feedback ? 'Graded: ' + a.score + ' / ' + a.points : 'Submitted'; };
+  const workText = (a) => { const w = a.work; return !w ? 'Not started' : w.phase === 'reviewed' ? 'Imported first version: submit your revised work' : S.assess.status(a); };
 
   // What the course grade is now and what changes. Plain words; nothing is hidden.
   U.gradeNote = function (c, weight) {
@@ -32,46 +32,6 @@
       h('p', { class: 'small muted' }, mod ? 'Right now your module average is ' + pct(mod.pct) + '. Adding a capstone changes nothing you have already earned; it only adds the capstone as a part of the final result.' : 'No module assignments are graded yet, so there is nothing to change yet.'));
   };
 
-  function preview(c, r) {
-    const cap = r.draft.cap, a = cap.assignments[0];
-    return h('div', { class: 'cap-preview panel', role: 'region', 'aria-label': 'Capstone preview' },
-      h('p', { class: 'eyebrow' }, 'Preview: not saved yet'),
-      h('h3', { class: 'cap-title' }, a.title),
-      a.portfolioNote ? h('p', { class: 'lede' }, a.portfolioNote) : null,
-      h('p', { class: 'pre' }, a.description),
-      h('p', { class: 'cap-k' }, 'What you will submit'), h('p', {}, a.submit || 'See the instructions.'),
-      a.parts.length ? h('div', {}, h('p', { class: 'cap-k' }, 'Phases of the work'), h('ol', { class: 'plain' }, a.parts.map((p) => h('li', {}, p.title)))) : null,
-      h('p', { class: 'cap-k' }, 'Weighted rubric (' + a.points + ' points)'),
-      h('ul', { class: 'plain' }, a.rubric.map((k) => h('li', {}, k.name + ' — ' + k.max + ' pts'))),
-      a.packet && a.packet.plan.length ? h('div', {}, h('p', { class: 'cap-k' }, 'Supplied exhibits (written after you accept)'), h('ul', { class: 'plain' }, a.packet.plan.map((x) => h('li', {}, x.title + ' (' + x.type + ')')))) : null,
-      U.prep(c, cap),
-      U.gradeNote(c, cap.weight),
-      h('div', { class: 'btn-row' },
-        h('button', { class: 'btn', type: 'button', onclick: () => accept(c) }, 'Add this capstone to the course'),
-        h('button', { class: 'btn ghost', type: 'button', onclick: () => draft(c) }, 'Write a different one'),
-        h('button', { class: 'btn ghost', type: 'button', onclick: () => { run[c.id] = null; S.render(false); } }, 'Discard')));
-  }
-
-  async function draft(c) {
-    const r = get(c); Object.assign(r, { state: 'working', draft: null, msg: 'Writing a capstone from your modules…', error: '' }); S.render(false);
-    try { const d = await S.ai.draftCapstone(c, {}); if (!alive(c)) return; Object.assign(r, { state: 'preview', draft: d, msg: '' }); }
-    catch (e) { Object.assign(r, { state: 'idle', draft: null, msg: '', error: e.message || 'The capstone could not be written.' }); }
-    S.render(false);
-  }
-  async function accept(c) {
-    const r = get(c);
-    try { S.ai.adoptCapstone(c, r.draft); } catch (e) { r.error = e.message; r.state = 'idle'; S.render(false); return; }
-    Object.assign(r, { state: 'finishing', msg: 'Building the capstone’s exhibits…', error: '' }); S.render(false);
-    try { const f = await S.ai.finishCapstone(c, { onStep: (t) => { r.msg = t; S.render(false); } }); toast(f.ok ? 'Capstone added.' : 'Capstone saved, but it is not finished yet.'); }
-    catch (e) { r.error = e.message; }
-    Object.assign(r, { state: 'idle', draft: null, msg: '' }); S.render(false);
-  }
-  async function finish(c) {
-    const r = get(c); Object.assign(r, { state: 'finishing', msg: 'Finishing the capstone…', error: '' }); S.render(false);
-    try { const f = await S.ai.createCapstone(c, { onStep: (t) => { r.msg = t; S.render(false); } }); toast(f.ok ? 'Capstone finished.' : 'Still not finished: see the note.'); }
-    catch (e) { r.error = e.message; }
-    Object.assign(r, { state: 'idle', msg: '' }); S.render(false);
-  }
   function remove(c) {
     const a = c.capstone && c.capstone.assignments[0];
     if (a && a.work) return toast('A capstone with submitted work cannot be removed.');
@@ -79,33 +39,42 @@
     delete c.capstone; run[c.id] = null; commit(); toast('Capstone removed.');
   }
 
+  // AI-off copy: write a capstone yourself. One assignment, kept outside the modules, counting 20% of the course grade once you assess it.
+  function addSection(c) {
+    return h('section', { class: 'home-sec cap-sec', 'aria-label': 'Course capstone' },
+      h('div', { class: 'section-head' }, h('h2', {}, 'Course capstone'), h('span', { class: 'count' }, 'Optional')),
+      h('details', { class: 'cap-card' }, h('summary', {}, 'Add a course capstone'),
+        h('p', { class: 'small muted' }, 'A culminating project you write yourself. Once you have assessed it, it counts 20% of your course grade and your module average counts 80%. Until then your course grade is your module average, labelled provisional.'),
+        h('form', { onsubmit: (e) => { e.preventDefault(); create(c, new FormData(e.target)); } },
+          S.field('Title', 'title', { required: true, placeholder: 'e.g. A public-facing case study' }),
+          S.field('What to make', 'description', { multiline: true, rows: 4, required: true }),
+          S.field('Rubric (optional)', 'rubric', { multiline: true, rows: 4, hint: 'One criterion per line, with its points after a vertical bar, for example “Uses evidence from the readings | 30”. Without a rubric you give one overall score.' }),
+          S.field('Points', 'points', { type: 'number', value: '100', hint: 'With a rubric, leave this empty to use the rubric total.' }),
+          h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'submit' }, 'Add the capstone')))));
+  }
+  function create(c, f) {
+    const lines = String(f.get('rubric') || '').split('\n').map((l) => l.trim()).filter(Boolean).slice(0, 10);
+    const rubric = lines.map((l) => { const m = l.match(/^(.+?)\s*\|\s*(\d+(?:\.\d+)?)$/); return m && Number(m[2]) > 0 ? { name: m[1].slice(0, 200), max: Number(m[2]) } : null; });
+    if (rubric.some((x) => !x)) return toast('Each rubric line needs a criterion, a vertical bar and its points, like “Clear argument | 25”.');
+    const total = rubric.reduce((t, k) => t + k.max, 0), p = Number(f.get('points')), pts = p > 0 ? p : total || 100;
+    c.capstone = S.makeCapstone({ title: 'Course capstone', status: 'ready', weight: 20, createdAt: new Date().toISOString(), note: 'Written by the learner.',
+      assignments: [{ id: S.uid(), title: String(f.get('title') || '').trim() || 'Course capstone', description: String(f.get('description') || '').trim(), points: pts, rubric, kind: 'demonstrate', capstone: true, origin: 'user', format: 'any', basis: 'portfolio' }] });
+    commit(); toast('Capstone added. It counts 20% of your course grade once you assess it.');
+  }
+
   U.section = function (c) {
-    const r = get(c), cap = c.capstone, a = cap && cap.assignments[0], ready = S.ai && S.ai.ready && S.ai.ready();
+    const r = get(c), cap = c.capstone, a = cap && cap.assignments[0];
     const sec = (...k) => h('section', { class: 'home-sec cap-sec', 'aria-label': 'Course capstone' },
       h('div', { class: 'section-head' }, h('h2', {}, 'Course capstone'), cap && cap.status === 'ready' ? h('span', { class: 'count' }, 'Counts ' + cap.weight + '% of the course grade') : h('span', { class: 'count' }, 'Culminating project')), ...k);
-    const busy = r.state === 'working' || r.state === 'finishing';
-    const status = busy ? h('p', { class: 'small', role: 'status' }, r.msg) : null;
     const err = r.error ? h('p', { class: 'small cap-err', role: 'alert' }, r.error) : null;
-    if (busy && !cap) return sec(status);
-    if (r.state === 'preview') return sec(preview(c, r));
-    if (!cap) {
-      if (!c.modules.length) return null;
-      return sec(
-        h('p', { class: 'muted' }, 'A capstone is one substantial, portfolio-worthy project that brings together ideas from across this course. The AI writes it from your modules, with full instructions, supplied exhibits, a weighted rubric and a place to submit. You see a preview first, and nothing is added until you accept.'),
-        ready ? null : h('p', { class: 'small' }, 'Connect the AI service first (', h('a', { href: '#/data' }, 'Data & Backup'), ').'),
-        err,
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', disabled: !ready, onclick: () => draft(c) }, 'Create a capstone')));
-    }
+    if (!cap) return addSection(c);
     if (cap.status !== 'ready') {
       return sec(
         h('div', { class: 'cap-card cap-incomplete' }, h('p', {}, badge('Incomplete', ''), ' ', h('b', {}, a ? a.title : 'Course capstone')),
           h('p', { class: 'small' }, cap.note || 'The capstone was not finished.'),
           h('p', { class: 'small muted' }, 'It is not available to submit to and does not affect your course grade until it is finished.')),
-        status, err,
-        h('div', { class: 'btn-row' },
-          h('button', { class: 'btn', type: 'button', disabled: busy || !ready, onclick: () => finish(c) }, 'Finish the capstone'),
-          h('button', { class: 'btn ghost', type: 'button', disabled: busy, onclick: () => remove(c) }, 'Remove it')),
-        ready ? null : h('p', { class: 'small' }, 'Connect the AI service first (', h('a', { href: '#/data' }, 'Data & Backup'), ').'));
+        err,
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn ghost', type: 'button', onclick: () => remove(c) }, 'Remove it')));
     }
     const g = S.courseGrade(c);
     return sec(

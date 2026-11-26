@@ -154,48 +154,15 @@
   }
 
   function panel(c, m, a) {
-    const ex = a.exhibits || [], st = flow.get(a.id) || {}, pk = a.packet, nodes = [];
-    const ready = S.ai && S.ai.ready && S.ai.ready();
-    const rerender = () => S.render(false);
-    const request = async (notes) => {
-      if (!ready) { S.toast('Add the AI service address and access code first (Data & Backup, AI).'); return; }
-      flow.set(a.id, { phase: 'busy', notes }); rerender();
-      try { const draft = await S.ai.draftPacket(c, m, a, { notes }); flow.set(a.id, { phase: 'preview', draft, notes }); }
-      catch (e) { flow.set(a.id, { phase: 'error', error: e.message, notes }); }
-      rerender();
-    };
-    if (st.phase === 'busy') { nodes.push(h('div', { class: 'ex-banner', role: 'status' }, h('p', {}, h('b', {}, 'Building the exhibits… '), 'This can take a minute. Nothing is saved until you approve it.'))); return nodes; }
-    if (st.phase === 'preview') {
-      const d = st.draft, fig = a.materials ? missingFigures(a, d) : null, upgrade = !ex.length && !!a.materials, miss = (fig && fig.missing) || [], needAck = !!(miss.length || a.work); let approve = null;
-      nodes.push(h('div', { class: 'ex-banner', role: 'region', 'aria-label': 'Preview of proposed exhibits' },
-        h('p', {}, h('b', {}, 'Preview. '), 'These exhibits are not saved yet. Approving them adds a packet to this assignment. Your instructions, steps, grading criteria, supplied text' + (a.work ? ', submitted work, grade and feedback' : '') + ' are not changed.'),
-        a.work ? h('p', {}, h('b', {}, 'You have already submitted work. '), 'It was written against the original text. Check that these exhibits match what you used. Existing feedback and grades will not change.') : null,
-        fig && fig.total ? h('p', {}, 'Figures from your existing materials: ' + (fig.total - fig.missing.length) + ' of ' + fig.total + ' appear in the exhibits' + (fig.missing.length ? '. Not found: ' + fig.missing.slice(0, 8).join(', ') + '. Check whether that matters.' : '.')) : null));
-      if (d.dropped.length) nodes.push(h('div', { class: 'ex-banner warn' }, h('p', {}, h('b', {}, d.dropped.length + ' exhibit' + (d.dropped.length === 1 ? ' was' : 's were') + ' rejected by the checks and ' + (d.dropped.length === 1 ? 'is' : 'are') + ' not shown. '), 'Nothing was repaired or filled in.'), h('ul', { class: 'plain' }, d.dropped.slice(0, 6).map((x) => h('li', {}, (x.id ? 'Exhibit ' + x.id + ' ' : '') + '“' + x.title + '”: ' + x.reason)))));
-      nodes.push(d.exhibits.length ? packet(d.exhibits, { key: 'draft-' + a.id }) : h('p', { class: 'empty' }, 'No exhibit passed the checks. You can try again.'));
-      const notes = h('textarea', { rows: '2', 'aria-label': 'Notes for the AI when regenerating', placeholder: 'Optional notes for another try, for example: make the dataset messier, add a landlord table, shorten the memo.', style: 'width:100%;margin-top:.8rem' }, st.notes || '');
-      if (needAck) nodes.push(h('div', { class: 'ex-banner warn', role: 'region', 'aria-label': 'Differences from the original text' }, h('p', {}, h('b', {}, miss.length ? 'These exhibits do not fully match your original text. ' : 'You have already submitted work on this assignment. '), (miss.length ? miss.length + ' figure' + (miss.length === 1 ? '' : 's') + ' from the original (' + miss.slice(0, 8).join(', ') + (miss.length > 8 ? ', …' : '') + ') could not be found in them. ' : 'Please confirm the exhibits match the material you worked from. ') + 'If you approve, the exhibits become what the assignment shows, but your original text is kept and stays available under the exhibits, and nothing is deleted. Do not approve if your submitted work or grade depends on the original figures.'),
-        h('label', { class: 'consent' }, h('input', { type: 'checkbox', onchange: (e) => { if (approve) approve.disabled = !d.exhibits.length || !e.target.checked; } }), h('span', {}, 'I have compared them and want these exhibits to replace the original presentation.'))));
-      nodes.push(h('div', { class: 'ex-bar-actions' },
-        (approve = h('button', { class: 'btn', type: 'button', disabled: !d.exhibits.length || needAck, onclick: () => { try { const state = S.ai.savePacket(c, a, d, { upgraded: upgrade }); flow.delete(a.id); S.toast(state === 'ready' ? 'Exhibits added.' : 'Exhibits added, but the packet is still marked incomplete.'); S.commit(); } catch (e) { S.toast(e.message); } } }, 'Approve and add these exhibits')),
-        h('button', { class: 'btn ghost', type: 'button', onclick: () => request(notes.value.trim().slice(0, 400)) }, 'Regenerate'),
-        h('button', { class: 'linkbtn', type: 'button', onclick: () => { flow.delete(a.id); rerender(); } }, 'Discard')), notes);
-      return nodes;
-    }
-    if (st.phase === 'error') nodes.push(h('div', { class: 'ex-banner warn', role: 'alert' }, h('p', {}, h('b', {}, 'The exhibits could not be built. '), st.error), h('button', { class: 'linkbtn', type: 'button', onclick: () => { flow.delete(a.id); rerender(); } }, 'Dismiss')));
+    const ex = a.exhibits || [], pk = a.packet, nodes = [];
     const needs = S.exhibits.needsPacket(a), status = S.exhibits.packetStatus(a);
     if (ex.length) {
-      if (pk && (pk.state === 'incomplete' || status === 'incomplete')) nodes.push(h('div', { class: 'ex-banner warn', role: 'status' }, h('p', {}, h('b', {}, 'This materials packet is incomplete. '), (pk && pk.note) || 'An exhibit that the instructions refer to is missing.'), h('button', { class: 'btn small ghost', type: 'button', onclick: () => request('') }, 'Rebuild the exhibits with AI')));
+      if (pk && (pk.state === 'incomplete' || status === 'incomplete')) nodes.push(h('div', { class: 'ex-banner warn', role: 'status' }, h('p', {}, h('b', {}, 'This materials packet is incomplete. '), (pk && pk.note) || 'An exhibit that the instructions refer to is missing.')));
       nodes.push(packet(ex, { key: a.id }));
       nodes.push(h('div', { class: 'ex-actions' },
-        h('button', { class: 'linkbtn', type: 'button', onclick: () => { const n = window.prompt('Anything to change? For example: add a second table, make the data messier. Leave blank to rebuild as before.'); if (n !== null) request(n.trim().slice(0, 400)); } }, 'Rebuild or customize with AI'),
-        h('button', { class: 'linkbtn', type: 'button', onclick: () => { if (window.confirm('Remove this packet? Your instructions, supplied text and any submitted work are not affected.')) { S.ai.removePacket(a); S.toast('Exhibits removed.'); S.commit(); } } }, 'Remove the exhibits')));
+        h('button', { class: 'linkbtn', type: 'button', onclick: () => { if (window.confirm('Remove these exhibits? Your instructions, supplied text and any submitted work are not affected.')) { S.ai.removePacket(a); S.toast('Exhibits removed.'); S.commit(); } } }, 'Remove the exhibits')));
     } else if (needs || (pk && pk.state)) {
-      nodes.push(h('div', { class: 'ex-banner warn', role: 'status' }, h('p', {}, h('b', {}, 'The exhibits for this assignment have not been built. '), (pk && pk.note) || 'The assignment refers to supplied materials, such as a document or data, that are not here yet.'),
-        h('button', { class: 'btn small', type: 'button', onclick: () => request('') }, 'Build the exhibits with AI')));
-    } else if (!a.realEvidence && a.kind !== 'learn' && a.basis !== 'readings') {
-      nodes.push(h('div', { class: 'ex-banner' }, h('p', {}, h('b', {}, 'Upgrade to an evidence packet. '), 'The AI can add documents, tables, timelines and charts to this assignment. You see a preview first, and only your approval saves anything. Nothing you wrote or submitted is changed.'),
-        h('button', { class: 'btn small ghost', type: 'button', onclick: () => request('') }, 'Preview an evidence packet')));
+      nodes.push(h('div', { class: 'ex-banner warn', role: 'status' }, h('p', {}, h('b', {}, 'Some supplied materials are missing. '), (pk && pk.note) || 'The instructions refer to a document or data that was never added to this assignment. Work from the text that is here, or add what you need with Edit.')));
     }
     return nodes;
   }

@@ -169,6 +169,38 @@
       criteria: arr(x.criteria, 10).map((k) => { k = obj(k); return { name: str(k.name, 200) || 'Criterion', max: num(k.max) || 0, score: num(k.score) || 0, status: inList(k.status, ['met', 'partly', 'not-met', 'not-assessed', ''], ''), assessed: k.assessed !== false, comment: str(k.comment, 400) }; }),
       findings: arr(x.findings, 14).map((f) => { f = obj(f); return { type: inList(f.type, S.FINDING_TYPES, 'optional'), criterion: str(f.criterion, 200), claim: str(f.claim, 700), quote: str(f.quote, 300), where: str(f.where, 120), located: f.located === true ? true : f.located === false ? false : null, fix: str(f.fix, 400) }; }).filter((f) => f.claim) };
   }
+  // Guided Assessment Studio (AI-off copy, js/assess.js): every submitted version with the learner's own highlights, rubric judgments and revision goals.
+  // Scores are the learner's own; the app only adds them up. Older records without it are rebuilt from a.work when first opened.
+  function normStudio(x) {
+    x = obj(x);
+    const vs = arr(x.versions, 12).map((v) => {
+      v = obj(v); if (!v.at) return null;
+      const as = v.assessment && typeof v.assessment === 'object' ? v.assessment : null;
+      return { at: str(v.at, 40), late: v.late === true, text: str(v.text, 30000), fileId: str(v.fileId, 60), fileName: str(v.fileName, 200), fileType: str(v.fileType, 100), fileSize: num(v.fileSize) || 0, imported: v.imported === true, note: str(v.note, 1000),
+        highlights: arr(v.highlights, 60).map((k) => { k = obj(k); const s = num(k.start), e = num(k.end), ok = s != null && e != null && e > s; return { id: str(k.id, 40) || S.uid(), kind: k.kind === 'strength' ? 'strength' : 'revise', start: ok ? s : null, end: ok ? e : null, quote: str(k.quote, 1000), note: str(k.note, 500) }; }).filter((k) => k.quote),
+        assessment: as ? { startedAt: str(as.startedAt, 40), completedAt: str(as.completedAt, 40), overall: str(as.overall, 3000),
+          criteria: arr(as.criteria, 10).map((k) => { k = obj(k); const mx = num(k.max) || 0; let sc = num(k.score); if (sc != null && sc > mx) sc = null; return { name: str(k.name, 200) || 'Criterion', max: mx, score: mx > 0 ? sc : null, reason: str(k.reason, 2000), evidence: str(k.evidence, 2000), improve: k.improve === true }; }) } : null,
+        goals: arr(v.goals, 12).map((g) => { g = obj(g); return { id: str(g.id, 40) || S.uid(), text: str(g.text, 500), criterion: str(g.criterion, 200), status: inList(g.status, ['open', 'addressed', 'partly', 'not'], 'open') }; }) };
+    }).filter(Boolean).map((v, i) => ({ n: i + 1, ...v }));
+    if (!vs.length) return null;
+    const r = x.recorded && typeof x.recorded === 'object' ? x.recorded : null, fv = num(x.finalV), okF = fv >= 1 && fv <= vs.length && Math.round(fv) === fv;
+    return { versions: vs,
+      recorded: r && num(r.score) != null ? { v: num(r.v) || 0, score: num(r.score), points: num(r.points), total: num(r.total), max: num(r.max), kind: r.kind === 'imported' ? 'imported' : 'self', at: str(r.at, 40), final: r.final === true } : null,
+      finalV: okF ? fv : 0, finalizedAt: okF ? str(x.finalizedAt, 40) : '',
+      log: arr(x.log, 80).map((l) => { l = obj(l); return { at: str(l.at, 40), what: str(l.what, 300) }; }).filter((l) => l.at && l.what) };
+  }
+  // Practice & Reflection (AI-off copy, js/practice.js): ungraded practice work, a focus, a checklist and a reflection. Never part of a grade.
+  function normPractice(x) {
+    x = obj(x);
+    const es = arr(x.entries, 30).map((e) => {
+      e = obj(e); if (!e.at) return null;
+      const f = obj(e.focus);
+      return { id: str(e.id, 40) || S.uid(), at: str(e.at, 40), updatedAt: str(e.updatedAt, 40), focus: { kind: inList(f.kind, ['criterion', 'goal', ''], ''), label: str(f.label, 500) },
+        work: str(e.work, 10000), fileId: str(e.fileId, 60), fileName: str(e.fileName, 200), fileType: str(e.fileType, 100), fileSize: num(e.fileSize) || 0, reflection: str(e.reflection, 5000),
+        checklist: arr(e.checklist, 20).map((k) => { k = obj(k); return { id: str(k.id, 40) || S.uid(), text: str(k.text, 300), done: k.done === true }; }) };
+    }).filter(Boolean);
+    return es.length ? { entries: es } : null;
+  }
   function normWork(w) {
     w = obj(w);
     const first = normSub(w.first), final = normSub(w.final);
@@ -219,8 +251,8 @@
       extras: arr(m.extras, 50).map((x) => { x = obj(x); return { id: id(x.id), title: str(x.title, 200) || 'Untitled section', body: str(x.body) }; }),
       assignments: arr(m.assignments).map((a) => {
         a = obj(a);
-        return { id: id(a.id), title: str(a.title, 300) || 'Untitled assignment', description: str(a.description), due: S.validDate(str(a.due, 10)), points: num(a.points), score: num(a.score), done: a.done === true, kind: ['learn', 'apply', 'demonstrate'].includes(a.kind) ? a.kind : '', origin: a.origin === 'ai' ? 'ai' : 'user', locked: a.locked === true && !!S.validDate(str(a.due, 10)), rubric: normRubric(a.rubric), work: normWork(a.work),
-          purpose: str(a.purpose, 2000), materials: str(a.materials, 6000), steps: strs(a.steps, 12, 500), format: ['text', 'pdf', 'image', 'file', 'any'].includes(a.format) ? a.format : '', basis: ['readings', 'scenario', 'portfolio'].includes(a.basis) ? a.basis : '', portfolioNote: str(a.portfolioNote, 500), realEvidence: a.realEvidence === true, evidence: (a.evidence && typeof a.evidence === 'object' && ['verified', 'needed'].includes(a.evidence.status)) ? { status: a.evidence.status, sources: (Array.isArray(a.evidence.sources) ? a.evidence.sources : []).slice(0, 8).map((s) => ({ title: str(s && s.title, 300), url: url(s && s.url) })).filter((s) => s.title) } : null, portfolio: a.portfolio === true, ...(a.capstone === true ? { capstone: true } : {}), office: normOffice(a.office), ...(a.myData ? (() => { const md = normMyData(a.myData); return md ? { myData: md } : {}; })() : {}), revisions: normRevisions(a.revisions), exhibits: S.exhibits.sanitize(a.exhibits).exhibits, packet: normPacket(a.packet),
+        return { id: id(a.id), title: str(a.title, 300) || 'Untitled assignment', description: str(a.description), due: S.validDate(str(a.due, 10)), points: num(a.points), score: num(a.score), done: a.done === true, kind: ['learn', 'apply', 'demonstrate'].includes(a.kind) ? a.kind : '', origin: a.origin === 'ai' ? 'ai' : 'user', locked: a.locked === true && !!S.validDate(str(a.due, 10)), rubric: normRubric(a.rubric), work: normWork(a.work), ...(a.studio ? (() => { const st = normStudio(a.studio); return st ? { studio: st } : {}; })() : {}),
+          purpose: str(a.purpose, 2000), materials: str(a.materials, 6000), steps: strs(a.steps, 12, 500), format: ['text', 'pdf', 'image', 'file', 'any'].includes(a.format) ? a.format : '', basis: ['readings', 'scenario', 'portfolio'].includes(a.basis) ? a.basis : '', portfolioNote: str(a.portfolioNote, 500), realEvidence: a.realEvidence === true, evidence: (a.evidence && typeof a.evidence === 'object' && ['verified', 'needed'].includes(a.evidence.status)) ? { status: a.evidence.status, sources: (Array.isArray(a.evidence.sources) ? a.evidence.sources : []).slice(0, 8).map((s) => ({ title: str(s && s.title, 300), url: url(s && s.url) })).filter((s) => s.title) } : null, portfolio: a.portfolio === true, ...(a.capstone === true ? { capstone: true } : {}), office: normOffice(a.office), ...(a.practice ? (() => { const p = normPractice(a.practice); return p ? { practice: p } : {}; })() : {}), ...(a.myData ? (() => { const md = normMyData(a.myData); return md ? { myData: md } : {}; })() : {}), revisions: normRevisions(a.revisions), exhibits: S.exhibits.sanitize(a.exhibits).exhibits, packet: normPacket(a.packet),
           parts: arr(a.parts, 8).map((p) => { p = obj(p); return { title: str(p.title, 120).trim(), questions: strs(p.questions, 8, 500) }; }).filter((p) => p.title || p.questions.length), submit: str(a.submit, 1000), criteria: strs(a.criteria, 8, 300), estimate: str(a.estimate, 60) };
       }),
     };
@@ -390,11 +422,9 @@
 
   /* ----- submissions: review rounds, the 72-hour window, and finalizing ----- */
 
-  S.REVIEW_HOURS = 72;
+  S.IMPORTED_WINDOW_HOURS = 72; // the full app's resubmission window; used only to read the timelines of imported records
   S.dueEnd = (a) => (a.due ? new Date(a.due + 'T23:59:59').getTime() : null); // due at the end of the due day, local time
   S.isLate = (a, atMs) => { const d = S.dueEnd(a); return d != null && atMs > d; };
-  S.hoursLeft = (a, nowMs) => (a.work && a.work.deadline ? (new Date(a.work.deadline).getTime() - (nowMs || Date.now())) / 3600000 : null);
-
   // A compact, real record of a review (when, score, rubric results, findings), taken from the saved submission. Returns null when there is no review to summarise.
   S.summarizeReview = function (sub) {
     const fb = sub && sub.feedback; if (!fb || !sub.at) return null;
@@ -415,15 +445,8 @@
     if (old && old !== keep && old.fileId && S.files) S.files.del(old.fileId);
     return true;
   };
-  // Anything past its 72 hours is finalized from its first review. Safe to call often.
-  S.finalizeExpired = function (nowMs) {
-    let n = 0;
-    S.allWork().forEach(({ a }) => {
-      if (a.work && a.work.phase === 'reviewed' && a.work.deadline && new Date(a.work.deadline).getTime() <= (nowMs || Date.now())) { if (S.finalizeWork(a)) n++; }
-    });
-    if (n) S.save();
-    return n;
-  };
+  // AI-off copy: there is no review deadline here, so nothing is ever finalised automatically.
+  S.finalizeExpired = () => 0;
 
   S.grade = function (c) {
     let earned = 0, possible = 0, n = 0;

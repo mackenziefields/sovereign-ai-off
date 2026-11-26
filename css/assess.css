@@ -1,0 +1,80 @@
+/* sovereign. (AI-off copy) — Guided Assessment Studio (js/assess.js). */
+.as-steps { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-wrap: wrap; gap: .3rem; counter-reset: as; }
+.as-steps li { counter-increment: as; font-size: .74rem; font-weight: 700; letter-spacing: .03em; padding: .25rem .5rem; border: 1px solid var(--rule); color: var(--muted); }
+.as-steps li::before { content: counter(as) '. '; }
+.as-steps li.is-done { border-color: var(--ink); color: var(--ink); background: var(--accent-soft); }
+.as-steps li.is-done::after { content: ' ✓'; }
+.as-ver { margin: 0 0 .75rem; }
+.as-checks, .as-hl, .as-rubric, .as-follow, .as-goalset, .as-resubmit, .as-final, .as-start { margin: 0 0 1.5rem; }
+.as-checks { border: 1px dashed var(--rule); padding: .75rem .9rem; }
+.as-chk { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .4rem; font-size: .88rem; }
+.as-chk li { display: grid; grid-template-columns: 6.5rem 1fr; gap: .6rem; align-items: baseline; }
+.chk-k { font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: .1rem .35rem; border: 1px solid currentColor; text-align: center; }
+.chk-ok .chk-k { color: #0b6b4f; }
+.chk-no .chk-k { color: var(--danger); }
+.chk-na .chk-k { color: var(--muted); }
+.as-text { max-height: 24rem; overflow: auto; border: 1px solid var(--rule); padding: .75rem .9rem; background: var(--card); line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.as-text:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+mark.hl { color: inherit; padding: 0 .05em; }
+mark.hl-strength { background: rgba(37, 99, 235, .2); border-bottom: 2px solid #2563eb; }
+mark.hl-revise { background: rgba(234, 179, 8, .38); border-bottom: 2px dashed #a16207; }
+.as-legend mark { font-weight: 700; }
+.as-hl-tools { display: grid; gap: .5rem; margin: .6rem 0; }
+.as-hl-tools .btn-row { margin: 0; }
+.as-hl-tools input, .as-hl-tools textarea, .as-goals input { width: 100%; }
+.hl-btn-strength { border-color: #2563eb; }
+.hl-btn-revise { border-color: #a16207; }
+.as-hls { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .45rem; font-size: .88rem; }
+.as-hls q { font-style: italic; }
+.hl-item { padding-left: .6rem; border-left: 4px solid #2563eb; }
+.hl-item-revise { border-left: 4px dashed #a16207; }
+.badge.hl-b-strength { color: #1d4ed8; border-color: #2563eb; }
+.badge.hl-b-revise { color: #854d0e; border-color: #a16207; }
+.as-crits { list-style: none; margin: .5rem 0; padding: 0; display: grid; gap: .9rem; }
+.as-crit { border: 1px solid var(--rule); padding: .75rem .9rem; background: var(--card); }
+.as-crit-h { display: flex; flex-wrap: wrap; gap: .35rem .75rem; align-items: baseline; justify-content: space-between; margin-bottom: .4rem; }
+.as-pts { font-size: .85rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.as-crit .field { margin: .4rem 0; }
+.as-crit textarea, .as-crit select { width: 100%; }
+.as-score input { max-width: 8rem; }
+.as-k { font-weight: 700; }
+.as-total { font-weight: 700; margin: .75rem 0 .25rem; }
+.as-goals { margin: .5rem 0; padding-left: 1.2rem; display: grid; gap: .5rem; }
+.as-goals li { display: grid; gap: .3rem; }
+.as-follow .as-goals li { grid-template-columns: 1fr auto; align-items: center; }
+.as-pick { border: 1px solid var(--rule); padding: .5rem .75rem; margin: .5rem 0; display: grid; gap: .4rem; }
+.as-version { border-top: 1px solid var(--rule); padding: .5rem 0; }
+.as-version summary { cursor: pointer; font-weight: 700; }
+.as-version h5 { margin: 1rem 0 .4rem; font-size: .85rem; letter-spacing: .04em; text-transform: uppercase; }
+.as-log { margin-top: 1rem; }
+@media (prefers-color-scheme: dark) {
+  .badge.hl-b-strength { color: #93c5fd; }
+  .badge.hl-b-revise { color: #fcd34d; }
+  .chk-ok .chk-k { color: #6ee7b7; }
+}
+@media (max-width: 520px) {
+  .as-chk li { grid-template-columns: 1fr; gap: .2rem; }
+  .chk-k { justify-self: start; }
+  .as-follow .as-goals li { grid-template-columns: 1fr; }
+}
+
+/* Practice & Reflection (js/practice.js) */
+.pr-note { margin: 0 0 1rem; font-size: .9rem; }
+.pr-entry { border: 1px solid var(--rule); background: var(--card); padding: .9rem 1rem; margin: 0 0 1.5rem; }
+.pr-head { display: flex; flex-wrap: wrap; gap: .25rem 1rem; justify-content: space-between; align-items: baseline; margin-bottom: .5rem; }
+.pr-entry textarea, .pr-entry select { width: 100%; }
+.pr-check { margin: 1rem 0; }
+.pr-items { list-style: none; margin: .5rem 0; padding: 0; display: grid; gap: .4rem; }
+.pr-items li { display: grid; grid-template-columns: auto 1fr auto; gap: .5rem; align-items: start; }
+.pr-items li > input[type=checkbox] { margin-top: .7rem; }
+.pr-items textarea { width: 100%; min-width: 0; resize: vertical; }
+.pr-items .linkbtn { margin-top: .5rem; }
+.pr-list, .pr-imported { margin: 0 0 1.5rem; }
+.pr-past { border-top: 1px solid var(--rule); padding: .5rem 0; }
+.pr-past summary { cursor: pointer; font-weight: 700; }
+
+/* Grades page status chips (Stage D) */
+.gr-chip.gr-final { background: var(--ink); color: var(--card); }
+.gr-chip.gr-prov { background: var(--accent-soft); border-color: var(--ink); }
+.gr-chip.gr-pending, .gr-chip.gr-manual { border-style: dashed; }
+.gr-chip.gr-done { border-color: var(--ink); }

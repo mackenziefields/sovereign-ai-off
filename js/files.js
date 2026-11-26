@@ -1,5 +1,5 @@
 /* sovereign. — files people attach to assignments. They are kept in this browser only (IndexedDB), never in the backup file,
-   and are sent to the AI service only when the person agrees for that one submission. */
+   and are never sent anywhere. */
 (function (S) {
   'use strict';
 
@@ -28,7 +28,7 @@
   const ext = (n) => (String(n).split('.').pop() || '').toLowerCase();
   const TEXT_EXT = ['txt', 'md', 'markdown', 'csv'];
 
-  // What can the AI review? text, PDF (within the size limit) and images. Everything else can be attached as evidence only.
+  // What kind of file is this? (text, PDF, image and Excel files can be shown or read in the app; any other file is kept as it is.)
   f.classify = function (file) {
     const t = (file.type || '').toLowerCase(), e = ext(file.name);
     if (t === 'application/pdf' || e === 'pdf') return 'pdf';
@@ -38,18 +38,12 @@
     return 'other';
   };
 
-  // Can the AI review this file? Checked the moment a file is chosen, so an unreadable or oversize file is never offered for AI review.
+  // Can this file be submitted here? Checked the moment a file is chosen.
   // Returns { ok:true } or { ok:false, msg }. (Text length is checked later, when the text is read.)
   f.check = function (file, fileOnly) {
     if (!file) return { ok: true };
     const kind = f.classify(file), e = ext(file.name), L = S.FILE_LIMITS, mb = (n) => Math.round(n / 1048576) + ' MB';
     if (kind === 'text' && fileOnly) return { ok: false, msg: 'This assignment needs a PDF, Excel file, or image, not a text file.' };
-    if (kind === 'pdf' && file.size > L.pdf) return { ok: false, msg: 'That PDF is over the ' + mb(L.pdf) + ' the AI can review. Compress it, or attach it as evidence without AI feedback.' };
-    if (kind === 'xlsx' && file.size > L.xlsx) return { ok: false, msg: 'That Excel file is over ' + mb(L.xlsx) + '. Save a smaller copy and try again.' };
-    if (kind === 'other') {
-      const tip = e === 'docx' || e === 'doc' || e === 'pages' || e === 'odt' ? ' Save it as a PDF first.' : e === 'heic' || e === 'heif' ? ' Export it as a JPG first.' : e === 'xls' || e === 'numbers' ? ' Save it as .xlsx or PDF first.' : '';
-      return { ok: false, msg: 'The AI can’t read “.' + (e || 'unknown') + '” files. It can review text, PDF, image, and Excel (.xlsx) files.' + tip + ' You can still attach this file as evidence without AI feedback.' };
-    }
     return { ok: true };
   };
 
@@ -154,7 +148,7 @@
         if (cells.some((x) => x)) out += Array.from(cells, (x) => csvCell(x || '')).join(',') + '\n';
       }
     }
-    if (out.length > S.FILE_LIMITS.text) throw new Error('That spreadsheet has more content than the AI can review (about ' + S.FILE_LIMITS.text.toLocaleString() + ' characters). Submit a PDF or a smaller sheet.');
+    if (out.length > S.FILE_LIMITS.text) throw new Error('That spreadsheet has more content than this app reads at once (about ' + S.FILE_LIMITS.text.toLocaleString() + ' characters). Submit a PDF or a smaller sheet.');
     if (out.split('\n').length < 4) throw new Error('No cell values were found in that Excel file.');
     return out;
   };

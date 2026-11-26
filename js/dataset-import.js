@@ -203,7 +203,7 @@
       const say = (...k) => { body.replaceChildren(...k.flat(3).filter(Boolean)); };
       const err = (m) => say(h('p', { class: 'banner warn', role: 'alert' }, m), h('div', { class: 'di-actions' }, h('button', { type: 'button', class: 'btn', onclick: () => done(null) }, 'Close')));
       const table = (rows) => h('div', { class: 'di-prev', tabindex: '0', role: 'region', 'aria-label': 'Preview of the first rows' }, h('table', {}, h('tbody', {}, rows.map((r) => h('tr', {}, r.map((c) => h('td', {}, c)))))));
-      const remind = h('p', { class: 'small muted' }, 'Stays on this device. Remove personal information about other people first; this app cannot check for it. Nothing is sent to the AI unless you agree when you ask for a review.');
+      const remind = h('p', { class: 'small muted' }, 'Stays on this device. Remove personal information about other people first; this app cannot check for it.');
 
       const showSheets = () => {
         stage = 'sheets'; const L = limits(), multi = model.info.length > 1;

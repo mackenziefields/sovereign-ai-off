@@ -1,14 +1,16 @@
-/* sovereign. — Assignment Workbench: one assignment as a two-pane workspace.
-   Left: Brief · Materials · Rubric (what you work from). Right: Submission · Feedback · Office hours (what you hand in and get back).
+/* sovereign. (AI-off copy) — Assignment Workbench: one assignment as a two-pane workspace. This copy owns this file (test-data/ai-off/js/workbench.js).
+   Left: Brief · Materials · Steps · Rubric (what you work from). Right: Submission, then the Guided Assessment Studio (js/assess.js):
+   Self-assessment · Revise · History, and Practice & reflection (js/practice.js, ungraded, always open). A review imported from the full app gets its own tab only when there is one.
    On phones one pane shows at a time, chosen from a six-way switcher. Reads existing data only; nothing here changes the saved format.
-   Route: #/course/<id>/assignments/<assignmentId>[/<brief|materials|rubric|submit|feedback|office>] */
+   Route: #/course/<id>/assignments/<assignmentId>[/<brief|materials|steps|rubric|submit|assess|revise|history|practice|feedback>] */
 (function (S) {
   'use strict';
   const { h, checkbox, plural, toast, commit } = S;
   const ui = S.ui;
   const REF = [['brief', 'Brief'], ['materials', 'Materials'], ['steps', 'Steps'], ['rubric', 'Rubric']];
-  const WORK = [['submit', 'Submission'], ['feedback', 'Feedback'], ['office', 'Office hours']];
-  const REFK = REF.map((t) => t[0]), WORKK = WORK.map((t) => t[0]);
+  const WORK_ALL = [['submit', 'Submission'], ['assess', 'Self-assessment'], ['revise', 'Revise'], ['history', 'History'], ['practice', 'Practice & reflection'], ['feedback', 'Imported AI review']];
+  let WORK = WORK_ALL; // the studio tabs show once work is submitted; the review tab only when an imported review exists
+  const REFK = REF.map((t) => t[0]), WORKK = WORK_ALL.map((t) => t[0]);
   const wbState = (ui.wb = ui.wb || {}); // which tab each pane last showed, per assignment (this visit only)
 
   const tabHref = (c, a, t) => S.href(c, 'assignments', a.id + '/' + t);
@@ -29,7 +31,7 @@
 
   function statusText(a) {
     const w = a.work;
-    return !w ? (a.done ? 'Marked completed' : 'Not submitted') : w.phase === 'reviewed' ? 'Feedback ready' : w.final.feedback ? 'Final grade: ' + a.score + ' / ' + a.points + ' pts' : 'Attached as evidence';
+    return !w ? (a.done ? 'Marked completed' : 'Not submitted') : w.phase === 'reviewed' ? 'Imported first version' : S.assess.status(a);
   }
 
   /* ----- left pane ----- */
@@ -108,7 +110,7 @@
 
   function rubricTab(c, m, a) {
     if (a.rubric.length) return [
-      h('p', { class: 'small muted' }, 'The AI reviews your work against these criteria, weighted as shown. You get detailed feedback first, then your final grade after you resubmit (or after ' + S.REVIEW_HOURS + ' hours).'),
+      h('p', { class: 'small muted' }, 'The criteria for this assignment, weighted as shown. After you submit, you assess your own work against them in the Self-assessment tab.'),
       h('ul', { class: 'rubric' }, a.rubric.map((k) => h('li', {},
         h('span', { class: 'rb-name' }, k.name),
         h('span', { class: 'rb-pts' }, h('b', {}, String(k.max)), ' / ' + a.points + ' points'),
@@ -116,10 +118,10 @@
       h('p', { class: 'wb-total' }, h('b', {}, String(a.points)), ' points in all'),
     ];
     if (a.criteria.length) return [
-      h('p', { class: 'small muted' }, (a.points != null ? a.points + ' points. ' : '') + 'The AI reviews your work against these. You get detailed feedback first, then your final grade after you resubmit (or after ' + S.REVIEW_HOURS + ' hours).'),
+      h('p', { class: 'small muted' }, (a.points != null ? a.points + ' points. ' : '') + 'The criteria for this assignment.'),
       h('ul', { class: 'plain wb-criteria' }, a.criteria.map((x) => h('li', {}, x))),
     ];
-    return [empty('No grading criteria have been written for this assignment.'), h('p', { class: 'small muted' }, 'Use Edit to add your own (one per line). AI feedback uses them, and if you leave them out the AI sets its own at the first review.')];
+    return [empty('No grading criteria have been written for this assignment.'), h('p', { class: 'small muted' }, 'Use Edit to add your own (one per line).')];
   }
 
   /* ----- right pane ----- */
@@ -134,10 +136,6 @@
       h('span', {}, 'Mark this assignment completed')), h('button', { class: 'linkbtn', type: 'button', onclick: () => { ui.edit = a.id; S.render(false); } }, 'Add points')));
     if (a.work && a.work.final) out.push(S.portfolioToggle(a));
     return out;
-  }
-
-  function officeTab(c, m, a) {
-    return a.points > 0 ? S.officePanel(c, m, a, true) : empty('Office hours are practice rounds for graded assignments. Add points to this assignment (Edit) to use them.');
   }
 
   /* ----- chrome ----- */
@@ -164,11 +162,14 @@
     page(c, m, a, tabIn) {
       const vc = S.vc, mi = c.modules.indexOf(m) + 1, st = S.STAGES.find((s) => s.key === S.stageOf(a));
       const p = S.workParts(c, m, a);
-      const defaultTab = p.state === 'reviewed' || p.state === 'graded' ? 'feedback' : 'brief';
+      const sp = a.work && a.work.phase === 'final' ? S.assess.parts(c, m, a) : null;
+      WORK = WORK_ALL.filter(([k]) => k === 'submit' || k === 'practice' || (k === 'feedback' ? !!p.feedback : !!sp));
+      const defaultTab = 'brief';
       const focus = REFK.includes(tabIn) || WORKK.includes(tabIn) ? tabIn : defaultTab;
       const rk = a.id + ':ref', wk = a.id + ':work';
       const refTab = REFK.includes(focus) ? focus : (wbState[rk] || 'brief');
-      const workTab = WORKK.includes(focus) ? focus : (wbState[wk] || (p.state === 'reviewed' || p.state === 'graded' ? 'feedback' : 'submit'));
+      let workTab = WORKK.includes(focus) ? focus : (wbState[wk] || 'submit');
+      if (!WORK.some((t) => t[0] === workTab)) workTab = 'submit';
       wbState[rk] = refTab; wbState[wk] = workTab;
       const focusPane = REFK.includes(focus) ? 'ref' : 'work';
       const theme = c.designTheme;
@@ -179,18 +180,14 @@
       if (ui.edit === a.id) return h('div', { class: 'course wb', 'data-theme': theme }, crumbs, h('div', { class: 'panel' }, h('h2', { class: 'mod-h' }, 'Edit assignment'), vc.assignmentForm(c, m, a)));
 
       const g = gaps(a), thin = !isCap && (g.length >= 3 || (!a.parts.length && !a.materials && !a.rubric.length));
-      const canWrite = !isCap && a.points > 0 && !a.work && (!a.parts.length && !a.materials || a.kind === 'demonstrate' && a.parts.length && a.basis !== 'portfolio');
       const notice = thin ? h('aside', { class: 'wb-notice', 'aria-label': 'Missing details' },
         h('p', { class: 'wb-notice-k' }, a.origin === 'ai' ? 'Incomplete: the full page didn’t finish' : 'A short entry'),
-        h('p', {}, a.origin === 'ai'
-          ? 'The AI wrote this assignment’s title but its full page (' + g.join(', ') + ') didn’t finish during the course build. Nothing you have submitted is affected. Write it now with the button below, or add the details yourself.'
-          : 'This assignment doesn’t have all its details yet: ' + g.join(', ') + '. Your progress and any work you have submitted are untouched. Add what you need yourself, or, if the assignment has points, ask the AI to write the full version.'),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick: () => { ui.edit = a.id; S.render(false); } }, 'Add details yourself')),
-        canWrite ? vc.writeBtn(c, m, a) : (a.points > 0 ? null : h('p', { class: 'small muted' }, 'The AI can write details only for assignments with points.'))) : (canWrite ? vc.writeBtn(c, m, a) : null);
+        h('p', {}, (a.origin === 'ai' ? 'This assignment was drafted in the full app, but its full page (' + g.join(', ') + ') was never finished. ' : 'This assignment doesn’t have all its details yet: ' + g.join(', ') + '. ') + 'Your progress and any work you have submitted are untouched. Add what you need yourself.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'button', onclick: () => { ui.edit = a.id; S.render(false); } }, 'Add details yourself'))) : null;
 
       const refBody = { brief: briefTab, materials: materialsTab, steps: stepsTab, rubric: rubricTab }[refTab](c, m, a);
-      const workBody = { submit: () => submitTab(c, m, a, p), feedback: () => p.feedback, office: () => officeTab(c, m, a) }[workTab]();
-      const flags = { feedback: p.state === 'reviewed' ? 'Feedback ready' : p.state === 'graded' ? 'Graded' : '', submit: p.state === 'reviewed' ? 'Resubmit open' : '' };
+      const workBody = { submit: () => submitTab(c, m, a, p), feedback: () => p.feedback, assess: () => sp.assess(), revise: () => sp.revise(), history: () => sp.history(), practice: () => S.practice.tab(c, m, a) }[workTab]();
+      const flags = sp && sp.flag ? { assess: sp.flag } : {};
       const pane = (id, label, tabs, body, cls) => h('section', { class: 'wb-pane wb-' + id + (focusPane === id ? ' is-focus' : '') + (cls || ''), 'aria-label': label },
         h('p', { class: 'wb-pane-k' }, label), tabs, h('div', { class: 'wb-body', id: 'wb-' + id + '-body' }, body));
 
@@ -200,7 +197,7 @@
           h('div', { class: 'wb-head-main' },
             h('p', { class: 'eyebrow' }, (a.kind ? S.kindMark(a.kind) : h('span', {}, 'Practice')), ' ', h('span', { class: 'wb-where' }, isCap ? 'Course capstone · counts ' + (c.capstone ? c.capstone.weight : 20) + '% of the course grade' : st.room + ' · Module ' + mi)),
             h('h2', { class: 'wb-title' }, a.title)),
-          h('div', { class: 'wb-tools' }, isCap ? null : vc.editBtn(a.id, 'Edit assignment'))),
+          h('div', { class: 'wb-tools' }, isCap && a.origin === 'ai' ? null : vc.editBtn(a.id, isCap ? 'Edit capstone' : 'Edit assignment'))),
         h('div', { class: 'ameta wb-meta' },
           ...[['Due', a.due ? S.fmtDate(a.due) + (a.locked ? ' (course timeline)' : '') : 'No due date'], ['Points', a.points != null ? String(a.points) : 'Not graded'], ['Estimated time', a.estimate], ['Submitting', vc.FORMAT_SHORT[a.format] || 'Text or a file'], ['Status', statusText(a)]]
             .map(([k, v]) => v ? h('div', { class: 'ameta-i' }, h('span', { class: 'ameta-k' }, k), h('span', {}, v)) : null)),

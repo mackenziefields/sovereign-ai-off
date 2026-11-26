@@ -103,7 +103,7 @@
     const st = S.courseStats(c), meta = st.mods ? st.done + ' of ' + st.mods + (st.mods === 1 ? ' module' : ' modules') : 'No modules yet';
     return h('section', { class: 'designer', 'aria-label': 'Course design' },
       h('div', { class: 'section-head' }, h('h2', {}, 'Course design'), h('button', { class: 'linkbtn', type: 'button', onclick: () => { ui.design = false; S.render(false); } }, 'Close')),
-      h('p', { class: 'small muted' }, 'Choose how this course looks. This changes only its appearance. Your syllabus, modules, assignments, grades, and work are not touched, and no AI service is used.'),
+      h('p', { class: 'small muted' }, 'Choose how this course looks. This changes only its appearance. Your syllabus, modules, assignments, grades, and work are not touched.'),
       h('div', { class: 'theme-grid', role: 'radiogroup', 'aria-label': 'Course design' }, S.THEMES.map(([id, name, note]) => h('label', { class: 'theme-opt' + (c.designTheme === id ? ' on' : '') },
         h('input', { type: 'radio', name: 'design', value: id, checked: c.designTheme === id, onchange: () => {
           c.designTheme = id; commit();
@@ -214,14 +214,12 @@
       h('dl', { class: 'brief' },
         h('div', {}, h('dt', {}, 'Learning objective'), h('dd', {}, c.objective || '—')),
         h('div', {}, h('dt', {}, 'Final deliverable'), h('dd', {}, c.deliverable || '—', ' ', c.deliverable ? h('a', { class: 'small', href: '#/work' }, 'Track in My Work') : null))),
-      c.ai && c.ai.generated ? h('p', { class: 'banner' + (c.ai.status === 'partial' ? ' error' : '') }, 'Drafted by AI: review and change anything. ', c.ai.note || '') : null,
       c.duration ? h('p', { class: 'muted' }, h('b', {}, 'Course length: '), c.duration) : null,
       c.outcomes.length ? h('section', {}, h('h3', { class: 'minor' }, 'What you will be able to do'), h('ul', { class: 'plain' }, c.outcomes.map((x) => h('li', {}, x)))) : null,
       c.pathway ? h('p', { class: 'muted' }, h('b', {}, 'Where this leads: '), c.pathway) : null,
       c.licensureNote ? h('p', { class: 'callout' }, h('b', {}, 'About licenses and credentials: '), c.licensureNote) : null,
       c.work.criteria.length ? h('section', {}, h('h3', { class: 'minor' }, 'Final project: ' + (c.work.title || 'criteria')), h('ul', { class: 'plain' }, c.work.criteria.map((x) => h('li', {}, x)))) : null,
       h('section', {}, h('h3', { class: 'minor' }, 'Syllabus notes'), c.syllabus ? h('p', { class: 'pre' }, c.syllabus) : empty('Add your schedule, expectations, and how you will grade yourself.')),
-      S.usageBlock(c),
       h('section', {},
         h('div', { class: 'btn-row' },
           h('button', { class: 'btn danger', type: 'button', onclick: () => {
@@ -310,7 +308,7 @@
       const graded = a && a.work && a.work.final && a.work.final.feedback;
       const lines = (k, n) => String(f.get(k) || '').split('\n').map((x) => x.trim()).filter(Boolean).slice(0, n).map((x) => x.slice(0, 500));
       const v = { materials: String(f.get('materials') || '').trim().slice(0, 6000), steps: a ? a.steps : [], parts: partsFrom(f.get('parts')), format: ['text', 'pdf', 'image', 'file', 'any'].includes(f.get('format')) ? f.get('format') : '', submit: String(f.get('submit') || '').trim().slice(0, 1000), criteria: lines('criteria', 8).map((x) => x.slice(0, 300)), estimate: String(f.get('estimate') || '').trim().slice(0, 60), title: f.get('title').trim(), description: f.get('description').trim(), due: a && a.locked ? a.due : S.validDate(f.get('due') || '') };
-      if (!graded) { v.points = num(f.get('points')); v.score = num(f.get('score')); }
+      if (!graded && !(a && a.score != null)) v.points = num(f.get('points')); if (!a) v.score = null; // AI-off copy: scores come only from a completed self-assessment
       if (canStage && f.has('kind')) v.kind = ['learn', 'apply', 'demonstrate'].includes(f.get('kind')) ? f.get('kind') : ''; // '' = Practice (shown under Apply)
       if (a) { Object.assign(a, v); ui.edit = null; }
       else {
@@ -328,10 +326,10 @@
       field('Parts and guiding questions (optional)', 'parts', { value: a ? partsText(a) : '', multiline: true, rows: 8, hint: 'Each part: its title on one line, then one question per line. Leave a blank line between parts.' }),
       select('Submit as', 'format', [['', 'Not specified'], ['text', 'Text entry'], ['pdf', 'PDF'], ['image', 'Image'], ['file', 'PDF, Excel file, or image (tables, charts)'], ['any', 'Text, PDF, or image']], a ? a.format : ''),
       field('What to submit (optional)', 'submit', { value: a ? a.submit : '', multiline: true, rows: 2 }),
-      a && a.rubric.length ? h('p', { class: 'small muted' }, 'Grading criteria are weighted and fixed for AI review: ' + a.rubric.map((k) => k.name + ' (' + k.max + ')').join('; ')) : field('How it is graded (optional)', 'criteria', { value: a ? a.criteria.join('\n') : '', multiline: true, rows: 3, hint: 'One criterion per line. The AI reviews against these.' }),
+      a && a.rubric.length ? h('p', { class: 'small muted' }, 'Grading criteria (weighted): ' + a.rubric.map((k) => k.name + ' (' + k.max + ')').join('; ')) : field('How it is graded (optional)', 'criteria', { value: a ? a.criteria.join('\n') : '', multiline: true, rows: 3, hint: 'One criterion per line.' }),
       field('Estimated time (optional)', 'estimate', { value: a ? a.estimate : '', placeholder: 'e.g. 45 minutes' }),
       a && a.locked ? h('p', { class: 'small muted' }, 'Due ' + S.fmtDate(a.due) + '. Set by your course timeline, so it can’t be changed.') : field('Due date (optional)', 'due', { type: 'date', value: a ? a.due : '' }),
-      a && a.work && a.work.final && a.work.final.feedback ? h('p', { class: 'small muted' }, 'Graded by the AI review: ' + a.score + ' / ' + a.points + ' pts. Points and score are fixed once graded.') : h('div', { class: 'two' }, field('Points (optional)', 'points', { type: 'number', value: a ? a.points : '' }), field('Your score (optional)', 'score', { type: 'number', value: a ? a.score : '' })),
+      a && a.work && a.work.final && a.work.final.feedback ? h('p', { class: 'small muted' }, 'Graded by an AI review in the full app (imported): ' + a.score + ' / ' + a.points + ' pts. Points and score are fixed once graded.') : a && a.score != null ? h('p', { class: 'small muted' }, 'Points: ' + a.points + '. They stay fixed while a score is recorded (' + S.assess.scoreLine(a) + ').') : field('Points (optional)', 'points', { type: 'number', value: a ? a.points : '', hint: 'Your score comes from your own self-assessment after you submit. Without points the assignment is tracked as complete or not.' }),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', type: 'submit' }, a ? 'Save' : 'Add assignment'), a ? cancelBtn() : null));
   }
 
@@ -342,8 +340,8 @@
     const meta = [
       a.kind ? S.kindMark(a.kind) : null,
       a.due ? h('span', { class: 'due' + (late ? ' late' : '') }, (late ? 'Overdue · ' : 'Due ') + S.fmtDate(a.due)) : null,
-      a.work && a.work.phase === 'reviewed' ? h('span', { class: 'badge soft' }, 'Feedback ready') : null,
-      a.points != null ? h('span', { class: 'due' }, a.score != null ? a.score + ' / ' + a.points + ' pts' + (pct != null ? ' · ' + pct + '%' : '') : a.points + ' pts') : null,
+      a.work && a.work.phase === 'reviewed' ? h('span', { class: 'badge soft' }, 'Imported review') : null,
+      a.points != null ? h('span', { class: 'due' }, S.assess.scoreLine(a)) : null,
     ].filter(Boolean);
     return h('li', { class: 'item' + (a.done ? ' is-done' : '') },
       checkbox(a.done, 'Mark completed: ' + a.title, (v) => { a.done = v; commit(); }),
@@ -363,21 +361,6 @@
   }
 
   // One assignment on its own page: what it is, why, how, what to hand in, how it is graded, and where to submit it.
-  const writing = new Set();
-  // For assignments without the full page (older courses, or when the first try failed): the AI writes it, after the person agrees.
-  function writeBtn(c, m, a) {
-    const busy = writing.has(a.id);
-    return h('div', { class: 'callout' },
-      h('p', { class: 'small' }, a.parts.length ? 'This demonstrate assignment was written before portfolio assignments existed. The AI can rewrite it as a substantive portfolio piece for your field (new overview, steps, and grading). Nothing you have submitted is affected.' : 'This assignment doesn’t have its full page yet (scenario, steps, and weighted grading). The AI can write it.' + (a.origin === 'ai' ? ' It will replace the AI-drafted overview. Anything you wrote yourself is kept.' : '')),
-      h('button', { class: 'btn ghost', type: 'button', disabled: busy, onclick: async () => {
-        if (!S.ai.ready()) { toast('AI is switched off in this copy.'); return; }
-        writing.add(a.id); S.render(false);
-        try { const r = await S.ai.writeDetails(c, m, [a], {}); toast(r.done ? 'Assignment written.' : 'The AI’s answer was incomplete. Please try again.'); }
-        catch (e) { toast(e.message); }
-        writing.delete(a.id); S.render(false);
-      } }, busy ? 'Writing…' : (a.parts.length ? 'Rewrite as a portfolio assignment with AI' : 'Write full assignment with AI')));
-  }
-
   function pageAssignments(c) {
     return h('div', {},
       pageHead('Assignments'),
@@ -400,7 +383,7 @@
         const numIn = (key, label) => h('input', { type: 'number', min: '0', step: 'any', inputmode: 'decimal', value: a[key] == null ? '' : String(a[key]), 'aria-label': label + ': ' + a.title,
           onchange: (e) => { a[key] = num(e.target.value); commit(); } });
         const aiGraded = !!(a.work && a.work.final && a.work.final.feedback);
-        rows.push(h('tr', {}, h('td', {}, a.title, aiGraded ? h('small', { class: 'muted' }, ' · AI-graded') : null), h('td', {}, aiGraded ? String(a.points) : numIn('points', 'Points')), h('td', {}, aiGraded ? String(a.score) : numIn('score', 'Score')), h('td', { class: 'pct' }, pct != null ? pct + '%' + (aiGraded ? ' · ' + S.letter(pct) : '') : '—')));
+        rows.push(h('tr', {}, h('td', {}, a.title, aiGraded ? h('small', { class: 'muted' }, ' · AI-graded, imported') : null), h('td', {}, aiGraded ? String(a.points) : numIn('points', 'Points')), h('td', {}, aiGraded ? String(a.score) : numIn('score', 'Score')), h('td', { class: 'pct' }, pct != null ? pct + '%' + (aiGraded ? ' · ' + S.letter(pct) : '') : '—')));
       });
     });
     return h('div', {},
@@ -454,7 +437,7 @@
   const busy = new Set();
   const sylN = (n) => n + (n === 1 ? ' syllabus' : ' syllabi');
 
-  // Syllabi from other courses live here, apart from readings. "Source readings" asks the AI to open one and add what it assigns.
+  // Syllabi from other courses live here, apart from readings, as plain references.
   function syllabiSection(c, m) {
     const item = (y) => {
       return h('li', { class: 'item' }, h('div', { class: 'item-body' },
@@ -462,13 +445,12 @@
         S.syllabusLabels(y),
         y.sourcedAt ? h('div', { class: 'small' }, y.sourcedCount + ' reading' + (y.sourcedCount === 1 ? '' : 's') + ' added to this module from it on ' + y.sourcedAt.slice(0, 10) + '.') : null,
         h('div', { class: 'item-actions' },
-          S.syl.button(c, m, y),
           removeBtn('syllabus', m.syllabi, y)),
-        S.syl.panel(c, m, y)));
+));
     };
     return h('section', { class: 'msec' },
       h('div', { class: 'sec-head' }, h('h3', {}, 'Syllabi from other courses'), h('span', { class: 'count' }, m.syllabi.length ? sylN(m.syllabi.length) : '')),
-      m.syllabi.length ? h('p', { class: 'small muted' }, 'Not readings themselves. Choose “Read this syllabus” to see which readings it lists and how far each could be checked. Nothing is added until you tick it.') : null,
+      m.syllabi.length ? h('p', { class: 'small muted' }, 'Kept for reference. They are not readings themselves: add the readings you need to this module yourself.') : null,
       m.syllabi.length ? h('ul', { class: 'items' }, m.syllabi.map(item)) : null,
       h('details', { class: 'add' }, h('summary', {}, 'Add a syllabus'),
         h('form', { onsubmit: (e) => {
@@ -477,25 +459,8 @@
           m.syllabi.push(S.makeSyllabus({ title: f.get('title').trim() || u, url: u, note: f.get('note').trim(), source: 'user' })); commit();
         } },
           field('Syllabus title', 'title', { placeholder: 'e.g. WGS 101, Prof. Name, University' }), field('Link', 'url', { required: true, placeholder: 'https://' }),
-          field('Note (optional)', 'note', { multiline: true, rows: 2 }), h('button', { class: 'btn', type: 'submit' }, 'Add syllabus'))),
-      S.syl.paste(c, m));
+          field('Note (optional)', 'note', { multiline: true, rows: 2 }), h('button', { class: 'btn', type: 'submit' }, 'Add syllabus'))));
   }
-  function findMaterialsBtn(c, m) { return null; /* AI-off copy: needs the AI service */
-    const working = busy.has(m.id);
-    return h('div', { class: 'find-row' },
-      h('button', { class: 'btn ghost', type: 'button', disabled: working, onclick: async () => {
-        if (!S.ai.ready()) { toast('AI is switched off in this copy.'); return; }
-        busy.add(m.id); S.render(false);
-        try {
-          const r = await S.ai.findMaterials(c, m, {});
-          toast(r.missing && r.syllabi ? 'No readings found, but ' + sylN(r.syllabi) + ' were added below to source from.' : r.missing ? 'No verifiable source was found for this module.' : 'Added ' + plural(r.added, 'suggested resource') + (r.syllabi ? ' and ' + sylN(r.syllabi) : '') + '.');
-        } catch (e) { toast(e.message); }
-        busy.delete(m.id); S.render(false);
-      } }, working ? 'Searching…' : 'Find materials with AI'),
-      S.syl.checkButton(c, m),
-      h('span', { class: 'small muted' }, 'Adds suggestions; never removes your own.'));
-  }
-
   function readingItem(m, r) {
     if (ui.edit === r.id) {
       return h('li', { class: 'item' }, h('form', { class: 'inline-edit', onsubmit: (e) => {
@@ -521,5 +486,5 @@
   }
 
   // Shared with the Module Studio (js/studio.js).
-  S.vc = { FORMAT_SENTENCE, FORMAT_SHORT, writeBtn, partsText, h, href, num, empty, cancelBtn, editBtn, moveBtns, removeBtn, textSection, extraSection, listSection, syllabiSection, findMaterialsBtn, readingItem, assignmentItem, assignmentForm, BAD_LINK };
+  S.vc = { FORMAT_SENTENCE, FORMAT_SHORT, partsText, h, href, num, empty, cancelBtn, editBtn, moveBtns, removeBtn, textSection, extraSection, listSection, syllabiSection, readingItem, assignmentItem, assignmentForm, BAD_LINK };
 })(window.Sovereign = window.Sovereign || {});

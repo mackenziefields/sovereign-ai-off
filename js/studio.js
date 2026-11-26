@@ -18,7 +18,7 @@
   // An assignment with no kind is "Practice", listed under Apply. Nothing is rewritten.
   S.stageOf = (a) => (a.kind === 'learn' || a.kind === 'demonstrate' ? a.kind : 'apply');
   S.assignState = function (a) {
-    if (a.work && a.work.phase === 'reviewed') return { key: 'feedback', label: 'Feedback ready' };
+    if (a.work && a.work.phase === 'reviewed') return { key: 'feedback', label: 'Imported review: revise it' };
     if (a.done || (a.work && a.work.final)) return { key: 'done', label: 'Complete' };
     if (a.work) return { key: 'submitted', label: 'Submitted' };
     return { key: 'todo', label: 'Not started' };
@@ -41,7 +41,7 @@
     if (r) return { stage: 'learn', verb: 'Read', title: r.title, href: sh('learn') };
     for (const key of ['learn', 'apply', 'demonstrate']) {
       const a = inStage(m, key).find((x) => !x.done);
-      if (a) return { stage: key, verb: S.assignState(a).key === 'feedback' ? 'Review feedback on' : (S.assignState(a).key === 'todo' ? 'Start' : 'Finish'), title: a.title, href: S.href(c, 'assignments', a.id) };
+      if (a) return { stage: key, verb: S.assignState(a).key === 'feedback' ? 'Revise' : (S.assignState(a).key === 'todo' ? 'Start' : 'Finish'), title: a.title, href: S.href(c, 'assignments', a.id) };
     }
     if (!m.reflection) return { stage: 'wrap', verb: 'Write', title: 'your reflection', href: sh('wrap') };
     if (!m.complete) return { stage: 'wrap', verb: 'Close', title: 'this module', href: sh('wrap') };
@@ -150,7 +150,6 @@
       h('section', { class: 'msec room-sec' },
         h('div', { class: 'sec-head' }, h('h3', {}, 'Resources'), h('span', { class: 'count' }, done + ' of ' + m.readings.length + ' read')),
         m.readings.length ? h('ul', { class: 'rcards' }, m.readings.map((r, i) => resourceCard(m, r, i))) : vc.empty('Add readings, videos, links, or notes to study.'),
-        vc.findMaterialsBtn(c, m),
         h('details', { class: 'add' }, h('summary', {}, 'Add a resource'),
           h('form', { onsubmit: (e) => {
             e.preventDefault(); const f = new FormData(e.target), u = S.cleanUrl(f.get('url'));
@@ -177,7 +176,7 @@
     return [
       a.due ? h('span', { class: 'fact' + (late ? ' late' : '') }, (late ? 'Overdue · ' : 'Due ') + S.fmtDate(a.due)) : null,
       a.estimate ? h('span', { class: 'fact' }, a.estimate) : null,
-      a.points != null ? h('span', { class: 'fact' }, a.score != null ? a.score + ' / ' + a.points + ' pts' + (pct != null ? ' · ' + pct + '%' : '') : a.points + ' pts') : null,
+      a.points != null ? h('span', { class: 'fact' }, S.assess.scoreLine(a)) : null,
     ].filter(Boolean);
   }
   function cardActions(m, a) {
@@ -186,7 +185,7 @@
   }
   function cta(c, a) {
     const k = S.assignState(a).key;
-    return h('a', { class: 'btn' + (k === 'done' ? ' ghost' : ''), href: S.href(c, 'assignments', a.id) }, k === 'todo' ? 'Open' : k === 'feedback' ? 'Review feedback' : k === 'submitted' ? 'View submission' : 'Review');
+    return h('a', { class: 'btn' + (k === 'done' ? ' ghost' : ''), href: S.href(c, 'assignments', a.id) }, k === 'todo' ? 'Open' : k === 'feedback' ? 'Revise' : k === 'submitted' ? 'View submission' : 'Review');
   }
 
   function caseCard(c, m, a, i, list) {

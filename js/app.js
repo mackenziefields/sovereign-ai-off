@@ -17,7 +17,6 @@
 
     if (!S.state.setup) { route = 'welcome'; view = V.firstRun(); title = 'Welcome'; }
     else if (parts[0] === 'work') { route = 'work'; view = V.work(); title = 'My Work'; }
-    else if (parts[0] === 'new-ai') { route = 'dash'; view = V.newAI(); title = 'Build with AI'; }
     else if (parts[0] === 'data') { route = 'data'; view = V.data(); title = 'Data & Backup'; }
     else if (parts[0] === 'course' && S.course(parts[1])) {
       const c = S.course(parts[1]);

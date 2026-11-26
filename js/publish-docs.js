@@ -103,24 +103,47 @@
     S.save();
   }
 
+  // AI-off copy: the learner's own assessment record (js/assess.js): rubric evaluation, revision history, goals and reflections.
+  const recVer = (facts) => { const s = facts.studio; if (!s) return null; const n = (s.recorded && s.recorded.kind === 'self' && s.recorded.v) || s.finalV || 0; return s.versions[n - 1] || null; };
+  function studioBlocks(a, facts) {
+    const s = facts.studio, v = recVer(facts), out = [];
+    if (v && v.assessment && v.assessment.done) {
+      out.push(klabel('Rubric evaluation (self-assessed, version ' + v.n + ')'),
+        h('table', { class: 'rub' }, h('thead', {}, h('tr', {}, h('th', {}, 'Criterion'), h('th', { class: 'n' }, 'Score'), h('th', {}, 'The learner’s reason and evidence'))),
+          h('tbody', {}, v.assessment.criteria.map((k) => h('tr', {}, h('td', {}, k.name, k.improve ? h('span', { class: 'muted' }, ' · flagged to improve') : null), h('td', { class: 'n' }, k.max > 0 ? (k.score != null ? k.score : '—') + ' / ' + k.max : '—'), h('td', {}, k.reason, k.evidence ? h('div', { class: 'muted' }, 'Evidence: ' + k.evidence) : null))),
+            v.assessment.total.max > 0 ? h('tr', { class: 'total' }, h('td', {}, 'Total'), h('td', { class: 'n' }, v.assessment.total.score + ' / ' + v.assessment.total.max), h('td', {}, '')) : null)),
+        h('p', { class: 'muted' }, 'Scored by the learner against the assignment’s rubric; the app only added the scores. This is a self-assessment, not an independent evaluation.'));
+    }
+    out.push(klabel('Revision history'), h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Version'), h('th', {}, 'Submitted'), h('th', {}, 'What changed'), h('th', {}, 'Self-assessment'))),
+      h('tbody', {}, s.versions.map((x) => h('tr', {}, h('td', {}, String(x.n) + (s.finalV === x.n ? ' (final)' : '')), h('td', { class: 'nw' }, dateOnly(x.at) + (x.late ? ' · late' : '')), h('td', {}, x.note || (x.n === 1 ? 'First submission' : '—')),
+        h('td', {}, !x.assessment ? 'Not assessed' : !x.assessment.done ? 'Not finished' : x.assessment.total.max > 0 ? x.assessment.total.score + ' / ' + x.assessment.total.max : 'Completed'))))));
+    const goals = s.versions.flatMap((x) => x.goals.filter((g) => g.text.trim()).map((g) => ({ n: x.n, ...g })));
+    if (goals.length) out.push(klabel('Revision goals'), h('ul', {}, goals.map((g) => h('li', {}, g.text + (g.criterion ? ' (' + g.criterion + ')' : '') + ' · set after version ' + g.n + ' · ' + g.status))));
+    const refl = s.versions.filter((x) => x.assessment && x.assessment.overall.trim()).map((x) => ({ k: 'Reflection on version ' + x.n, t: x.assessment.overall }))
+      .concat(((a.practice && a.practice.entries) || []).filter((e) => e.reflection.trim()).map((e) => ({ k: 'Practice reflection, ' + dateOnly(e.at), t: e.reflection })));
+    if (refl.length) out.push(klabel('Reflections'), ...refl.map((r) => h('div', { class: 'work' }, h('span', { class: 'work-label' }, r.k), h('div', { class: 'work-text' }, paras(r.t)))));
+    return out;
+  }
+
   /* ================= one project, as it appears in either mode ================= */
   function projectBlock(c, t, n, e, o, flags) {
     const { a, m, cap } = e, facts = M.reviewFacts(a), sub = a.work && a.work.final, nodes = [];
-    const rec = facts.recorded, grade = rec.kind === 'ai' ? pct1(rec.pct) + ' · AI-generated assessment' : rec.kind === 'self' ? 'Self-scored ' + rec.score + ' of ' + rec.points : '';
+    const rec = facts.recorded, grade = rec.kind === 'ai' ? pct1(rec.pct) + ' · AI-generated assessment, imported' : rec.kind === 'selfassessed' ? 'Self-assessed ' + rec.score + ' of ' + rec.points + ' points (' + pct1(rec.pct) + ')' + (rec.final ? '' : ', provisional') : rec.kind === 'self' ? 'Entered by hand: ' + rec.score + ' of ' + rec.points : '';
     const meta = flags.professional
       ? [[cap ? 'Capstone' : 'Project', ''], sub && sub.at ? ['Completed', dateOnly(sub.at)] : null, flags.grades && grade ? ['Assessment', grade] : null]
       : [[cap ? 'Capstone' : (H.STAGE[e.stage] || 'Work'), cap && c.capstone ? 'counts ' + c.capstone.weight + '% of the course grade' : m.title], sub && sub.at ? ['Completed', dateOnly(sub.at)] : null, grade ? ['Recorded grade', grade] : null];
     nodes.push(opener(t, n, a.title, { cls: 'project', id: 'proj-' + a.id, meta }));
-    const crit = facts.review ? facts.review.criteria.filter((k) => k.assessed !== false).map((k) => k.name) : [];
+    const sv = recVer(facts), crit = facts.review ? facts.review.criteria.filter((k) => k.assessed !== false).map((k) => k.name) : sv && sv.assessment ? sv.assessment.criteria.map((k) => k.name) : [];
     const intro = a.portfolioNote || a.purpose || trim(a.description, 360);
-    const noteText = flags.professional ? (crit.length ? 'Skills demonstrated (from the assessment criteria): ' + crit.join(' · ') : '') : (crit.length ? 'Assessed against: ' + crit.join(' · ') : '');
+    const noteText = flags.professional ? (crit.length ? 'Assessment criteria: ' + crit.join(' · ') : '') : (crit.length ? 'Assessed against: ' + crit.join(' · ') : '');
     if (intro) nodes.push(withNote(t, h('p', { class: 'lede' }, intro), noteText)); else if (noteText) nodes.push(h('p', { class: 'aside-n' }, noteText));
     const pn = (o.notes && o.notes[a.id]) || '';
-    if (flags.history && facts.state !== 'none') {
+    if (flags.history && facts.state !== 'none' && !(facts.studio && facts.state === 'attached')) {
       nodes.push(klabel('Assessment history'), ...history(facts));
       if (facts.first && facts.first.findings.length) nodes.push(h('p', { class: 'muted' }, 'The first review recorded ' + facts.first.findings.length + ' findings' + (facts.first.criteria.length ? ' across ' + facts.first.criteria.length + ' criteria' : '') + '.'));
     }
     if (flags.rubric && facts.review) nodes.push(klabel('Rubric results (final review, AI-generated)'), rubricTable(facts.review.criteria));
+    if (flags.history && facts.studio) nodes.push(...studioBlocks(a, facts));
     if (sub && (sub.text || '').trim()) nodes.push(h('div', { class: 'work' }, h('span', { class: 'work-label' }, 'Submitted work'), h('div', { class: 'work-text' + (t === 'editorial' ? ' dropcap' : '') }, paras(sub.text))));
     else nodes.push(h('p', { class: 'muted' }, 'No typed text was submitted for this piece.'));
     const ar = sub && P.attach ? P.attach.nodes(sub, o.att && o.att[a.id]) : null; // a file is shown only when the learner ticked it for this export
@@ -144,7 +167,7 @@
       c.description ? h('p', { class: 'lede pre' }, c.description) : null,
       h('dl', { class: 'facts' }, [['Learner', learner() || '—'], ['Course', c.code], ['Length', c.duration || '—'], ['Completed', doneN + ' of ' + all]].map((x) => h('div', {}, h('dt', {}, x[0]), h('dd', {}, x[1])))),
       c.outcomes.length ? [klabel('Learning outcomes'), h('ol', {}, c.outcomes.map((x) => h('li', {}, x)))] : null,
-      notice('How to read this record.', 'Scores are AI-generated assessments made by Sovereign’s reviewer against each assignment’s rubric. They are not human-verified grades and are not accredited or endorsed by any institution. Credentials and the learner’s own final project are self-reported.')));
+      notice('How to read this record.', 'Scores are the learner’s own self-assessments: the learner scored each criterion of the assignment’s rubric with a reason and evidence, and the app added the scores. They are self-assessment, not independent evaluation, and scores marked provisional were not finalized. A score from an AI review made in the full Sovereign app is labelled as imported. None is a human-verified grade, and none is accredited or endorsed by any institution. Credentials and the learner’s own final project are self-reported.')));
     // 2 Course grade
     n++;
     const gradeRows = [];
@@ -163,7 +186,7 @@
       n++;
       const rows = ['learn', 'apply', 'demonstrate'].flatMap((k) => m.assignments.filter((a) => S.stageOf(a) === k).map((a) => {
         const f = M.reviewFacts(a), sub = a.work && (a.work.final || a.work.first), r = f.recorded;
-        const res = r.kind === 'ai' ? r.pct + '% · AI-assessed' : r.kind === 'self' ? 'Self-scored ' + r.score + ' of ' + r.points : f.state === 'attached' ? 'Attached as evidence' : f.state === 'reviewed' ? 'Feedback ready; no grade yet' : a.done ? 'Marked complete' : 'Not started';
+        const res = r.kind === 'ai' ? r.pct + '% · AI-assessed, imported' : r.kind === 'selfassessed' ? r.pct + '% · self-assessed' + (r.final ? '' : ', provisional') : r.kind === 'self' ? 'Entered by hand: ' + r.score + ' of ' + r.points : !(a.points > 0) && (a.done || (a.studio && a.studio.finalizedAt)) ? 'Complete' : f.state === 'attached' ? 'Submitted · not assessed' : f.state === 'reviewed' ? 'Imported first version; not finished' : a.done ? 'Marked complete' : 'Not started';
         return h('tr', {}, h('td', {}, H.STAGE[k]), h('td', {}, a.title), h('td', { class: 'nw' }, sub && sub.at ? dateOnly(sub.at) : '—'), h('td', {}, res));
       }));
       nodes.push(h('section', { class: 'pub-sec' }, secHead(t, n, m.title), m.overview ? h('p', { class: 'pre' }, trim(m.overview, 600)) : null,
@@ -175,11 +198,15 @@
     const flags = { professional: false, history: true, rubric: true, grades: true };
     if (!sel.length) { n++; nodes.push(h('section', { class: 'pub-sec', style: 'break-before:page' }, secHead(t, n, 'Selected work'), h('p', { class: 'muted' }, 'No pieces were selected for this record.'))); }
     sel.forEach((e) => { n++; nodes.push(...projectBlock(c, t, n, e, o, flags)); });
-    // 5 skills and competencies (from AI-assessed rubric criteria; not an external standard)
-    const sk = new Map();
-    c.modules.flatMap((m) => m.assignments).concat(S.capstoneOf(c) ? [S.capstoneOf(c)] : []).forEach((a) => { const f = M.reviewFacts(a); if (f.state !== 'final' || !f.review) return; f.review.criteria.forEach((k) => { if (k.assessed !== false && k.max > 0 && k.score / k.max >= 0.8) { const e = sk.get(k.name) || { n: 0 }; e.n++; sk.set(k.name, e); } }); });
-    if (sk.size) { n++; nodes.push(h('section', { class: 'pub-sec' }, secHead(t, n, 'Skills and competencies'), h('p', { class: 'muted' }, 'Criteria on which the AI reviewer scored this learner at 80% or more, in at least one final review. These are the reviewer’s rubric criteria, not an external competency standard.'),
-      h('ul', { class: 'plain' }, [...sk.entries()].map(([k, v]) => h('li', {}, h('b', {}, k), ' · assessed strongly in ' + v.n + (v.n === 1 ? ' assignment' : ' assignments')))))); }
+    // 5 learner-reported skills (AI-off copy): rubric criteria the learner self-assessed at 80% or more in a finalized assignment; imported AI reviews are labelled.
+    const sk = new Map(), addSk = (name, src) => { const e = sk.get(name) || { self: 0, ai: 0 }; e[src]++; sk.set(name, e); };
+    c.modules.flatMap((m) => m.assignments).concat(S.capstoneOf(c) ? [S.capstoneOf(c)] : []).forEach((a) => {
+      const st = a.studio, v = st && st.finalizedAt ? st.versions[st.finalV - 1] : null;
+      if (v && v.assessment && v.assessment.completedAt) v.assessment.criteria.forEach((k) => { if (k.max > 0 && k.score != null && k.score / k.max >= 0.8) addSk(k.name, 'self'); });
+      else { const f = M.reviewFacts(a); if (f.state === 'final' && f.review && f.recorded.kind === 'ai') f.review.criteria.forEach((k) => { if (k.assessed !== false && k.max > 0 && k.score / k.max >= 0.8) addSk(k.name, 'ai'); }); }
+    });
+    if (sk.size) { n++; nodes.push(h('section', { class: 'pub-sec' }, secHead(t, n, 'Skills (learner-reported)'), h('p', { class: 'muted' }, 'Rubric criteria the learner self-assessed at 80% or more in a finalized assignment. They are self-reported and not independently verified, and each criterion comes from its own assignment’s rubric, not an external competency standard.'),
+      h('ul', { class: 'plain' }, [...sk.entries()].map(([k, v]) => h('li', {}, h('b', {}, k), ' · ' + [v.self ? 'self-assessed at 80% or more in ' + v.self + (v.self === 1 ? ' assignment' : ' assignments') : '', v.ai ? 'scored at 80% or more by an imported review in ' + v.ai + (v.ai === 1 ? ' assignment' : ' assignments') : ''].filter(Boolean).join('; ')))))); }
     // 6 credentials, always labelled self-reported
     if (c.credentials.length) { n++; nodes.push(h('section', { class: 'pub-sec' }, secHead(t, n, 'Credentials and next steps'), h('p', { class: 'muted' }, 'Self-reported by the learner. Sovereign does not verify or issue credentials, and nothing here is an accredited qualification.'),
       h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Credential'), h('th', {}, 'Issuer'), h('th', {}, 'Status (self-reported)'))), h('tbody', {}, c.credentials.map((k) => h('tr', {}, h('td', {}, H.link(k.name, k.url)), h('td', {}, k.issuer || ''), h('td', {}, S.label(S.CRED_STATUS, k.status) || k.status))))))); }
@@ -187,7 +214,7 @@
     const w = c.work; if (w && (w.title || w.description || w.reflection)) { n++; nodes.push(h('section', { class: 'pub-sec' }, secHead(t, n, 'Self-reported final project'), notice('Not graded by Sovereign.', 'The learner wrote this description themselves. It is separate from the graded capstone.'),
       w.title ? h('h3', {}, w.title) : null, w.status ? h('p', { class: 'muted' }, 'Status: ' + (S.label(S.WORK_STATUS, w.status) || w.status)) : null,
       w.description ? [klabel('What I made'), h('p', { class: 'pre' }, w.description)] : null, w.reflection ? [klabel('Reflection'), h('p', { class: 'pre' }, w.reflection)] : null, w.url ? h('p', {}, H.link(w.url, w.url)) : null)); }
-    return Object.assign({ doc: 'Academic Record', kicker: 'sovereign. · Academic Record', deck: c.objective || 'What was studied, practised and demonstrated.', nodes, colophon: 'Grades follow the rules the app applies and every score is an AI-generated assessment' }, learnerBy());
+    return Object.assign({ doc: 'Academic Record', kicker: 'sovereign. · Academic Record', deck: c.objective || 'What was studied, practised and demonstrated.', nodes, colophon: 'Grades follow the rules the app applies, and each score is labelled by where it came from' }, learnerBy());
   }
 
   /* ================= Professional Portfolio ================= */
@@ -202,7 +229,7 @@
       klabel('Contents'), toc));
     sel.forEach((e) => { n++; nodes.push(...projectBlock(c, t, n, e, o, { professional: true, history: false, rubric: !!o.grades, grades: !!o.grades })); });
     nodes.push(h('section', { class: 'pub-sec', style: 'break-before:avoid' }, o.closing && o.closing.trim() ? [secHead(t, n + 1, 'Closing'), h('div', { class: 'work-text' }, paras(o.closing))] : null,
-      notice('About this work.', 'This work was completed in Sovereign, an independent learning app' + (o.grades ? ', and any scores shown are AI-generated assessments, not human-verified grades' : '') + '. It is not an accredited qualification, an official certification or an independently verified credential.')));
+      notice('About this work.', 'This work was completed in Sovereign, an independent learning app' + (o.grades ? ', and any scores shown are the learner’s own self-assessments, not independent evaluations' : '') + '. It is not an accredited qualification, an official certification or an independently verified credential.')));
     return Object.assign({ doc: 'Professional Portfolio', kicker: 'sovereign. · Portfolio', deck: 'Selected work', nodes, colophon: 'The work is shown as the learner submitted it' }, learnerBy());
   }
 
@@ -212,7 +239,7 @@
     if (!found || !found.a.work) return { empty: 'This assignment has no review to report on.' };
     const { a, m } = found, gate = M.assertPublishable(c, [a.id]);
     if (!gate.ok) return { blocked: gate.diagnostics };
-    const f = M.reviewFacts(a), r = f.review; if (!r) return { empty: 'This assignment was attached as evidence and has no AI review, so there is no report to make.' };
+    const f = M.reviewFacts(a), r = f.review; if (!r) return { empty: 'This assignment has no AI review imported from the full app, so there is no report to make.' };
     const t = o.theme, sub = a.work.final || a.work.first, nodes = []; let n = 0;
     const stageName = f.state === 'final' ? 'Final graded review' : 'First review (no grade yet)';
     n++; nodes.push(opener(t, n, 'The assessment', { cls: 'report', deck: 'An automated review of ' + a.title + ', with the evidence behind each finding', meta: [['Course', c.title], ['Type', f.state === 'final' ? stageName : 'First review'], ['Reviewed', M.fmtWhen(r.at)]] }));
@@ -297,8 +324,8 @@
         list.length ? h('ul', { class: 'pub-list' }, [...sel, ...list.filter((e) => !selIds.includes(e.a.id))].map(row)) : h('p', { class: 'small muted' }, o.mode === 'professional' ? 'No completed Demonstrate projects or capstone yet.' : 'Nothing has been completed yet.'),
         h('p', { class: 'small muted' }, 'Order follows the list. Only completed work appears here.')));
       const af = attachFieldset(o, sel, changed, draw); if (af) box.append(af);
-      if (o.mode === 'professional') box.append(h('label', { class: 'pub-check' }, h('input', { type: 'checkbox', checked: !!o.grades, onchange: (ev) => { o.grades = ev.target.checked; changed(true); } }), ' Include grades and rubric results (AI-generated)'));
-      else box.append(h('p', { class: 'small muted' }, 'An Academic Record always shows grades and assessment history, each labelled as AI-generated.'));
+      if (o.mode === 'professional') box.append(h('label', { class: 'pub-check' }, h('input', { type: 'checkbox', checked: !!o.grades, onchange: (ev) => { o.grades = ev.target.checked; changed(true); } }), ' Include grades and rubric results'));
+      else box.append(h('p', { class: 'small muted' }, 'An Academic Record always shows grades and assessment history, each labelled by where it came from.'));
       box.append(h('label', { class: 'field' }, h('span', {}, o.mode === 'professional' ? 'Introduction or personal statement (optional)' : 'Introduction (optional)'), h('textarea', { rows: 4, value: o.intro || '', oninput: (ev) => { o.intro = ev.target.value; changed(false); } })));
       if (o.mode === 'professional') box.append(h('label', { class: 'field' }, h('span', {}, 'Closing statement or contact details (optional)'), h('textarea', { rows: 3, value: o.closing || '', oninput: (ev) => { o.closing = ev.target.value; changed(false); } })));
       box.append(h('label', { class: 'pub-check' }, h('input', { type: 'checkbox', checked: !!o.remember, onchange: (ev) => { o.remember = ev.target.checked; changed(true); } }), ' Remember my text on this device for next time'),

@@ -105,59 +105,8 @@
 
   // scope: 'assignment' (Demonstrate Materials tab) or 'office' (the practice session)
 
-  /* ---------- sending it to a review: only with the learner's explicit agreement for that one review (Phase 2D-3) ---------- */
-  const INTRO = 'LEARNER-PROVIDED DATA (stored exactly as the learner imported it; "(blank)" means an empty cell; ids in brackets are the app’s own row references):';
-  const BUDGET = 8000;
-  D.prep = new Map(); // versionId -> what would be sent (versions never change, so this is safe to keep)
-
-  // The learner's current dataset, if this review can offer it: Demonstrate assignments (graded flow) or the Office Hours session.
-  D.eligible = function (a, scope) {
-    if (scope === 'assignment' && !(a.kind === 'demonstrate' && !a.realEvidence)) return null;
-    if (scope !== 'assignment' && scope !== 'office') return null;
-    return current(get(a, scope));
-  };
-  // Exactly what would be sent, as text, plus a plain description of it. Sampling is by whole rows and is stated ("first N of M rows").
-  D.prepareSend = async function (ver) {
-    const ex = await D.load(ver); if (!ex) return null;
-    const r = S.exhibits.asText({ exhibits: ex }, BUDGET, { intro: INTRO });
-    const lines = r.text.split('\n'), rowsOf = (id) => lines.filter((l) => l.indexOf('[' + id + '-') === 0);
-    const sheets = ex.map((e) => ({ name: (ver.sheets.find((s) => s.exhibitId === e.id) || {}).name || e.title, id: e.id, sent: (r.shown[e.id] || [0, 0])[0], total: e.table.rows.length, cols: e.table.columns.length }));
-    return { text: r.text, chars: r.text.length, cut: r.cut, sheets, rows: sheets.reduce((t, s) => t + s.sent, 0), preview: sheets.flatMap((s) => rowsOf(s.id).slice(0, 3)).slice(0, 8) };
-  };
-  // Called at send time, only if the box was ticked. Re-checks that the dataset is still the one the learner saw described.
-  D.forReview = async function (a, scope, seenId) {
-    const ver = D.eligible(a, scope);
-    if (!ver) throw new Error('Your data is no longer available for this review. Untick “Include my dataset” or add it again.');
-    if (seenId && ver.id !== seenId) throw new Error('Your data changed after you ticked the box. Please read the description again and tick it again.');
-    const p = D.prep.get(ver.id) || await D.prepareSend(ver);
-    if (!p) throw new Error('The data for this version is not on this device, so it cannot be sent.');
-    return { text: p.text, ref: { datasetId: (get(a, scope) || {}).id || '', versionId: ver.id, sent: p.sheets.filter((s) => s.sent).map((s) => s.name), rows: p.rows, chars: p.chars, at: new Date().toISOString() } };
-  };
-  // The authorization box shown above the usual "send it?" consent. Unticked by default, never remembered, and shown only when it can work.
-  D.authBox = function (a, scope, d) {
-    const ver = D.eligible(a, scope); if (!ver || !scope) return null;
-    if (!(S.ai && S.ai.ready && S.ai.ready())) return null;
-    if (!S.ai.workerVersion) { if (!D.asked) { D.asked = true; S.ai.ensureVersion(a).then(() => S.render(false)); } return null; }
-    const box = (...k) => h('div', { class: 'md-auth' }, h('p', { class: 'md-auth-h' }, 'Your own data (optional)'), ...k);
-    if (!S.ai.learnerOk()) return box(h('p', { class: 'small muted' }, 'Your data stays on this device. Including it in a review needs the AI service to be version 17 or newer (yours is version ' + S.ai.workerVersion + '), so this review will not use it.'));
-    const p = D.prep.get(ver.id);
-    if (!p) { D.prepareSend(ver).then((x) => { D.prep.set(ver.id, x || { missing: true }); S.render(false); }); return box(h('p', { class: 'small muted', role: 'status' }, 'Checking your data…')); }
-    if (p.missing) return box(h('p', { class: 'small muted' }, 'The data for this version is not on this device (uploaded files are not part of backups), so it cannot be included.'));
-    d.sendVer = ver.id;
-    const on = !!d.sendData;
-    return box(
-      h('label', { class: 'consent' }, h('input', { type: 'checkbox', checked: on, disabled: d.busy, onchange: (e) => { d.sendData = e.target.checked; S.render(false); } }), h('span', {}, h('b', {}, 'Include my dataset in this review'), ' (off unless you tick it, and asked again for every review)')),
-      on ? h('div', { class: 'md-auth-detail' },
-        h('p', { class: 'small' }, 'If you send this review, the AI service will receive, for this review only and not kept by the service:'),
-        h('ul', { class: 'plain small' },
-          h('li', {}, 'Your dataset “' + ver.source.name + '”, added ' + when(ver.at) + '.'),
-          p.sheets.map((s) => h('li', {}, s.name + ': ' + (s.sent < s.total ? 'the first ' + s.sent + ' of ' + s.total + ' rows (the rest will not be sent)' : s.total + ' row' + (s.total === 1 ? '' : 's')) + ', ' + s.cols + ' column' + (s.cols === 1 ? '' : 's') + '.')),
-          h('li', {}, 'About ' + p.chars.toLocaleString() + ' characters of text in all, with row ids so the review can point to a row.')),
-        p.cut ? h('p', { class: 'small' }, h('b', {}, 'Some rows are left out. '), 'The AI will be told it saw only part of the data and should make no claims about the rest.') : null,
-        h('p', { class: 'small muted' }, 'This is your own data. The AI cannot tell whether it is real or correct; it checks your work against it. Your original file never leaves this device.'),
-        p.preview.length ? h('details', { class: 'inspect' }, h('summary', {}, 'Preview of the first rows that will be sent'), h('pre', { class: 'small md-prev' }, p.preview.join('\n'))) : null)
-      : h('p', { class: 'small muted' }, 'Not included: this review will run without your data and will not refer to it.'));
-  };
+  // AI-off copy: your data is never sent anywhere, so there is nothing to authorise.
+  D.authBox = () => null;
 
   /* ---------- Phase 2D-4: show the cited row from the version the review was given ---------- */
   const findVer = (a, id) => { const all = [].concat((a.myData && a.myData.versions) || [], (a.office && a.office.data && a.office.data.versions) || []); return all.find((v) => v.id === id) || null; };
@@ -201,7 +150,7 @@
     } else {
       nodes.push(h('p', { class: 'small' }, h('b', {}, cur.source.name), ' · ' + kb(cur.source.size) + ' · added ' + when(cur.at) + (cur.note ? ' · ' + cur.note : '')), exhibitsBox(cur, (office ? 'od-' : 'md-') + a.id));
       if (cur.left.length || cur.notes.length) nodes.push(h('details', { class: 'inspect' }, h('summary', {}, 'What was left out or changed when this was added'), cur.left.length ? h('ul', { class: 'plain small' }, cur.left.map((x) => h('li', {}, x))) : h('p', { class: 'small' }, 'Nothing was left out.'), cur.notes.length ? h('ul', { class: 'plain small muted' }, cur.notes.map((x) => h('li', {}, x))) : null));
-      nodes.push(h('p', { class: 'small muted' }, 'Stays on this device and is never sent to the AI service in this version of the app. Your original file is kept unchanged.'),
+      nodes.push(h('p', { class: 'small muted' }, 'Stays on this device. Your original file is kept unchanged.'),
         h('div', { class: 'btn-row' }, h('button', { class: 'linkbtn', type: 'button', onclick: () => choose('Replaced the earlier file') }, 'Replace with a new file'),
           h('button', { class: 'linkbtn danger', type: 'button', onclick: () => { if (!window.confirm('Remove your data from this ' + (office ? 'session' : 'assignment') + '? Your supplied materials, submissions and grades are not affected. Versions that a review used are kept.')) return; D.removeCurrent(a, scope); S.toast('Your data was removed.'); S.render(false); } }, 'Remove my data')));
     }

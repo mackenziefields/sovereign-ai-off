@@ -96,7 +96,7 @@
 
   /* ---------- learning progress (replaces the module library) ---------- */
   const STATE_LABEL = { complete: 'Complete', progress: 'In progress', todo: 'Not started' };
-  const WORK_LABEL = { todo: 'Not started', submitted: 'Submitted', feedback: 'Feedback ready', done: 'Complete', incomplete: 'Not finished' };
+  const WORK_LABEL = { todo: 'Not started', submitted: 'Submitted', feedback: 'Imported review: revise it', done: 'Complete', incomplete: 'Not finished' };
   const pctText = (g) => (g.pct == null ? 'Not graded yet' : g.pct + '% ' + S.letter(g.pct));
   function gradeNote(g) {
     if (g.pct == null) return 'Not graded yet';
@@ -121,7 +121,7 @@
             ? h('a', { href: S.href(c, 'modules', p.current.m.id) }, p.current.m.title) : (p.modsTotal ? 'All modules complete' : '—'),
             p.current ? h('small', {}, ' ' + p.current.st.done + ' of ' + p.current.st.items + ' items done') : null)),
           h('div', {}, h('dt', {}, 'Assignments'), h('dd', {}, k.total
-            ? k.done + ' complete · ' + k.feedback + ' feedback ready · ' + k.submitted + ' submitted · ' + k.todo + ' not started' : 'None yet')),
+            ? k.done + ' complete · ' + (k.feedback ? k.feedback + ' imported, awaiting your revision · ' : '') + k.submitted + ' submitted · ' + k.todo + ' not started' : 'None yet')),
           h('div', {}, h('dt', {}, 'Course grade'), h('dd', {}, gradeNote(p.grade)))),
         cap ? h('div', { class: 'prog-cap' },
           h('b', {}, 'Course capstone'),
@@ -199,7 +199,7 @@
         h('p', { class: 'eyebrow' }, 'Portfolio · ' + course.title),
         h('h2', { class: 'display' }, 'Selected work'),
         h('p', { class: 'lede' }, 'The work and credentials you can point to for this course.'),
-        h('p', { class: 'small muted' }, 'Only final versions appear here. AI-reviewed scores are automated assessments, and credentials are self-reported; none of it is verified by anyone else.'),
+        h('p', { class: 'small muted' }, 'Only final versions appear here. Scores are your own self-assessments unless labelled as imported AI reviews, and credentials are self-reported; none of it is verified by anyone else.'),
         h('dl', { class: 'stats' },
           h('div', {}, h('dt', {}, 'Pieces'), h('dd', {}, String(pieces.length))),
           h('div', {}, h('dt', {}, 'Graded'), h('dd', {}, String(graded.length))),
@@ -209,9 +209,9 @@
       h('section', {}, h('div', { class: 'section-head' }, h('h2', {}, 'Graded work'), h('span', { class: 'count' }, plural(graded.length, 'assignment'))),
         graded.length ? h('ul', { class: 'items' }, graded.map(({ c, m, a }) => h('li', { class: 'item' }, h('div', { class: 'item-body' },
           h('div', { class: 'item-title' }, h('a', { href: S.href(c, 'modules', m.id) }, a.title)),
-          h('div', { class: 'item-meta' }, h('span', { class: 'code' }, c.code), h('span', { class: 'due' }, a.score + ' / ' + a.points + ' pts · ' + S.pctOf(a) + '%' + (a.work && a.work.final && a.work.final.feedback ? ' · ' + S.letter(S.pctOf(a)) : ''))),
-          a.work && a.work.final && a.work.final.feedback ? h('div', { class: 'item-meta' }, h('span', { class: 'badge soft' }, 'AI-reviewed'), a.work.final.late ? h('span', { class: 'badge warn' }, 'Late') : null) : null,
-          a.work && a.work.final && a.work.final.feedback ? h('details', { class: 'work-panel' }, h('summary', {}, 'Final feedback'), h('div', { class: 'wp-body' }, S.finalFeedback(a))) : null)))) : empty('Assignments you have scored will appear here.')),
+          h('div', { class: 'item-meta' }, h('span', { class: 'code' }, c.code), h('span', { class: 'due' }, S.assess.scoreLine(a))),
+          a.work && a.work.final && a.work.final.feedback ? h('div', { class: 'item-meta' }, h('span', { class: 'badge soft' }, 'AI review, imported'), a.work.final.late ? h('span', { class: 'badge warn' }, 'Late') : null) : null,
+          a.work && a.work.final && a.work.final.feedback ? h('details', { class: 'work-panel' }, h('summary', {}, 'Imported review'), h('div', { class: 'wp-body' }, S.finalFeedback(a))) : null)))) : empty('Assignments you have scored will appear here.')),
       h('section', {}, h('div', { class: 'section-head' }, h('h2', {}, 'Final projects')),
         finals.length ? h('ul', { class: 'items' }, finals.map((c) => h('li', { class: 'item' }, h('div', { class: 'item-body' },
           h('div', { class: 'item-title' }, c.work.title || c.deliverable || c.title, ' ', badge(S.label(S.WORK_STATUS, c.work.status), c.work.status === 'completed' ? 'solid' : '')),

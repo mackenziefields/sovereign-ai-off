@@ -6,7 +6,7 @@
      review score    = sum of the ASSESSED criteria scores, each criterion rounded to 0.1, the sum rounded to 0.1
      review maximum  = sum of the ASSESSED criteria maxima ("not assessed" criteria are left out of both)
      grade on the Grades page (a.score) = round(score / max * points, 1)   [the same percentage is kept if the points were edited later]
-     review deadline = first submission + REVIEW_HOURS (72) hours
+     (imported records) the full app's review deadline = first submission + its review window
    A difference of up to 0.1 is one rounding step and is allowed (reported as a note); anything bigger cannot come from rounding and is substantive. */
 (function (S) {
   'use strict';
@@ -68,7 +68,7 @@
     }
 
     // ----- timeline: only saved facts, or a derivation labelled as derived -----
-    const dl = ms(w.deadline), finAt = fin ? ms(fin.at) : null, windowMs = S.REVIEW_HOURS * 3600000;
+    const dl = ms(w.deadline), finAt = fin ? ms(fin.at) : null, windowMs = S.IMPORTED_WINDOW_HOURS * 3600000;
     if (w.phase === 'reviewed') {
       T.firstAt = w.first && ms(w.first.at) != null ? w.first.at : null; T.firstSource = T.firstAt ? 'saved' : 'unavailable'; T.how = 'awaiting';
       T.window = dl != null ? 'open-or-closed' : 'unknown';
@@ -88,12 +88,20 @@
     } else if (T.how === 'first-review') T.window = 'no-resubmission';
     // statements a document may print (each one is backed by saved timestamps)
     const S_ = T.statements;
-    if (T.how === 'resubmission' && T.window === 'within' && T.firstAt) S_.push('Resubmitted ' + hours(ms(T.firstAt), finAt) + ' hours after the first review, inside the ' + S.REVIEW_HOURS + '-hour window that ended ' + fmtWhen(w.deadline) + '.');
+    if (T.how === 'resubmission' && T.window === 'within' && T.firstAt) S_.push('Resubmitted ' + hours(ms(T.firstAt), finAt) + ' hours after the first review, inside the full app’s review window, which ended ' + fmtWhen(w.deadline) + '.');
     if (T.how === 'resubmission' && T.window === 'after') S_.push('The final submission is dated ' + fmtWhen(fin.at) + ', after the review deadline recorded for this assignment (' + fmtWhen(w.deadline) + ').');
     if (T.how === 'first-review') S_.push('No resubmission was made. The first review was recorded as the final grade.');
-    if (T.how === 'resubmission' && T.window === 'unknown') S_.push('Whether the resubmission was inside the ' + S.REVIEW_HOURS + '-hour window cannot be shown because a timestamp was not recorded.');
+    if (T.how === 'resubmission' && T.window === 'unknown') S_.push('Whether the resubmission was inside the full app’s review window cannot be shown because a timestamp was not recorded.');
     if (sub && sub.late) S_.push('Marked late against the assignment’s due date.');
 
+    // AI-off copy: a completed self-assessment (js/assess.js) is the recorded grade. It replaces an imported AI grade only when the learner assessed a later version.
+    const SR = a.studio && a.studio.recorded && a.studio.recorded.kind === 'self' ? a.studio.recorded : null;
+    if (SR) {
+      out.checks = out.checks.filter((k) => k.rule !== 'R3');
+      out.recorded = { kind: 'selfassessed', score: a.score, points: a.points > 0 ? a.points : null, pct: S.pctOf(a), version: SR.v, final: !!a.studio.finalizedAt };
+      if (a.score == null || Math.abs(a.score - SR.score) > 0.05) out.checks.push({ rule: 'R7', level: 'substantive', ok: false, msg: 'The Grades page score does not match the recorded self-assessment.' });
+    }
+    out.studio = S.assess ? S.assess.facts(a) : null;
     out.ok = out.checks.every((c) => c.ok);
     return out;
   }
